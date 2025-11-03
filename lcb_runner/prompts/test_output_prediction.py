@@ -243,17 +243,13 @@ def format_prompt_test_output(
             f"{get_cllama_question_template_answer(question, testcase_input)}\n[/INST]"
         )
         return prompt
-    elif LanguageModelStyle == LMStyle.MagiCoder:
-        prompt = f"{PromptConstants.SYSTEM_MESSAGE_CHAT_GENERIC}\n"
-        prompt += f"{get_magicoder_question_template_answer(question, testcase_input)}"
-        return prompt
-    elif LanguageModelStyle == LMStyle.WizardCoder:
-        prompt = f"{PromptConstants.SYSTEM_MESSAGE_WIZARD}\n\n{get_wizard_question_template_answer(question, testcase_input)}"
-        return prompt
-    elif LanguageModelStyle == LMStyle.Phind:
-        prompt = f"### System Prompt\n\n{PromptConstants.SYSTEM_MESSAGE_CHAT_GENERIC}\n\n### User Message\n\n{get_phind_question_template_answer(question, testcase_input)}"
-        return prompt
-    elif LanguageModelStyle == LMStyle.OC:
+    # elif LanguageModelStyle == LMStyle.WizardCoder:
+    #     prompt = f"{PromptConstants.SYSTEM_MESSAGE_WIZARD}\n\n{get_wizard_question_template_answer(question, testcase_input)}"
+    #     return prompt
+    # elif LanguageModelStyle == LMStyle.Phind:
+    #     prompt = f"### System Prompt\n\n{PromptConstants.SYSTEM_MESSAGE_CHAT_GENERIC}\n\n### User Message\n\n{get_phind_question_template_answer(question, testcase_input)}"
+    #     return prompt
+    # elif LanguageModelStyle == LMStyle.OC:
         prompt = f"{PromptConstants.SYSTEM_MESSAGE_CHAT_GENERIC}\n"
         prompt += (
             f"{get_generic_question_template_test_completion(question, testcase_input)}"

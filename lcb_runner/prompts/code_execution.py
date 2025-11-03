@@ -136,14 +136,12 @@ def format_prompt_execution_base(
         return prompt
     elif LanguageModelStyle == LMStyle.CodeLLaMaInstruct:
         return prompt
-    elif LanguageModelStyle == LMStyle.MagiCoder:
-        return prompt
-    elif LanguageModelStyle == LMStyle.WizardCoder:
-        return prompt
-    elif LanguageModelStyle == LMStyle.Phind:
-        return prompt
-    elif LanguageModelStyle == LMStyle.OC:
-        return prompt
+    # elif LanguageModelStyle == LMStyle.WizardCoder:
+    #     return prompt
+    # elif LanguageModelStyle == LMStyle.Phind:
+    #     return prompt
+    # elif LanguageModelStyle == LMStyle.OC:
+    #     return prompt
     elif LanguageModelStyle == LMStyle.MistralWeb:
         chat_messages = [
             {

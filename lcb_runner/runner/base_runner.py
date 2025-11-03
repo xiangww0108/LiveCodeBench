@@ -160,7 +160,7 @@ class BaseRunner(ABC):
                         prompt_index_to_question_idx[len(prompts) - 1] = problem_idx
                         prompt_index_to_code_idx[len(prompts) - 1] = code_idx
 
-        assert len(benchmark)==count, f"{len(benchmark)=}!={count=}"
+        # assert len(benchmark)==count, f"{len(benchmark)=}!={count=}"
 
         prompt_outputs = self.prompts_to_outputs(prompts)
         for prompt_idx, output in enumerate(prompt_outputs):

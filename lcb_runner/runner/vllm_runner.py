@@ -49,15 +49,37 @@ class VLLMRunner(BaseRunner):
             remaining_prompts.append(prompt)
             remaining_indices.append(prompt_index)
         if remaining_prompts:
+            print(f"DEBUG: Processing {len(remaining_prompts)} prompts")
+            for i, prompt in enumerate(remaining_prompts):
+                print(f"DEBUG: Prompt {i} length: {len(prompt)} chars")
+                if len(prompt) > 30000:
+                    print(f"DEBUG: Very long prompt detected! First 200 chars: {prompt[:200]}")
+            
             vllm_outputs = self.llm.generate(remaining_prompts, self.sampling_params)
+            print(f"DEBUG: Got {len(vllm_outputs)} outputs")
+            
             if self.args.use_cache:
                 assert len(remaining_prompts) == len(vllm_outputs)
                 for index, remaining_prompt, vllm_output in zip(
                     remaining_indices, remaining_prompts, vllm_outputs
                 ):
-                    self.cache[remaining_prompt] = [o.text for o in vllm_output.outputs]
-                    outputs[index] = [o.text for o in vllm_output.outputs]
+                    output_texts = []
+                    for o in vllm_output.outputs:
+                        if o.text is None:
+                            print(f"DEBUG: Got None output for prompt index {index}")
+                            output_texts.append("")  # Use empty string instead of None
+                        else:
+                            output_texts.append(o.text)
+                    self.cache[remaining_prompt] = output_texts
+                    outputs[index] = output_texts
             else:
                 for index, vllm_output in zip(remaining_indices, vllm_outputs):
-                    outputs[index] = [o.text for o in vllm_output.outputs]
+                    output_texts = []
+                    for o in vllm_output.outputs:
+                        if o.text is None:
+                            print(f"DEBUG: Got None output for prompt index {index}")
+                            output_texts.append("")  # Use empty string instead of None
+                        else:
+                            output_texts.append(o.text)
+                    outputs[index] = output_texts
         return outputs

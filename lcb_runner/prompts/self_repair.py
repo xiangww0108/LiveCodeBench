@@ -38,26 +38,35 @@ def get_check_prompt(question: str, result, metadata):
     # result_by_test_case = result
     # assert len(metadata) == 1, f"metadata = {metadata}"
     # metadata = metadata[0]
-    metadata = json.loads(metadata)
+    
+    # Handle case when code passed (result is True)
+    if result:
+        return "The code passed all test cases."
+    
+    # Handle case when code failed (result is False)
+    try:
+        metadata = json.loads(metadata)
+    except (json.JSONDecodeError, TypeError):
+        return "The above code is incorrect and got a runtime error."
+    
     if "error_code" not in metadata:
-        return ""
+        return "The above code is incorrect."
+        
     if metadata["error_code"] == -1:
-        # time limit exceeded
-        message = f"The above code is incorrect and got the following compilation error.\n{metadata['error']}"
+        # compilation error
+        message = f"The above code is incorrect and got the following compilation error.\n{metadata.get('error_message', 'Compilation error')}"
     elif metadata["error_code"] == -2:
         # wrong answer
-        message = f"The above code is incorrect and got a wrong answer.\nInput: {metadata['inputs']}\nGenerated Output: {metadata['output']}\nExpected: {metadata['expected']}"
+        message = f"The above code is incorrect and got a wrong answer.\nInput: {metadata.get('inputs', 'N/A')}\nGenerated Output: {metadata.get('output', 'N/A')}\nExpected: {metadata.get('expected', 'N/A')}\nError: {metadata.get('error_message', 'Wrong answer')}"
     elif metadata["error_code"] == -3:
-        # time limit exceeded
-        message = f"The above code is incorrect and got time limit exceeded.\n{metadata['error']}\nInput: {metadata['inputs']}\nExpected: {metadata['expected']}"
-        pass
-    elif metadata["error_code"] == -4:
         # runtime error
-        message = f"The above code is incorrect and got a runtime error.\nInput: {metadata['inputs']}\nExpected: {metadata['expected']}\n{metadata['error']}"
+        message = f"The above code is incorrect and got a runtime error.\nInput: {metadata.get('inputs', 'N/A')}\nExpected: {metadata.get('expected', 'N/A')}\n{metadata.get('error_message', 'Runtime error')}"
+    elif metadata["error_code"] == -4:
+        # time limit exceeded / timeout
+        message = f"The above code is incorrect and got time limit exceeded.\nInput: {metadata.get('inputs', 'N/A')}\nExpected: {metadata.get('expected', 'N/A')}\n{metadata.get('error_message', 'Time limit exceeded')}"
     else:
-        raise NotImplementedError(
-            f"metadata['error_code'] = {metadata['error_code']} not implemented || {metadata=}"
-        )
+        message = f"The above code is incorrect (error code: {metadata['error_code']})."
+        
     return message
 
 
@@ -259,18 +268,31 @@ def format_prompt_self_repair(
     elif LanguageModelStyle == LMStyle.CodeLLaMaInstruct:
         prompt = f"[INST] <<SYS>>\n{PromptConstants.SYSTEM_MESSAGE_GENERIC}\n<</SYS>>\n\n{get_cllama_question_template_answer(question, code, result,metadata)}\n[/INST]"
         return prompt
-    elif LanguageModelStyle == LMStyle.MagiCoder:
-        prompt = f"{PromptConstants.SYSTEM_MESSAGE_MAGIC}\n{get_magicoder_question_template_answer(question, code, result,metadata)}"
-        return prompt
-    elif LanguageModelStyle == LMStyle.WizardCoder:
-        prompt = f"{PromptConstants.SYSTEM_MESSAGE_WIZARD}\n\n{get_wizard_question_template_answer(question, code, result,metadata)}"
-        return prompt
-    elif LanguageModelStyle == LMStyle.Phind:
-        prompt = f"### System Prompt\n\n{PromptConstants.SYSTEM_MESSAGE_PHIND}\n\n### User Message\n\n{get_phind_question_template_answer(question, code, result,metadata)}"
-        return prompt
-    elif LanguageModelStyle == LMStyle.DracarysQwen:
-        prompt = f"{get_qwen_question_template_answer(question, code, result,metadata)}"
-        return prompt
+    elif LanguageModelStyle == LMStyle.CodeQwenInstruct:
+        # Handle Qwen models (including Qwen2.5-7B-Instruct)
+        chat_messages = [
+            {"role": "system", "content": PromptConstants.SYSTEM_MESSAGE_GENERIC},
+        ]
+        chat_messages += [
+            {
+                "role": "user", 
+                "content": get_generic_question_template_answer(
+                    question, code, result, metadata
+                ),
+            },
+        ]
+        
+        from transformers import AutoTokenizer
+        tokenizer = AutoTokenizer.from_pretrained(
+            "Qwen/Qwen2.5-7B-Instruct", padding_side="left", use_fast=False
+        )
+        return tokenizer.apply_chat_template(
+            chat_messages,
+            tokenize=False,
+            add_generation_prompt=True,
+            truncation=False,
+            padding=False,
+        )
     elif LanguageModelStyle == LMStyle.DracarysLlama:
         chat_messages = [
             {"role": "system", "content": PromptConstants.SYSTEM_MESSAGE_GENERIC},
