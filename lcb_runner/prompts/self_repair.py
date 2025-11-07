@@ -154,6 +154,33 @@ def get_qwen_cot_question_template_answer(question: str, code, result, metadata)
     prompt += f"### Answer: (use the provided format with backticks)\n\n"
     return prompt
 
+def get_qwen_structured_cot_question_template_answer(question: str, code, result, metadata):
+    prompt = f"### Question:\n{question}\n\n"
+    prompt += f"### Existing Code:\n```python\n{code}\n```\n\n"
+    prompt += get_check_prompt(question, result, metadata) + "\n\n"
+
+    # structured CoT debugging plan
+    prompt += (
+        "### Debugging Plan (think step by step)\n"
+        "Please understand the requirement and the failure signal, and write a rough\n"
+        "debugging plan in the following structure. Fill in the items in natural language.\n\n"
+        "Input:\n"
+        "  - <short description of the function inputs>\n"
+        "Output:\n"
+        "  - <short description of the expected output / behavior>\n"
+        "Bug analysis:\n"
+        "  1: <what the current code is doing>\n"
+        "  2: <why this leads to the failing output or error for the given test case>\n"
+        "Fix plan:\n"
+        "  1: <the main code change(s) needed>\n"
+        "  2: <any important edge cases or conditions to handle>\n\n"
+        "After writing this plan, you will then provide the fixed code.\n\n"
+    )
+    # For structured-CoT we intentionally avoid including an example fenced block
+    # here because some models may echo it, which confuses code extraction.
+    prompt += "### Answer: Provide your '### Debugging Plan' followed by '### Fixed Code' with a single Python code block containing the entire corrected program. Do not include any other fenced code blocks.\n\n"
+    return prompt
+
 def get_phind_question_template_answer(question: str, code, result, metadata):
     prompt = f"{question}\n\n"
     prompt += f"```python\n{code}\n``` \n\n"
@@ -312,23 +339,44 @@ def format_prompt_self_repair(
     # Zero-shot CoT version of Self-repair
     elif LanguageModelStyle == LMStyle.CodeQwenInstruct:
         # Handle Qwen models (including Qwen2.5-7B-Instruct)
-        system_message_qwen_instruct = f"You are a helpful programming assistant and an expert Python programmer. You are helping a user write a program to solve a problem. The user has written some code, but it has some errors and is not passing the tests. Before you answer, think step by step about why the code fails and how to fix it. You will help the user by first giving a concise (at most 2-3 sentences) textual explanation of what is wrong with the code. After you have pointed out what is wrong with the code, you will then generate a fixed version of the program. You must put the entire fixed program within code delimiters only for once."
+        system_message_qwen_cot_instruct = f"You are a helpful programming assistant and an expert Python programmer. You are helping a user write a program to solve a problem. The user has written some code, but it has some errors and is not passing the tests. Before you answer, think step by step about why the code fails and how to fix it. You will help the user by first giving a concise (at most 2-3 sentences) textual explanation of what is wrong with the code. After you have pointed out what is wrong with the code, you will then generate a fixed version of the program. You must put the entire fixed program within code delimiters only for once."
+        system_message_qwen_scot_instruct = (
+            "You are a helpful programming assistant and an expert Python programmer. "
+            "You are helping a user debug a Python program that fails some tests.\n\n"
+            "For each task, you MUST follow this structure:\n"
+            "1. First, produce a structured debugging plan under the heading "
+            "   '### Debugging Plan'.\n"
+            "   - Briefly restate the problem.\n"
+            "   - Analyze why the given code fails, using the failing input, wrong "
+            "     output, expected output, and any error message.\n"
+            "   - Describe the concrete changes needed to fix the bug.\n"
+            "2. Then, under the heading '### Fixed Code', output the ENTIRE corrected "
+            "   program in a single Python code block (one pair of ```python ... ``` only).\n"
+            "IMPORTANT: Do not include any other fenced code blocks anywhere else in your response."
+        )
         chat_messages = [
-            {"role": "system", "content": system_message_qwen_instruct},
+            {"role": "system", "content": system_message_qwen_scot_instruct},
         ]
         chat_messages += [
             {
-                "role": "user", 
-                "content": get_qwen_cot_question_template_answer(
+                "role": "user",
+                "content": get_qwen_structured_cot_question_template_answer(
                     question, code, result, metadata
                 ),
             },
         ]
         
         from transformers import AutoTokenizer
-        tokenizer = AutoTokenizer.from_pretrained(
-            "Qwen/Qwen2.5-7B-Instruct", padding_side="left", use_fast=False
-        )
+        # Prefer the Coder-Instruct tokenizer/template when using the coder model,
+        # but fall back gracefully to the general Instruct template.
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(
+                "Qwen/Qwen2.5-Coder-Instruct", padding_side="right", use_fast=True
+            )
+        except Exception:
+            tokenizer = AutoTokenizer.from_pretrained(
+                "Qwen/Qwen2.5-7B-Instruct", padding_side="right", use_fast=True
+            )
         return tokenizer.apply_chat_template(
             chat_messages,
             tokenize=False,
