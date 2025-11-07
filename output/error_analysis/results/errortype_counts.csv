@@ -1,0 +1,14 @@
+ErrorType,count
+Pass,293
+WrongAnswer-NumericMismatch,210
+WrongAnswer (no diff shown),177
+TestingError-Indention,97
+TestingError-Unpacking,96
+RuntimeError,95
+WrongAnswer-BooleanMismatch,43
+Timeout,23
+WrongAnswer-SymbolMismatch,17
+TestingError-Other,1
+TestingError-Index,1
+TestingError-Generator,1
+TestingError-Syntax,1

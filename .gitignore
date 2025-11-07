@@ -1,6 +1,6 @@
 logs/
 cache/
-output/
+outdated_*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
