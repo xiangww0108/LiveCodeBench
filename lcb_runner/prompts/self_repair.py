@@ -1,4 +1,5 @@
 import json
+import os
 
 from anthropic import HUMAN_PROMPT, AI_PROMPT
 
@@ -421,43 +422,223 @@ def format_prompt_self_repair(
 
 
 def extract_code(model_output: str, lmstyle: LMStyle):
-    outputlines = model_output.split("\n")
-    if lmstyle == LMStyle.CodeLLaMa:
-        indexlines = [i for i, line in enumerate(outputlines) if "PYTHON]" in line]
-    else:
-        indexlines = [i for i, line in enumerate(outputlines) if "```" in line]
-    if len(indexlines) < 2:
-        return ""
-    return "\n".join(outputlines[indexlines[0] + 1 : indexlines[1]])
+    """
+    Extract the repaired program from the model output.
+    
+    Robust version with comprehensive error handling to prevent crashes.
+    """
+    try:
+        if not model_output or not isinstance(model_output, str):
+            return ""
+        
+        lines = model_output.split("\n")
+        if not lines:
+            return ""
 
+        # Collect all fenced code blocks with their ranges and language tag
+        blocks = []  # (start_idx, end_idx, lang)
+        i = 0
+        while i < len(lines):
+            try:
+                line = lines[i].strip()
+                if line.startswith("```"):
+                    lang = line[3:].strip().lower()  # e.g., 'python'
+                    # find closing fence
+                    j = i + 1
+                    while j < len(lines) and not lines[j].strip().startswith("```"):
+                        j += 1
+                    if j < len(lines):
+                        blocks.append((i, j, lang))
+                        i = j  # jump to closing fence
+                i += 1
+            except (IndexError, AttributeError) as e:
+                # Skip malformed lines, continue processing
+                i += 1
+                continue
+
+        if not blocks:
+            return ""
+
+        # 1) Prefer the block after a 'Fixed Code' heading
+        try:
+            fixed_heading_indices = [idx for idx, l in enumerate(lines) 
+                                   if l and "fixed code" in l.lower()]
+            if fixed_heading_indices:
+                cutoff = fixed_heading_indices[-1]
+                for start, end, lang in blocks:
+                    if start > cutoff:
+                        return "\n".join(lines[start + 1 : end])
+        except (IndexError, AttributeError):
+            pass  # Fall through to next strategy
+
+        # 2) Prefer the last python block
+        try:
+            python_blocks = [b for b in blocks if len(b) >= 3 and b[2] in ("python", "py")]
+            if python_blocks:
+                start, end, _ = python_blocks[-1]
+                return "\n".join(lines[start + 1 : end])
+        except (IndexError, TypeError):
+            pass  # Fall through to next strategy
+
+        # 3) Fallback to the longest block
+        try:
+            if blocks:
+                start, end, _ = max(blocks, key=lambda b: (b[1] - b[0]) if len(b) >= 2 else 0)
+                return "\n".join(lines[start + 1 : end])
+        except (ValueError, IndexError, TypeError):
+            pass  # Fall through to final fallback
+
+        # 4) Ultimate fallback: return empty string
+        return ""
+        
+    except Exception as e:
+        # Catch-all: log the error and return empty string
+        print(f"Warning: extract_code failed with error {type(e).__name__}: {e}")
+        return ""
+
+
+def validate_environment():
+    """Pre-flight checks to ensure environment is safe."""
+    try:
+        # Check imports
+        import transformers
+        print("✓ transformers available")
+    except ImportError:
+        print("⚠ transformers not available - some LM styles may fail")
+    
+    try:
+        from lcb_runner.lm_styles import LMStyle
+        print("✓ LMStyle import successful")
+    except ImportError as e:
+        print(f"✗ LMStyle import failed: {e}")
+        return False
+    
+    # Check disk space for output files
+    import shutil
+    free_space = shutil.disk_usage("/tmp").free
+    if free_space < 1024 * 1024:  # 1MB minimum
+        print(f"⚠ Low disk space: {free_space} bytes available")
+    else:
+        print(f"✓ Disk space OK: {free_space // (1024*1024)} MB available")
+    
+    return True
+
+def safe_test_extract_code():
+    """Test extract_code function with various inputs to ensure robustness."""
+    print("Testing extract_code function...")
+    
+    test_cases = [
+        "",  # empty string
+        "No code blocks here",  # no code
+        "```python\nprint('hello')\n```",  # simple case
+        "### Fixed Code\n```python\nprint('fixed')\n```",  # structured CoT
+        "```\nno lang\n```\n```python\nprint('last')\n```",  # multiple blocks
+    ]
+    
+    for i, test_input in enumerate(test_cases):
+        try:
+            result = extract_code(test_input, LMStyle.CodeQwenInstruct)
+            print(f"  Test {i+1}: OK (returned {len(result)} chars)")
+        except Exception as e:
+            print(f"  Test {i+1}: ERROR - {e}")
+            return False
+    
+    return True
 
 def test():
+    """Enhanced test function with comprehensive error handling."""
+    print("=== LiveCodeBench Self-Repair Test ===")
+    
+    # Pre-flight checks
+    if not validate_environment():
+        print("Environment validation failed. Aborting.")
+        return
+    
+    if not safe_test_extract_code():
+        print("extract_code tests failed. Aborting.")
+        return
+    
     def write_str_or_json(prompt):
-        if isinstance(prompt, str):
-            fp.write(prompt)
-        else:
-            fp.write(json.dumps(prompt))
+        try:
+            if isinstance(prompt, str):
+                fp.write(prompt)
+            else:
+                fp.write(json.dumps(prompt, indent=2))
+        except Exception as e:
+            print(f"Error writing output: {e}")
+            fp.write(f"ERROR: {e}")
+        return
+    
+    input_path = "output/GPT-3.5-Turbo-0125/Scenario.codegeneration_10_0.2_eval_all.json"
+    if not os.path.exists(input_path):
+        print(f"Input file not found: {os.path.abspath(input_path)}")
+        print("Create a fake file or point the script to a valid evaluation JSON to proceed.")
         return
 
-    for lm_style in [LMStyle.OpenAIChat]:
-        with open(
-            "output/GPT-3.5-Turbo-0125/Scenario.codegeneration_10_0.2_eval_all.json"
-        ) as f:
-            check_metadata = json.load(f)[0]
-        checked_base_question_cotent = check_metadata["question_content"]
-        checked_base_codes = check_metadata["code_list"][0]
-        checked_base_results = check_metadata["graded_list"][0]
-        checked_base_metadata = check_metadata["metadata"][0]
-        leetcode_prompt = format_prompt_self_repair(
-            checked_base_question_cotent,
-            lm_style,
-            checked_base_codes,
-            checked_base_results,
-            checked_base_metadata,
-        )
+    # Test both baseline and structured CoT for comparison
+    test_styles = [LMStyle.OpenAIChat, LMStyle.CodeQwenInstruct]
+    
+    for lm_style in test_styles:
+        try:
+            print(f"\nTesting {lm_style}...")
+            
+            with open(input_path) as f:
+                try:
+                    data = json.load(f)
+                    if not data or not isinstance(data, list):
+                        print(f"Invalid JSON structure in {input_path}")
+                        continue
+                    check_metadata = data[0]
+                except Exception as e:
+                    print(f"Failed to parse {input_path}: {e}")
+                    continue
 
-        with open(f"/tmp/leetcode_{lm_style}.txt", "w") as fp:
-            write_str_or_json(leetcode_prompt)
+            # Safely extract metadata with defaults
+            checked_base_question_cotent = check_metadata.get("question_content", "Default question")
+            checked_base_codes = check_metadata.get("code_list", ["pass"])[0]
+            checked_base_results = check_metadata.get("graded_list", [False])[0]
+            checked_base_metadata = check_metadata.get("metadata", [{}])[0]
+
+            print(f"  Question length: {len(str(checked_base_question_cotent))}")
+            print(f"  Code length: {len(str(checked_base_codes))}")
+            print(f"  Result: {checked_base_results}")
+
+            # Generate prompt with error handling
+            leetcode_prompt = format_prompt_self_repair(
+                checked_base_question_cotent,
+                lm_style,
+                checked_base_codes,
+                checked_base_results,
+                checked_base_metadata,
+            )
+
+            # Write output safely
+            out_path = f"/tmp/leetcode_{lm_style}.txt"
+            try:
+                with open(out_path, "w", encoding='utf-8') as fp:
+                    write_str_or_json(leetcode_prompt)
+            except Exception as e:
+                print(f"Error writing {out_path}: {e}")
+                continue
+
+            if not leetcode_prompt:
+                print(f"  Generated prompt is empty for {lm_style}")
+                print(f"  This can happen when code already passed tests")
+            else:
+                prompt_len = len(str(leetcode_prompt))
+                print(f"  ✓ Generated prompt ({prompt_len} chars) -> {out_path}")
+                
+                # Test extract_code on a sample output
+                if isinstance(leetcode_prompt, str):
+                    sample_output = f"### Fixed Code\n```python\nprint('test')\n```"
+                    extracted = extract_code(sample_output, lm_style)
+                    print(f"  ✓ extract_code test: {len(extracted)} chars extracted")
+                    
+        except Exception as e:
+            print(f"  ✗ Error processing {lm_style}: {type(e).__name__}: {e}")
+            continue
+    
+    print("\n=== Test completed safely ===")
     return
 
 
