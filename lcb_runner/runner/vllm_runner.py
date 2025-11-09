@@ -14,16 +14,25 @@ class VLLMRunner(BaseRunner):
         model_tokenizer_path = (
             model.model_name if args.local_model_path is None else args.local_model_path
         )
-        self.llm = LLM(
-            model=model_tokenizer_path,
-            tokenizer=model_tokenizer_path,
-            tensor_parallel_size=args.tensor_parallel_size,
-            dtype=args.dtype,
-            enforce_eager=True,
-            disable_custom_all_reduce=True,
-            enable_prefix_caching=args.enable_prefix_caching,
-            trust_remote_code=args.trust_remote_code,
-        )
+        # Build LLM kwargs, filtering out None values for optional parameters
+        llm_kwargs = {
+            "model": model_tokenizer_path,
+            "tokenizer": model_tokenizer_path,
+            "tensor_parallel_size": args.tensor_parallel_size,
+            "dtype": args.dtype,
+            "enforce_eager": True,
+            "disable_custom_all_reduce": True,
+            "enable_prefix_caching": args.enable_prefix_caching,
+            "trust_remote_code": args.trust_remote_code,
+        }
+        
+        # Add optional parameters only if they are not None
+        if getattr(args, "max_seq_len", None) is not None:
+            llm_kwargs["max_model_len"] = args.max_seq_len
+        if getattr(args, "gpu_memory_utilization", None) is not None:
+            llm_kwargs["gpu_memory_utilization"] = args.gpu_memory_utilization
+            
+        self.llm = LLM(**llm_kwargs)
         self.sampling_params = SamplingParams(
             n=self.args.n,
             max_tokens=self.args.max_tokens,

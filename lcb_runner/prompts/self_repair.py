@@ -283,6 +283,33 @@ def format_prompt_self_repair(
     elif LanguageModelStyle == LMStyle.CodeLLaMaInstruct:
         prompt = f"[INST] <<SYS>>\n{PromptConstants.SYSTEM_MESSAGE_GENERIC}\n<</SYS>>\n\n{get_cllama_question_template_answer(question, code, result,metadata)}\n[/INST]"
         return prompt
+    elif LanguageModelStyle == LMStyle.CodeQwenInstruct:
+        # Handle Qwen models
+        chat_messages = [
+            {"role": "system", "content": PromptConstants.SYSTEM_MESSAGE_GENERIC},
+        ]
+        chat_messages += [
+            {
+                "role": "user", 
+                "content": get_generic_question_template_answer(
+                    question, code, result, metadata
+                ),
+            },
+        ]
+        
+        from transformers import AutoTokenizer
+        tokenizer = AutoTokenizer.from_pretrained(
+            "Qwen/Qwen3-8B", padding_side="left", use_fast=False
+        )
+        return tokenizer.apply_chat_template(
+            chat_messages,
+            tokenize=False,
+            add_generation_prompt=True,
+            truncation=False,
+            padding=False,
+        )
+    
+    # Zero-shot CoT version of Self-repair
     # elif LanguageModelStyle == LMStyle.CodeQwenInstruct:
     #     # Handle Qwen models (including Qwen2.5-7B-Instruct)
     #     chat_messages = [
@@ -308,34 +335,6 @@ def format_prompt_self_repair(
     #         truncation=False,
     #         padding=False,
     #     )
-    
-    # Zero-shot CoT version of Self-repair
-    elif LanguageModelStyle == LMStyle.CodeQwenInstruct:
-        # Handle Qwen models (including Qwen2.5-7B-Instruct)
-        system_message_qwen_instruct = f"You are a helpful programming assistant and an expert Python programmer. You are helping a user write a program to solve a problem. The user has written some code, but it has some errors and is not passing the tests. Before you answer, think step by step about why the code fails and how to fix it. You will help the user by first giving a concise (at most 2-3 sentences) textual explanation of what is wrong with the code. After you have pointed out what is wrong with the code, you will then generate a fixed version of the program. You must put the entire fixed program within code delimiters only for once."
-        chat_messages = [
-            {"role": "system", "content": system_message_qwen_instruct},
-        ]
-        chat_messages += [
-            {
-                "role": "user", 
-                "content": get_qwen_cot_question_template_answer(
-                    question, code, result, metadata
-                ),
-            },
-        ]
-        
-        from transformers import AutoTokenizer
-        tokenizer = AutoTokenizer.from_pretrained(
-            "Qwen/Qwen2.5-7B-Instruct", padding_side="left", use_fast=False
-        )
-        return tokenizer.apply_chat_template(
-            chat_messages,
-            tokenize=False,
-            add_generation_prompt=True,
-            truncation=False,
-            padding=False,
-        )
     elif LanguageModelStyle == LMStyle.DracarysLlama:
         chat_messages = [
             {"role": "system", "content": PromptConstants.SYSTEM_MESSAGE_GENERIC},
