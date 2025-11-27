@@ -1,0 +1,760 @@
+[
+  {
+    "question_title": "minimum-number-of-flips-to-make-binary-grid-palindromic-i",
+    "question_content": "You are given an m x n binary matrix grid.\nA row or column is considered palindromic if its values read the same forward and backward.\nYou can flip any number of cells in grid from 0 to 1, or from 1 to 0.\nReturn the minimum number of cells that need to be flipped to make either all rows palindromic or all columns palindromic.\n \nExample 1:\n\nInput: grid = [[1,0,0],[0,0,0],[0,0,1]]\nOutput: 2\nExplanation:\n\nFlipping the highlighted cells makes all the rows palindromic.\n\nExample 2:\n\nInput: grid = [[0,1],[0,1],[0,0]]\nOutput: 1\nExplanation:\n\nFlipping the highlighted cell makes all the columns palindromic.\n\nExample 3:\n\nInput: grid = [[1],[0]]\nOutput: 0\nExplanation:\nAll rows are already palindromic.\n\n \nConstraints:\n\nm == grid.length\nn == grid[i].length\n1 <= m * n <= 2 * 10^5\n0 <= grid[i][j] <= 1",
+    "platform": "leetcode",
+    "question_id": "3526",
+    "contest_id": "biweekly-contest-136",
+    "contest_date": "2024-08-03T00:00:00",
+    "starter_code": "class Solution:\n    def minFlips(self, grid: List[List[int]]) -> int:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nfrom typing import List\n\nclass Solution:\n    def minFlips(self, grid: List[List[int]]) -> int:\n        m, n = len(grid), len(grid[0])\n        all_ones = (1 << n) - 1\n        all_zeros = 0\n        row_patterns = [all_ones if row[0] == 1 else all_zeros for row in grid]\n        col_patterns = [all_ones if col[0] == 1 else all_zeros for col in zip(*grid)]\n        \n        for i in range(1, m):\n            for j in range(n):\n                if grid[i][j] != grid[i-1][j]:\n                    row_patterns[i] ^= 1 << j\n                if grid[i][j] != grid[i][j-1]:\n                    col_patterns[j] ^= 1 << i\n        \n        row_counts = [0] * (1 << n)\n        for pattern in row_patterns:\n            row_counts[pattern] += 1\n        \n        col_counts = [0] * (1 << m)\n        for pattern in col_patterns:\n            col_counts[pattern] += 1\n        \n        min_flips = float('inf')\n        for i in range(1 << n):\n            row_flips = row_counts[i] + row_counts[all_ones ^ i]\n            col_flips = col_counts[i] + col_counts[all_ones ^ i]\n            min_flips = min(min_flips, row_flips, col_flips)\n        \n        return min_flips\n```"
+    ],
+    "code_list": [
+      "from typing import List\n\nclass Solution:\n    def minFlips(self, grid: List[List[int]]) -> int:\n        m, n = len(grid), len(grid[0])\n        all_ones = (1 << n) - 1\n        all_zeros = 0\n        row_patterns = [all_ones if row[0] == 1 else all_zeros for row in grid]\n        col_patterns = [all_ones if col[0] == 1 else all_zeros for col in zip(*grid)]\n        \n        for i in range(1, m):\n            for j in range(n):\n                if grid[i][j] != grid[i-1][j]:\n                    row_patterns[i] ^= 1 << j\n                if grid[i][j] != grid[i][j-1]:\n                    col_patterns[j] ^= 1 << i\n        \n        row_counts = [0] * (1 << n)\n        for pattern in row_patterns:\n            row_counts[pattern] += 1\n        \n        col_counts = [0] * (1 << m)\n        for pattern in col_patterns:\n            col_counts[pattern] += 1\n        \n        min_flips = float('inf')\n        for i in range(1 << n):\n            row_flips = row_counts[i] + row_counts[all_ones ^ i]\n            col_flips = col_counts[i] + col_counts[all_ones ^ i]\n            min_flips = min(min_flips, row_flips, col_flips)\n        \n        return min_flips"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"0\", \"inputs\": \"[[[1, 0, 0], [0, 0, 0], [0, 0, 1]]]\", \"expected\": \"2\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        8,
+        9
+      ]
+    ],
+    "bug_summary": "Incorrect initialization of row_patterns and col_patterns using only the first element of each row/column instead of the entire row/column."
+  },
+  {
+    "question_title": "Erase Leaves",
+    "question_content": "You are given a tree with N vertices: vertex 1, vertex 2, \\ldots, vertex N.\r\nThe i-th edge (1\\leq i\\lt N) connects vertex u _ i and vertex v _ i.\nConsider repeating the following operation some number of times:\n\n- Choose one leaf vertex v and delete it along with all incident edges.\n\nFind the minimum number of operations required to delete vertex 1.\nWhat is a tree?\r\nA tree is an undirected graph that is connected and has no cycles.\r\nFor more details, see: Wikipedia \"Tree (graph theory)\".\r\n\nWhat is a leaf?\r\nA leaf in a tree is a vertex with a degree of at most 1.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN\r\nu _ 1 v _ 1\r\nu _ 2 v _ 2\r\n\\vdots\r\nu _ {N-1} v _ {N-1}\n\nOutput\n\nPrint the answer in a single line.\n\nConstraints\n\n\n- 2\\leq N\\leq3\\times10^5 \n- 1\\leq u _ i\\lt v _ i\\leq N\\ (1\\leq i\\lt N)\n- The given graph is a tree.\n- All input values are integers.\n\nSample Input 1\n\n9\r\n1 2\r\n2 3\r\n2 4\r\n2 5\r\n1 6\r\n6 7\r\n7 8\r\n7 9\n\nSample Output 1\n\n5\r\n\nThe given graph looks like this:\n\nFor example, you can choose vertices 9,8,7,6,1 in this order to delete vertex 1 in five operations.\n\nVertex 1 cannot be deleted in four or fewer operations, so print 5.\n\nSample Input 2\n\n6\r\n1 2\r\n2 3\r\n2 4\r\n3 5\r\n3 6\n\nSample Output 2\n\n1\r\n\nIn the given graph, vertex 1 is a leaf.\r\nHence, you can choose and delete vertex 1 in the first operation.\n\nSample Input 3\n\n24\r\n3 6\r\n7 17\r\n7 20\r\n7 11\r\n14 18\r\n17 21\r\n6 19\r\n5 22\r\n9 24\r\n11 14\r\n6 23\r\n8 17\r\n9 12\r\n4 17\r\n2 15\r\n1 17\r\n3 9\r\n10 16\r\n7 13\r\n2 16\r\n1 16\r\n5 7\r\n1 3\n\nSample Output 3\n\n12",
+    "platform": "atcoder",
+    "question_id": "abc333_d",
+    "contest_id": "abc333",
+    "contest_date": "2023-12-16T00:00:00",
+    "starter_code": "",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\n# NUMBER OF VERTICES\nN = int(input())\n# ADJACENCY LIST\nadj = [[] for _ in range(N)]\n# READ EDGES\nfor _ in range(N-1):\n    u, v = map(int, input().split())\n    u -= 1\n    v -= 1\n    adj[u].append(v)\n    adj[v].append(u)\n# DEGREE OF EACH VERTEX\ndegree = [len(adj[i]) for i in range(N)]\n# DEQUEUE FOR LEAVES\nfrom collections import deque\nleaves = deque([i for i in range(N) if degree[i] == 1])\n# COUNT OPERATIONS\nops = 0\n# WHILE LEAVES EXISTS\nwhile leaves:\n    ops += 1\n    # POP LEAF\n    leaf = leaves.popleft()\n    # REMOVE LEAF FROM ADJACENCY LIST\n    for neighbor in adj[leaf]:\n        degree[neighbor] -= 1\n        if degree[neighbor] == 1:\n            leaves.append(neighbor)\n    # REMOVE LEAF FROM ADJACENCY LIST\n    adj[leaf] = []\n# PRINT OPERATIONS TO DELETE VERTEX 1\nprint(ops - (degree[0] == 1))\n```"
+    ],
+    "code_list": [
+      "# NUMBER OF VERTICES\nN = int(input())\n# ADJACENCY LIST\nadj = [[] for _ in range(N)]\n# READ EDGES\nfor _ in range(N-1):\n    u, v = map(int, input().split())\n    u -= 1\n    v -= 1\n    adj[u].append(v)\n    adj[v].append(u)\n# DEGREE OF EACH VERTEX\ndegree = [len(adj[i]) for i in range(N)]\n# DEQUEUE FOR LEAVES\nfrom collections import deque\nleaves = deque([i for i in range(N) if degree[i] == 1])\n# COUNT OPERATIONS\nops = 0\n# WHILE LEAVES EXISTS\nwhile leaves:\n    ops += 1\n    # POP LEAF\n    leaf = leaves.popleft()\n    # REMOVE LEAF FROM ADJACENCY LIST\n    for neighbor in adj[leaf]:\n        degree[neighbor] -= 1\n        if degree[neighbor] == 1:\n            leaves.append(neighbor)\n    # REMOVE LEAF FROM ADJACENCY LIST\n    adj[leaf] = []\n# PRINT OPERATIONS TO DELETE VERTEX 1\nprint(ops - (degree[0] == 1))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"9\\n\", \"inputs\": \"9\\n1 2\\n2 3\\n2 4\\n2 5\\n1 6\\n6 7\\n7 8\\n7 9\\n\", \"expected\": \"5\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 9 != 5\"}"
+    ],
+    "bug_span": [
+      [
+        21,
+        21
+      ],
+      [
+        32,
+        32
+      ]
+    ],
+    "bug_summary": "Incorrect increment of ops and wrong final adjustment in print statement cause wrong leaf removal count."
+  },
+  {
+    "question_title": "Symmetric Painting",
+    "question_content": "On a circle, there are N equally spaced points numbered 0,1,\\ldots,N-1 in this order, with Alice at point 0 and Bob at point K. Initially, all points are colored white. Starting with Alice, they alternately perform the following operation:\n\n- Choose one of the currently white points and color it black. Here, after the operation, the coloring of the points must be symmetric with respect to the straight line connecting the operator and the center of the circle.\n\nIf the operator cannot perform an operation satisfying the above condition, the sequence of operations ends there.\nBoth players cooperate and make the best choices to maximize the total number of points colored black in the end. Determine whether all points are colored black at the end of the sequence of operations.\nYou are given T test cases to solve.\n\nInput\n\nThe input is given from Standard Input in the following format:\nT\n\\mathrm{case}_1\n\\mathrm{case}_2\n\\vdots \n\\mathrm{case}_T\n\nEach test case \\mathrm{case}_i (1 \\leq i \\leq T) is in the following format:\nN K\n\nOutput\n\nPrint T lines. The i-th line should contain Yes if all points can be colored black for the i-th test case, and No otherwise.\n\nConstraints\n\n\n- 1 \\leq T \\leq 10^5\n- 2 \\leq N \\leq 2 \\times 10^5\n- 1 \\leq K \\leq N-1\n- All input values are integers.\n\nSample Input 1\n\n4\n6 2\n6 3\n6 1\n200000 100000\n\nSample Output 1\n\nYes\nNo\nYes\nNo\n\nFor N=6 and K=2, all points can be colored black by, for example, performing operations in the following order:\n\n- Alice colors point 3 black.\n- Bob colors point 1 black.\n- Alice colors point 5 black.\n- Bob colors point 2 black.\n- Alice colors point 4 black.\n- Bob colors point 0 black.\n\n\nFor N=6 and K=3, below is one possible progression. Actually, no matter what they do, they cannot color all points black.\n\n- Alice colors point 3 black.\n- Bob colors point 0 black.\n- Alice cannot color any point black so that the coloring will be symmetric with respect to her line, so she cannot perform the operation.",
+    "platform": "atcoder",
+    "question_id": "arc188_b",
+    "contest_id": "arc188",
+    "contest_date": "2024-11-23T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# number of test cases\nT = int(input())\n\ndef can_color_all(N, K):\n    # If K is 1, Alice can color all points black in one turn\n    if K == 1:\n        return True\n    # If N is even and K is N/2, Alice can color all points black in two turns\n    if N % 2 == 0 and K == N // 2:\n        return True\n    # If N is odd and K is (N-1)/2, Alice can color all points black in two turns\n    if N % 2 != 0 and K == (N - 1) // 2:\n        return True\n    return False\n\nfor _ in range(T):\n    N, K = map(int, input().split())\n    if can_color_all(N, K):\n        print(\"Yes\")\n    else:\n        print(\"No\")\n```"
+    ],
+    "code_list": [
+      "# number of test cases\nT = int(input())\n\ndef can_color_all(N, K):\n    # If K is 1, Alice can color all points black in one turn\n    if K == 1:\n        return True\n    # If N is even and K is N/2, Alice can color all points black in two turns\n    if N % 2 == 0 and K == N // 2:\n        return True\n    # If N is odd and K is (N-1)/2, Alice can color all points black in two turns\n    if N % 2 != 0 and K == (N - 1) // 2:\n        return True\n    return False\n\nfor _ in range(T):\n    N, K = map(int, input().split())\n    if can_color_all(N, K):\n        print(\"Yes\")\n    else:\n        print(\"No\")"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"No\\nYes\\nYes\\nYes\\n\", \"inputs\": \"4\\n6 2\\n6 3\\n6 1\\n200000 100000\", \"expected\": \"Yes\\nNo\\nYes\\nNo\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: No != Yes\"}"
+    ],
+    "bug_span": [
+      [
+        8,
+        10
+      ]
+    ],
+    "bug_summary": "Incorrect condition for N even and K equals N/2; should return False for K == N/2 when N is even"
+  },
+  {
+    "question_title": "2UP3DOWN",
+    "question_content": "Takahashi is in a building with 100 floors.\nHe uses the stairs for moving up two floors or less or moving down three floors or less, and uses the elevator otherwise.\nDoes he use the stairs to move from floor X to floor Y?\n\nInput\n\nThe input is given from Standard Input in the following format:\nX Y\n\nOutput\n\nIf Takahashi uses the stairs for the move, print Yes; if he uses the elevator, print No.\n\nConstraints\n\n\n- 1 \\leq X,Y \\leq 100\n- X \\neq Y\n- All input values are integers.\n\nSample Input 1\n\n1 4\n\nSample Output 1\n\nNo\n\nThe move from floor 1 to floor 4 involves going up three floors, so Takahashi uses the elevator.\n\nSample Input 2\n\n99 96\n\nSample Output 2\n\nYes\n\nThe move from floor 99 to floor 96 involves going down three floors, so Takahashi uses the stairs.\n\nSample Input 3\n\n100 1\n\nSample Output 3\n\nNo",
+    "platform": "atcoder",
+    "question_id": "abc326_a",
+    "contest_id": "abc326",
+    "contest_date": "2023-10-28T00:00:00",
+    "starter_code": "",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nx, y = map(int, input().split())\nif abs(x - y) <= 2 or (x in [1, 2, 3] and y in [1, 2, 3]) or (x in [98, 99, 100] and y in [98, 99, 100]):\n    print('Yes')\nelse:\n    print('No')\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nx, y = map(int, input().split())\nif abs(x - y) <= 2 or (x in [1, 2, 3] and y in [1, 2, 3]) or (x in [98, 99, 100] and y in [98, 99, 100]):\n    print('Yes')\nelse:\n    print('No')"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"No\\n\", \"inputs\": \"99 96\\n\", \"expected\": \"Yes\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: No != Yes\"}"
+    ],
+    "bug_span": [
+      [
+        3,
+        3
+      ]
+    ],
+    "bug_summary": "Incorrect condition for checking if x and y are within 2 steps in the high range; should include 97 to 100 instead of 98 to 100"
+  },
+  {
+    "question_title": "Delimiter",
+    "question_content": "You are given N integers A_1,A_2,\\dots,A_N, one per line, over N lines. However, N is not given in the input.\r\nFurthermore, the following is guaranteed:\n\n- A_i \\neq 0 ( 1 \\le i \\le N-1 )\n- A_N = 0\n\nPrint A_N, A_{N-1},\\dots,A_1 in this order.\n\nInput\n\nThe input is given from Standard Input in the following format:\nA_1\r\nA_2\r\n\\vdots\r\nA_N\n\nOutput\n\nPrint A_N, A_{N-1}, \\dots, A_1 in this order, as integers, separated by newlines.\n\nConstraints\n\n\n- All input values are integers.\n- 1 \\le N \\le 100\n- 1 \\le A_i \\le 10^9 ( 1 \\le i \\le N-1 )\n- A_N = 0\n\nSample Input 1\n\n3\r\n2\r\n1\r\n0\n\nSample Output 1\n\n0\r\n1\r\n2\r\n3\r\n\nNote again that N is not given in the input.\r\nHere, N=4 and A=(3,2,1,0).\n\nSample Input 2\n\n0\n\nSample Output 2\n\n0\r\n\nA=(0).\n\nSample Input 3\n\n123\r\n456\r\n789\r\n987\r\n654\r\n321\r\n0\n\nSample Output 3\n\n0\r\n321\r\n654\r\n987\r\n789\r\n456\r\n123",
+    "platform": "atcoder",
+    "question_id": "abc344_b",
+    "contest_id": "abc344",
+    "contest_date": "2024-03-09T00:00:00",
+    "starter_code": "",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nimport sys\n\nlines = sys.stdin.readlines()\nnumbers = [int(line) for line in lines]\nnumbers.reverse()\n\nfor number in numbers:\n    print(number)\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nimport sys\n\nlines = sys.stdin.readlines()\nnumbers = [int(line) for line in lines]\nnumbers.reverse()\n\nfor number in numbers:\n    print(number)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"ValueError(\\\"invalid literal for int() with base 10: ''\\\")\", \"error_code\": -4, \"error_message\": \"Runtime Error\", \"inputs\": \"3\\n2\\n1\\n0\\n\", \"expected\": \"0\\n1\\n2\\n3\\n\"}"
+    ],
+    "bug_span": [
+      [
+        1,
+        1
+      ]
+    ],
+    "bug_summary": "Missing code to read input from stdin before processing lines"
+  },
+  {
+    "question_title": "assign-elements-to-groups-with-constraints",
+    "question_content": "You are given an integer array groups, where groups[i] represents the size of the i^th group. You are also given an integer array elements.\nYour task is to assign one element to each group based on the following rules:\n\nAn element at index j can be assigned to a group i if groups[i] is divisible by elements[j].\nIf there are multiple elements that can be assigned, assign the element with the smallest index j.\nIf no element satisfies the condition for a group, assign -1 to that group.\n\nReturn an integer array assigned, where assigned[i] is the index of the element chosen for group i, or -1 if no suitable element exists.\nNote: An element may be assigned to more than one group.\n \nExample 1:\n\nInput: groups = [8,4,3,2,4], elements = [4,2]\nOutput: [0,0,-1,1,0]\nExplanation:\n\nelements[0] = 4 is assigned to groups 0, 1, and 4.\nelements[1] = 2 is assigned to group 3.\nGroup 2 cannot be assigned any element.\n\n\nExample 2:\n\nInput: groups = [2,3,5,7], elements = [5,3,3]\nOutput: [-1,1,0,-1]\nExplanation:\n\nelements[1] = 3 is assigned to group 1.\nelements[0] = 5 is assigned to group 2.\nGroups 0 and 3 cannot be assigned any element.\n\n\nExample 3:\n\nInput: groups = [10,21,30,41], elements = [2,1]\nOutput: [0,1,0,1]\nExplanation:\nelements[0] = 2 is assigned to the groups with even values, and elements[1] = 1 is assigned to the groups with odd values.\n\n \nConstraints:\n\n1 <= groups.length <= 10^5\n1 <= elements.length <= 10^5\n1 <= groups[i] <= 10^5\n1 <= elements[i] <= 10^5",
+    "platform": "leetcode",
+    "question_id": "3760",
+    "contest_id": "weekly-contest-436",
+    "contest_date": "2025-02-08T18:30:00",
+    "starter_code": "class Solution:\n    def assignElements(self, groups: List[int], elements: List[int]) -> List[int]:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nclass Solution:\n    def assignElements(self, groups: List[int], elements: List[int]) -> List[int]:\n        assigned = [-1] * len(groups)\n        element_index = 0\n        \n        for i, group_size in enumerate(groups):\n            for j in range(element_index, len(elements)):\n                if group_size % elements[j] == 0:\n                    assigned[i] = j\n                    element_index = j + 1\n                    break\n        \n        return assigned\n```"
+    ],
+    "code_list": [
+      "class Solution:\n    def assignElements(self, groups: List[int], elements: List[int]) -> List[int]:\n        assigned = [-1] * len(groups)\n        element_index = 0\n        \n        for i, group_size in enumerate(groups):\n            for j in range(element_index, len(elements)):\n                if group_size % elements[j] == 0:\n                    assigned[i] = j\n                    element_index = j + 1\n                    break\n        \n        return assigned"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"[0, 1, -1, -1, -1]\", \"inputs\": \"[[8, 4, 3, 2, 4], [4, 2]]\", \"expected\": \"[0, 0, -1, 1, 0]\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        4,
+        10
+      ]
+    ],
+    "bug_summary": "Incorrect element assignment logic and element_index update causing wrong group-element mapping"
+  },
+  {
+    "question_title": "sum-of-k-subarrays-with-length-at-least-m",
+    "question_content": "You are given an integer array nums and two integers, k and m.\nReturn the maximum sum of k non-overlapping subarrays of nums, where each subarray has a length of at least m.\n \nExample 1:\n\nInput: nums = [1,2,-1,3,3,4], k = 2, m = 2\nOutput: 13\nExplanation:\nThe optimal choice is:\n\nSubarray nums[3..5] with sum 3 + 3 + 4 = 10 (length is 3 >= m).\nSubarray nums[0..1] with sum 1 + 2 = 3 (length is 2 >= m).\n\nThe total sum is 10 + 3 = 13.\n\nExample 2:\n\nInput: nums = [-10,3,-1,-2], k = 4, m = 1\nOutput: -10\nExplanation:\nThe optimal choice is choosing each element as a subarray. The output is (-10) + 3 + (-1) + (-2) = -10.\n\n \nConstraints:\n\n1 <= nums.length <= 2000\n-10^4 <= nums[i] <= 10^4\n1 <= k <= floor(nums.length / m)\n1 <= m <= 3",
+    "platform": "leetcode",
+    "question_id": "3722",
+    "contest_id": "weekly-contest-439",
+    "contest_date": "2025-03-01T18:30:00",
+    "starter_code": "class Solution:\n    def maxSum(self, nums: List[int], k: int, m: int) -> int:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nfrom typing import List\n\nclass Solution:\n    def maxSum(self, nums: List[int], k: int, m: int) -> int:\n        n = len(nums)\n        dp = [[0] * (k + 1) for _ in range(n + 1)]\n        prefix_sum = [0] * (n + 1)\n        \n        for i in range(1, n + 1):\n            prefix_sum[i] = prefix_sum[i - 1] + nums[i - 1]\n        \n        for i in range(1, n + 1):\n            for j in range(1, k + 1):\n                start = max(i - m, 0)\n                for l in range(start, i):\n                    dp[i][j] = max(dp[i][j], dp[l][j - 1] + prefix_sum[i] - prefix_sum[l])\n        \n        return dp[n][k]\n```"
+    ],
+    "code_list": [
+      "from typing import List\n\nclass Solution:\n    def maxSum(self, nums: List[int], k: int, m: int) -> int:\n        n = len(nums)\n        dp = [[0] * (k + 1) for _ in range(n + 1)]\n        prefix_sum = [0] * (n + 1)\n        \n        for i in range(1, n + 1):\n            prefix_sum[i] = prefix_sum[i - 1] + nums[i - 1]\n        \n        for i in range(1, n + 1):\n            for j in range(1, k + 1):\n                start = max(i - m, 0)\n                for l in range(start, i):\n                    dp[i][j] = max(dp[i][j], dp[l][j - 1] + prefix_sum[i] - prefix_sum[l])\n        \n        return dp[n][k]"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"10\", \"inputs\": \"[[1, 2, -1, 3, 3, 4], 2, 2]\", \"expected\": \"13\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        14,
+        15
+      ]
+    ],
+    "bug_summary": "Incorrect calculation of start index for subarray; should be i-m+1 instead of i-m to ensure subarray length is at least m"
+  },
+  {
+    "question_title": "Cutoff",
+    "question_content": "There is an exam structured as follows.\n\n- The exam consists of N rounds called round 1 to N.\n- In each round, you are given an integer score between 0 and 100, inclusive.\n- Your final grade is the sum of the N-2 of the scores earned in the rounds excluding the highest and lowest.\n- Formally, let S=(S_1,S_2,\\dots,S_N) be the sequence of the scores earned in the rounds sorted in ascending order, then the final grade is S_2+S_3+\\dots+S_{N-1}.\n\n\n\nNow, N-1 rounds of the exam have ended, and your score in round i was A_i.\r\nPrint the minimum score you must earn in round N for a final grade of X or higher.\r\nIf your final grade will never be X or higher no matter what score you earn in round N, print -1 instead.\r\nNote that your score in round N can only be an integer between 0 and 100.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN X\r\nA_1 A_2 \\dots A_{N-1}\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- All input values are integers.\n- 3 \\le N \\le 100\n- 0 \\le X \\le 100 \\times (N-2)\n- 0 \\le A_i \\le 100\n\nSample Input 1\n\n5 180\r\n40 60 80 50\n\nSample Output 1\n\n70\r\n\nYour scores in the first four rounds were 40, 60, 80, and 50.\r\nIf you earn a score of 70 in round 5, the sequence of the scores sorted in ascending order will be S=(40,50,60,70,80), for a final grade of 50+60+70=180.\r\nIt can be shown that 70 is the minimum score you must earn for a final grade of 180 or higher.\n\nSample Input 2\n\n3 100\r\n100 100\n\nSample Output 2\n\n0\r\n\nYour scores in the first two rounds were 100 and 100.\r\nIf you earn a score of 0 in round 3, the sequence of the scores sorted in ascending order will be S=(0,100,100), for a final grade of 100.\r\nNote that the highest score, 100, is earned multiple times, and only one of them is excluded. (The same goes for the lowest score.)\r\nIt can be shown that 0 is the minimum score you must earn for a final grade of 100 or higher.\n\nSample Input 3\n\n5 200\r\n0 0 99 99\n\nSample Output 3\n\n-1\r\n\nYour scores in the first four rounds were 0, 0, 99, and 99.\r\nIt can be shown that your final grade will never be 200 or higher no matter what score you earn in round 5.\n\nSample Input 4\n\n10 480\r\n59 98 88 54 70 24 8 94 46\n\nSample Output 4\n\n45",
+    "platform": "atcoder",
+    "question_id": "abc321_b",
+    "contest_id": "abc321",
+    "contest_date": "2023-09-23T00:00:00",
+    "starter_code": "",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\n# number of rounds and required final grade\nN, X = map(int, input().split())\n\n# scores in the first N-1 rounds\nA = list(map(int, input().split()))\n\n# sort the scores\nA.sort()\n\n# calculate the sum of the scores excluding the highest and lowest\ncurrent_sum = sum(A[1:-1])\n\n# calculate the minimum score needed in the last round\nmin_score = X - current_sum\n\n# check if the minimum score is valid\nif min_score < 0 or min_score > 100:\n    print(-1)\nelse:\n    print(max(0, min_score))\n```"
+    ],
+    "code_list": [
+      "# number of rounds and required final grade\nN, X = map(int, input().split())\n\n# scores in the first N-1 rounds\nA = list(map(int, input().split()))\n\n# sort the scores\nA.sort()\n\n# calculate the sum of the scores excluding the highest and lowest\ncurrent_sum = sum(A[1:-1])\n\n# calculate the minimum score needed in the last round\nmin_score = X - current_sum\n\n# check if the minimum score is valid\nif min_score < 0 or min_score > 100:\n    print(-1)\nelse:\n    print(max(0, min_score))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"100\\n\", \"inputs\": \"3 100\\n100 100\\n\", \"expected\": \"0\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 100 != 0\"}"
+    ],
+    "bug_span": [
+      [
+        7,
+        11
+      ]
+    ],
+    "bug_summary": "Incorrectly sorting and summing scores excluding highest and lowest causes wrong calculation of current_sum."
+  },
+  {
+    "question_title": "369",
+    "question_content": "You are given two integers A and B.\nHow many integers x satisfy the following condition?\n\n- Condition: It is possible to arrange the three integers A, B, and x in some order to form an arithmetic sequence.\n\nA sequence of three integers p, q, and r in this order is an arithmetic sequence if and only if q-p is equal to r-q.\n\nInput\n\nThe input is given from Standard Input in the following format:\nA B\n\nOutput\n\nPrint the number of integers x that satisfy the condition in the problem statement.\r\nIt can be proved that the answer is finite.\n\nConstraints\n\n\n- 1 \\leq A,B \\leq 100\n- All input values are integers.\n\nSample Input 1\n\n5 7\n\nSample Output 1\n\n3\r\n\nThe integers x=3,6,9 all satisfy the condition as follows:\n\n- When x=3, for example, arranging x,A,B forms the arithmetic sequence 3,5,7.\n- When x=6, for example, arranging B,x,A forms the arithmetic sequence 7,6,5.\n- When x=9, for example, arranging A,B,x forms the arithmetic sequence 5,7,9.\n\nConversely, there are no other values of x that satisfy the condition.\r\nTherefore, the answer is 3.\n\nSample Input 2\n\n6 1\n\nSample Output 2\n\n2\r\n\nOnly x=-4 and 11 satisfy the condition.\n\nSample Input 3\n\n3 3\n\nSample Output 3\n\n1\r\n\nOnly x=3 satisfies the condition.",
+    "platform": "atcoder",
+    "question_id": "abc369_a",
+    "contest_id": "abc369",
+    "contest_date": "2024-08-31T00:00:00",
+    "starter_code": "",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\n# A, B = map(int, input().split())\nA, B = map(int, input().split())\nif A == B:\n    print(1)\nelif abs(A - B) % 3 == 0:\n    print(3)\nelse:\n    print(2)\n```"
+    ],
+    "code_list": [
+      "# A, B = map(int, input().split())\nA, B = map(int, input().split())\nif A == B:\n    print(1)\nelif abs(A - B) % 3 == 0:\n    print(3)\nelse:\n    print(2)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"2\\n\", \"inputs\": \"5 7\\n\", \"expected\": \"3\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 2 != 3\"}"
+    ],
+    "bug_span": [
+      [
+        5,
+        6
+      ]
+    ],
+    "bug_summary": "Incorrect condition and output for checking if the difference is divisible by 3; should print 3 only if difference is exactly 3, not any multiple of 3."
+  },
+  {
+    "question_title": "Square Price",
+    "question_content": "There are N types of products, each having 10^{100} units in stock.\nYou can buy any non-negative number of units of each product. To buy k units of the i-th product, it costs k^2 P_i yen.\nIf your total purchase cost is at most M yen, what is the maximum number of units you can buy in total?\n\nInput\n\nThe input is given from Standard Input in the following format:\nN M\r\nP_1 \\ldots P_N\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 1 \\leq N \\leq 2 \\times 10^{5}\n- 1 \\leq M \\leq 10^{18}\n- 1 \\leq P_i \\leq 2 \\times 10^{9}\n- All input values are integers.\n\nSample Input 1\n\n3 9\r\n4 1 9\n\nSample Output 1\n\n3\r\n\nIf you buy one unit of the 1st product and two units of the 2nd product, the total purchase cost is 1^2 \\times 4 + 2^2 \\times 1 = 8. It is impossible to buy four or more units in total with a total cost of at most 9 yen, so the answer is 3.\n\nSample Input 2\n\n10 1000\r\n2 15 6 5 12 1 7 9 17 2\n\nSample Output 2\n\n53",
+    "platform": "atcoder",
+    "question_id": "abc389_e",
+    "contest_id": "abc389",
+    "contest_date": "2025-01-18T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# N, M = map(int, input().split())\n# P = list(map(int, input().split()))\n\nN, M = 3, 9\nP = [4, 1, 9]\n\ndef max_units(N, M, P):\n    P.sort()\n    units = 0\n    for i in range(N):\n        p = P[i]\n        k = 1\n        while k**2 * p <= M:\n            M -= k**2 * p\n            units += k\n            k += 1\n        if M == 0:\n            break\n    return units\n\nprint(max_units(N, M, P))\n```"
+    ],
+    "code_list": [
+      "# N, M = map(int, input().split())\n# P = list(map(int, input().split()))\n\nN, M = 3, 9\nP = [4, 1, 9]\n\ndef max_units(N, M, P):\n    P.sort()\n    units = 0\n    for i in range(N):\n        p = P[i]\n        k = 1\n        while k**2 * p <= M:\n            M -= k**2 * p\n            units += k\n            k += 1\n        if M == 0:\n            break\n    return units\n\nprint(max_units(N, M, P))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"4\\n\", \"inputs\": \"3 9\\n4 1 9\", \"expected\": \"3\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 4 != 3\"}"
+    ],
+    "bug_span": [
+      [
+        13,
+        16
+      ]
+    ],
+    "bug_summary": "Incorrect logic in while loop for calculating units and updating M; it overcounts units and reduces M incorrectly."
+  },
+  {
+    "question_title": "Avoid Queen Attack",
+    "question_content": "There is a grid of N^2 squares with N rows and N columns.\r\nLet (i,j) denote the square at the i-th row from the top (1\\leq i\\leq N) and j-th column from the left (1\\leq j\\leq N).\nEach square is either empty or has a piece placed on it.\r\nThere are M pieces placed on the grid, and the k-th (1\\leq k\\leq M) piece is placed on square (a_k,b_k).\nYou want to place your piece on an empty square in such a way that it cannot be captured by any of the existing pieces.\nA piece placed on square (i,j) can capture pieces that satisfy any of the following conditions:\n\n- Placed in row i\n- Placed in column j\n- Placed on any square (a,b)\\ (1\\leq a\\leq N,1\\leq b\\leq N) where i+j=a+b\n- Placed on any square (a,b)\\ (1\\leq a\\leq N,1\\leq b\\leq N) where i-j=a-b\n\nFor example, a piece placed on square (4,4) can capture pieces placed on the squares shown in blue in the following figure:\n\nHow many squares can you place your piece on?\n\nInput\n\nThe input is given from Standard Input in the following format:\nN M\r\na_1 b_1\r\na_2 b_2\r\n\\vdots\r\na_M b_M\n\nOutput\n\nPrint the number of empty squares where you can place your piece without it being captured by any existing pieces.\n\nConstraints\n\n\n- 1\\leq N\\leq10^9\n- 1\\leq M\\leq10^3\n- 1\\leq a_k\\leq N,1\\leq b_k\\leq N\\ (1\\leq k\\leq M)\n- (a_k,b_k)\\neq(a_l,b_l)\\ (1\\leq k\\lt l\\leq M)\n- All input values are integers.\n\nSample Input 1\n\n8 6\r\n1 4\r\n2 1\r\n3 8\r\n4 5\r\n5 2\r\n8 3\n\nSample Output 1\n\n2\r\n\nThe existing pieces can capture pieces placed on the squares shown in blue in the following figure:\n\nTherefore, you can place your piece on only two squares: squares (6,6) and (7,7).\n\nSample Input 2\n\n1000000000 1\r\n1 1\n\nSample Output 2\n\n999999997000000002\r\n\nOut of 10^{18} squares, the squares that cannot be used are: squares in row 1, squares in column 1, and squares (1,1), (2,2), \\ldots, (10^9,10^9), totaling 3\\times10^9-2 squares.\nNote that the answer may be 2^{32} or greater.\n\nSample Input 3\n\n20 10\r\n1 4\r\n7 11\r\n7 15\r\n8 10\r\n11 6\r\n12 5\r\n13 1\r\n15 2\r\n20 10\r\n20 15\n\nSample Output 3\n\n77",
+    "platform": "atcoder",
+    "question_id": "abc377_f",
+    "contest_id": "abc377",
+    "contest_date": "2024-10-26T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# Read input\nimport sys\ninput = sys.stdin.read\ndata = input().split()\n\n# Parse input\nN = int(data[0])\nM = int(data[1])\npieces = []\nfor i in range(2, 2*M+2, 2):\n    pieces.append((int(data[i]), int(data[i+1])))\n\n# Initialize sets for rows, columns, and diagonals\nrows = set()\ncols = set()\ndiags1 = set()\ndiags2 = set()\n\n# Add occupied squares to sets\nfor a, b in pieces:\n    rows.add(a)\n    cols.add(b)\n    diags1.add(a + b)\n    diags2.add(a - b)\n\n# Calculate the number of available squares\ntotal_squares = N * N\noccupied_squares = len(rows) + len(cols) + len(diags1) + len(diags2) - 3*M\navailable_squares = total_squares - occupied_squares\n\n# Write output\nprint(available_squares)\n```"
+    ],
+    "code_list": [
+      "# Read input\nimport sys\ninput = sys.stdin.read\ndata = input().split()\n\n# Parse input\nN = int(data[0])\nM = int(data[1])\npieces = []\nfor i in range(2, 2*M+2, 2):\n    pieces.append((int(data[i]), int(data[i+1])))\n\n# Initialize sets for rows, columns, and diagonals\nrows = set()\ncols = set()\ndiags1 = set()\ndiags2 = set()\n\n# Add occupied squares to sets\nfor a, b in pieces:\n    rows.add(a)\n    cols.add(b)\n    diags1.add(a + b)\n    diags2.add(a - b)\n\n# Calculate the number of available squares\ntotal_squares = N * N\noccupied_squares = len(rows) + len(cols) + len(diags1) + len(diags2) - 3*M\navailable_squares = total_squares - occupied_squares\n\n# Write output\nprint(available_squares)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"59\\n\", \"inputs\": \"8 6\\n1 4\\n2 1\\n3 8\\n4 5\\n5 2\\n8 3\\n\", \"expected\": \"2\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 59 != 2\"}"
+    ],
+    "bug_span": [
+      [
+        28,
+        28
+      ]
+    ],
+    "bug_summary": "Incorrect calculation of occupied_squares by summing lengths of sets and subtracting 3*M; this does not correctly count attacked squares without double counting"
+  },
+  {
+    "question_title": "maximum-subarray-sum-with-length-divisible-by-k",
+    "question_content": "You are given an array of integers nums and an integer k.\nReturn the maximum sum of a subarray of nums, such that the size of the subarray is divisible by k.\n \nExample 1:\n\nInput: nums = [1,2], k = 1\nOutput: 3\nExplanation:\nThe subarray [1, 2] with sum 3 has length equal to 2 which is divisible by 1.\n\nExample 2:\n\nInput: nums = [-1,-2,-3,-4,-5], k = 4\nOutput: -10\nExplanation:\nThe maximum sum subarray is [-1, -2, -3, -4] which has length equal to 4 which is divisible by 4.\n\nExample 3:\n\nInput: nums = [-5,1,2,-3,4], k = 2\nOutput: 4\nExplanation:\nThe maximum sum subarray is [1, 2, -3, 4] which has length equal to 4 which is divisible by 2.\n\n \nConstraints:\n\n1 <= k <= nums.length <= 2 * 10^5\n-10^9 <= nums[i] <= 10^9",
+    "platform": "leetcode",
+    "question_id": "3653",
+    "contest_id": "weekly-contest-427",
+    "contest_date": "2024-12-07T18:30:00",
+    "starter_code": "class Solution:\n    def maxSubarraySum(self, nums: List[int], k: int) -> int:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nfrom typing import List\n\nclass Solution:\n    def maxSubarraySum(self, nums: List[int], k: int) -> int:\n        prefix_sum = 0\n        max_sum = float('-inf')\n        remainder_map = {0: 0}\n        current_sum = 0\n        \n        for i, num in enumerate(nums):\n            current_sum += num\n            remainder = current_sum % k\n            \n            if remainder in remainder_map:\n                subarray_sum = current_sum - remainder_map[remainder]\n                max_sum = max(max_sum, subarray_sum)\n            else:\n                remainder_map[remainder] = current_sum\n            \n            max_sum = max(max_sum, current_sum)\n        \n        return max_sum\n```"
+    ],
+    "code_list": [
+      "from typing import List\n\nclass Solution:\n    def maxSubarraySum(self, nums: List[int], k: int) -> int:\n        prefix_sum = 0\n        max_sum = float('-inf')\n        remainder_map = {0: 0}\n        current_sum = 0\n        \n        for i, num in enumerate(nums):\n            current_sum += num\n            remainder = current_sum % k\n            \n            if remainder in remainder_map:\n                subarray_sum = current_sum - remainder_map[remainder]\n                max_sum = max(max_sum, subarray_sum)\n            else:\n                remainder_map[remainder] = current_sum\n            \n            max_sum = max(max_sum, current_sum)\n        \n        return max_sum"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"-1\", \"inputs\": \"[[-1, -2, -3, -4, -5], 4]\", \"expected\": \"-10\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        7,
+        18
+      ]
+    ],
+    "bug_summary": "Incorrect initialization and usage of remainder_map leading to wrong subarray sum calculation for length divisible by k"
+  },
+  {
+    "question_title": "Snuke's Kyoto Trip",
+    "question_content": "You are given integers W,H,L,R,D,U.\nA town of Kyoto is on the two-dimensional plane.\nIn the town, there is exactly one block at each lattice point (x,y) that satisfies all of the following conditions. There are no blocks at any other points.\n\n- 0\\leq x\\leq W\n- 0\\leq y\\leq H\n- x<L or R<x or y<D or U<y\n\nSnuke traveled through the town as follows.\n\n- First, he chooses one block and stands there.\n- Then, he performs the following operation any number of times (possibly zero):\n- Move one unit in the positive direction of the x-axis or the positive direction of the y-axis. However, the point after moving must also have a block.\n\n\n\nPrint the number, modulo 998244353, of possible paths that Snuke could have taken.\n\nInput\n\nThe input is given from Standard Input in the following format:\nW H L R D U\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 0\\leq L\\leq R\\leq W\\leq 10^6\n- 0\\leq D\\leq U\\leq H\\leq 10^6\n- There is at least one block.\n- All input values are integers.\n\nSample Input 1\n\n4 3 1 2 2 3\n\nSample Output 1\n\n192\r\n\nThe following are examples of possible paths. Here, a path is represented by listing the lattice points visited in order.\n\n- (3,0)\n- (0,0)\\rightarrow (1,0)\\rightarrow (2,0)\\rightarrow (2,1)\\rightarrow (3,1)\\rightarrow (3,2)\\rightarrow (4,2)\\rightarrow (4,3)\n- (0,1)\\rightarrow (0,2)\n\nThere are 192 possible paths.\n\nSample Input 2\n\n10 12 4 6 8 11\n\nSample Output 2\n\n4519189\n\nSample Input 3\n\n192 25 0 2 0 9\n\nSample Output 3\n\n675935675\r\n\nDo not forget to print the number of paths modulo 998244353.",
+    "platform": "atcoder",
+    "question_id": "arc192_e",
+    "contest_id": "arc192",
+    "contest_date": "2025-02-09T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\nmod = 998244353\n\ndef binomial(n, k):\n    if k > n:\n        return 0\n    if k == 0 or k == n:\n        return 1\n    k = min(k, n - k)\n    c = 1\n    for i in range(k):\n        c = c * (n - i) * pow(i + 1, mod - 2, mod) % mod\n    return c\n\ndef solve(W, H, L, R, D, U):\n    if L > R:\n        L, R = R, L\n    if D > U:\n        D, U = U, D\n    if L == R:\n        R += 1\n    if D == U:\n        U += 1\n    return (binomial(W + 1, R + 1) * binomial(H + 1, U + 1) - binomial(W + 1, L) * binomial(H + 1, D)) % mod\n\nW, H, L, R, D, U = map(int, input().split())\nprint(solve(W, H, L, R, D, U))\n```"
+    ],
+    "code_list": [
+      "mod = 998244353\n\ndef binomial(n, k):\n    if k > n:\n        return 0\n    if k == 0 or k == n:\n        return 1\n    k = min(k, n - k)\n    c = 1\n    for i in range(k):\n        c = c * (n - i) * pow(i + 1, mod - 2, mod) % mod\n    return c\n\ndef solve(W, H, L, R, D, U):\n    if L > R:\n        L, R = R, L\n    if D > U:\n        D, U = U, D\n    if L == R:\n        R += 1\n    if D == U:\n        U += 1\n    return (binomial(W + 1, R + 1) * binomial(H + 1, U + 1) - binomial(W + 1, L) * binomial(H + 1, D)) % mod\n\nW, H, L, R, D, U = map(int, input().split())\nprint(solve(W, H, L, R, D, U))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"998244333\\n\", \"inputs\": \"4 3 1 2 2 3\", \"expected\": \"192\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 998244333 != 192\"}"
+    ],
+    "bug_span": [
+      [
+        23,
+        23
+      ]
+    ],
+    "bug_summary": "Incorrect formula in solve function for calculating the result; binomial indices and arithmetic are wrong."
+  },
+  {
+    "question_title": "Row and Column Order",
+    "question_content": "You are given two permutations P=(P_1,P_2,\\dots,P_N) and Q=(Q_1,Q_2,\\dots,Q_N) of (1,2,\\dots,N).\nWrite one of the characters 0 and 1 in each cell of an N-by-N grid so that all of the following conditions are satisfied:\n\n- Let S_i be the string obtained by concatenating the characters in the i-th row from the 1-st to the N-th column. Then, S_{P_1} < S_{P_2} < \\dots < S_{P_N} in lexicographical order.\n- Let T_i be the string obtained by concatenating the characters in the i-th column from the 1-st to the N-th row. Then, T_{Q_1} < T_{Q_2} < \\dots < T_{Q_N} in lexicographical order.\n\nIt can be proved that for any P and Q, there is at least one way to write the characters that satisfies all the conditions.\n What does \"X < Y in lexicographical order\" mean?\nFor strings X=X_1X_2\\dots X_{|X|} and Y = Y_1Y_2\\dots Y_{|Y|}, \"X < Y in lexicographical order\" means that 1. or 2. below holds.\r\nHere, |X| and |Y| denote the lengths of X and Y, respectively.\n\n-  |X| \\lt |Y| and X_1X_2\\ldots X_{|X|} = Y_1Y_2\\ldots Y_{|X|}. \n-  There exists an integer 1 \\leq i \\leq \\min\\lbrace |X|, |Y| \\rbrace such that both of the following are true:\r\n\n-  X_1X_2\\ldots X_{i-1} = Y_1Y_2\\ldots Y_{i-1}\n-  X_i is less than Y_i.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN\r\nP_1 P_2 \\dots P_N\r\nQ_1 Q_2 \\dots Q_N\n\nOutput\n\nPrint a way to fill the grid that satisfies the conditions in the following format, where A_{ij} is the character written at the i-th row and j-th column:\nA_{11}A_{12}\\dots A_{1N}\r\n\\vdots\r\nA_{N1}A_{N2}\\dots A_{NN}\r\n\nIf there are multiple ways to satisfy the conditions, any of them will be accepted.\n\nConstraints\n\n\n- 2 \\leq N \\leq 500\n- P and Q are permutations of (1,2,\\dots,N).\n- All input values are integers.\n\nSample Input 1\n\n3\r\n1 2 3\r\n2 1 3\n\nSample Output 1\n\n001\r\n101\r\n110\r\n\nIn this sample, S_1=001, S_2=101, S_3=110, and T_1=011, T_2=001, T_3=110. Therefore, S_1 < S_2 < S_3 and T_2 < T_1 < T_3 hold, satisfying the conditions.\n\nSample Input 2\n\n15\r\n8 15 10 2 4 3 1 13 5 12 9 6 14 11 7\r\n4 1 5 14 3 12 13 7 11 8 6 2 9 15 10\n\nSample Output 2\n\n010001111110101\r\n001000000101001\r\n010001001100010\r\n010000011110010\r\n010011101101101\r\n100101110100000\r\n111100011001000\r\n000001001100000\r\n100011011000101\r\n000111101011110\r\n101010101010101\r\n011010101011110\r\n010011000010011\r\n100110010110101\r\n000101101100100",
+    "platform": "atcoder",
+    "question_id": "arc181_c",
+    "contest_id": "arc181",
+    "contest_date": "2024-08-04T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# N = int(input())\n# P = list(map(int, input().split()))\n# Q = list(map(int, input().split()))\n\ndef solve(N, P, Q):\n    A = [['0'] * N for _ in range(N)]\n    \n    for i in range(N):\n        for j in range(N):\n            if P[i] < Q[j]:\n                A[i][j] = '1'\n    \n    for i in range(N):\n        for j in range(N - 1):\n            if A[i][j] == '1' and A[i][j + 1] == '1':\n                A[i][j + 1] = '0'\n    \n    for j in range(N):\n        for i in range(N - 1):\n            if A[i][j] == '1' and A[i + 1][j] == '1':\n                A[i + 1][j] = '0'\n    \n    for i in range(N):\n        print(''.join(A[i]))\n\nN = int(input())\nP = list(map(int, input().split()))\nQ = list(map(int, input().split()))\nsolve(N, P, Q)\n```"
+    ],
+    "code_list": [
+      "# N = int(input())\n# P = list(map(int, input().split()))\n# Q = list(map(int, input().split()))\n\ndef solve(N, P, Q):\n    A = [['0'] * N for _ in range(N)]\n    \n    for i in range(N):\n        for j in range(N):\n            if P[i] < Q[j]:\n                A[i][j] = '1'\n    \n    for i in range(N):\n        for j in range(N - 1):\n            if A[i][j] == '1' and A[i][j + 1] == '1':\n                A[i][j + 1] = '0'\n    \n    for j in range(N):\n        for i in range(N - 1):\n            if A[i][j] == '1' and A[i + 1][j] == '1':\n                A[i + 1][j] = '0'\n    \n    for i in range(N):\n        print(''.join(A[i]))\n\nN = int(input())\nP = list(map(int, input().split()))\nQ = list(map(int, input().split()))\nsolve(N, P, Q)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"101\\n000\\n000\\n\", \"inputs\": \"3\\n1 2 3\\n2 1 3\\n\", \"expected\": \"001\\n101\\n110\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 101 != 001\"}"
+    ],
+    "bug_span": [
+      [
+        15,
+        16
+      ]
+    ],
+    "bug_summary": "Incorrectly zeroing out consecutive '1's in rows breaks expected pattern; line 16 should not set A[i][j+1] to '0'"
+  },
+  {
+    "question_title": "Invisible Hand",
+    "question_content": "There are N sellers and M buyers in an apple market.\nThe i-th seller may sell an apple for A_i yen or more (yen is the currency in Japan).\nThe i-th buyer may buy an apple for B_i yen or less.\nFind the minimum integer X that satisfies the following condition.\nCondition: The number of people who may sell an apple for X yen is greater than or equal to the number of people who may buy an apple for X yen.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN M\r\nA_1 \\ldots A_N\r\nB_1 \\ldots B_M\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 1 \\leq N,M \\leq 2\\times 10^5\n- 1\\leq A_i,B_i \\leq 10^9\n- All input values are integers.\n\nSample Input 1\n\n3 4\r\n110 90 120\r\n100 80 120 10000\n\nSample Output 1\n\n110\r\n\nTwo sellers, the 1-st and 2-nd, may sell an apple for 110 yen; two buyers, the 3-rd and 4-th, may buy an apple for 110 yen.  Thus, 110 satisfies the condition.\nSince an integer less than 110 does not satisfy the condition, this is the answer.\n\nSample Input 2\n\n5 2\r\n100000 100000 100000 100000 100000\r\n100 200\n\nSample Output 2\n\n201\n\nSample Input 3\n\n3 2\r\n100 100 100\r\n80 120\n\nSample Output 3\n\n100",
+    "platform": "atcoder",
+    "question_id": "abc312_c",
+    "contest_id": "abc312",
+    "contest_date": "2023-07-29T00:00:00",
+    "starter_code": "",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\n# PYTHON PROGRAM\nimport sys\nfrom bisect import bisect_left, bisect_right\n\ninput = sys.stdin.read\ndata = input().split()\nn = int(data[0])\nm = int(data[1])\na = list(map(int, data[2:n+2]))\nb = list(map(int, data[n+2:]))\na.sort()\nb.sort()\n\ndef count(X):\n    return len(a) - bisect_left(a, X) - (bisect_right(b, X) - bisect_left(b, X))\n\nl, r = 1, 10**9\nwhile l < r:\n    mid = (l + r) // 2\n    if count(mid) >= 0:\n        r = mid\n    else:\n        l = mid + 1\n\nprint(l)\n```"
+    ],
+    "code_list": [
+      "# PYTHON PROGRAM\nimport sys\nfrom bisect import bisect_left, bisect_right\n\ninput = sys.stdin.read\ndata = input().split()\nn = int(data[0])\nm = int(data[1])\na = list(map(int, data[2:n+2]))\nb = list(map(int, data[n+2:]))\na.sort()\nb.sort()\n\ndef count(X):\n    return len(a) - bisect_left(a, X) - (bisect_right(b, X) - bisect_left(b, X))\n\nl, r = 1, 10**9\nwhile l < r:\n    mid = (l + r) // 2\n    if count(mid) >= 0:\n        r = mid\n    else:\n        l = mid + 1\n\nprint(l)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"1\\n\", \"inputs\": \"3 4\\n110 90 120\\n100 80 120 10000\\n\", \"expected\": \"110\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 1 != 110\"}"
+    ],
+    "bug_span": [
+      [
+        15,
+        15
+      ]
+    ],
+    "bug_summary": "Incorrect count calculation in line 15 causes wrong binary search condition."
+  },
+  {
+    "question_title": "GCD of Subset",
+    "question_content": "You are given a sequence A = (A_1, A_2, \\dots, A_N) of length N and a positive integer K (at most N).\r\nFor each i = 1, 2, \\dots, N, solve the following problem:\n\n- When you choose K elements from A that include A_i, find the maximum possible GCD (greatest common divisor) of those chosen elements.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN K\r\nA_1 A_2 \\dots A_N\n\nOutput\n\nPrint N lines. The j-th line should contain the answer for i=j.\n\nConstraints\n\n\n- 1 \\leq K \\leq N \\leq 1.2 \\times 10^6\n- 1 \\leq A_i \\leq 10^6\n- All input values are integers.\n\nSample Input 1\n\n5 2\r\n3 4 6 7 12\n\nSample Output 1\n\n3\r\n4\r\n6\r\n1\r\n6\r\n\nFor i=1, choosing A_1 and A_3 yields \\gcd(\\lbrace 3,6 \\rbrace) = 3, which is the maximum.\r\nFor i=2, choosing A_2 and A_5 yields \\gcd(\\lbrace 4,12 \\rbrace) = 4, which is the maximum.\r\nFor i=3, choosing A_3 and A_5 yields \\gcd(\\lbrace 6,12 \\rbrace) = 6, which is the maximum.\r\nFor i=4, choosing A_4 and A_2 yields \\gcd(\\lbrace 7,4 \\rbrace) = 1, which is the maximum.\r\nFor i=5, choosing A_5 and A_3 yields \\gcd(\\lbrace 12,6 \\rbrace) = 6, which is the maximum.\n\nSample Input 2\n\n3 3\r\n6 10 15\n\nSample Output 2\n\n1\r\n1\r\n1\n\nSample Input 3\n\n10 3\r\n414003 854320 485570 52740 833292 625990 909680 885153 435420 221663\n\nSample Output 3\n\n59\r\n590\r\n590\r\n879\r\n879\r\n590\r\n20\r\n879\r\n590\r\n59",
+    "platform": "atcoder",
+    "question_id": "abc393_e",
+    "contest_id": "abc393",
+    "contest_date": "2025-02-15T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\nfrom math import gcd\nfrom collections import defaultdict\n\ndef solve(N, K, A):\n    max_gcd = [0] * N\n    gcd_count = defaultdict(int)\n    for i in range(N):\n        current_gcd = 0\n        for j in range(i, N):\n            current_gcd = gcd(current_gcd, A[j])\n            if j - i + 1 == K:\n                gcd_count[current_gcd] += 1\n                if gcd_count[current_gcd] == K:\n                    max_gcd[i] = current_gcd\n                    break\n            elif j - i + 1 > K:\n                break\n    for i in range(N):\n        if max_gcd[i] == 0:\n            max_gcd[i] = A[i]\n            for j in range(i + 1, N):\n                max_gcd[i] = gcd(max_gcd[i], A[j])\n    for i in range(N):\n        print(max_gcd[i])\n\nN, K = map(int, input().split())\nA = list(map(int, input().split()))\nsolve(N, K, A)\n```"
+    ],
+    "code_list": [
+      "from math import gcd\nfrom collections import defaultdict\n\ndef solve(N, K, A):\n    max_gcd = [0] * N\n    gcd_count = defaultdict(int)\n    for i in range(N):\n        current_gcd = 0\n        for j in range(i, N):\n            current_gcd = gcd(current_gcd, A[j])\n            if j - i + 1 == K:\n                gcd_count[current_gcd] += 1\n                if gcd_count[current_gcd] == K:\n                    max_gcd[i] = current_gcd\n                    break\n            elif j - i + 1 > K:\n                break\n    for i in range(N):\n        if max_gcd[i] == 0:\n            max_gcd[i] = A[i]\n            for j in range(i + 1, N):\n                max_gcd[i] = gcd(max_gcd[i], A[j])\n    for i in range(N):\n        print(max_gcd[i])\n\nN, K = map(int, input().split())\nA = list(map(int, input().split()))\nsolve(N, K, A)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"1\\n1\\n1\\n1\\n12\\n\", \"inputs\": \"5 2\\n3 4 6 7 12\", \"expected\": \"3\\n4\\n6\\n1\\n6\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 1 != 3\"}"
+    ],
+    "bug_span": [
+      [
+        13,
+        14
+      ]
+    ],
+    "bug_summary": "Incorrect condition and assignment in lines 13-14 cause wrong max_gcd calculation for subsets of length K."
+  },
+  {
+    "question_title": "Another Sigma Problem",
+    "question_content": "For positive integers x and y, define f(x, y) as follows:\n\n- Interpret the decimal representations of x and y as strings and concatenate them in this order to obtain a string z. The value of f(x, y) is the value of z when interpreted as a decimal integer.\n\nFor example, f(3, 14) = 314 and f(100, 1) = 1001.\nYou are given a sequence of positive integers A = (A_1, \\ldots, A_N) of length N. Find the value of the following expression modulo 998244353:\n\\displaystyle \\sum_{i=1}^{N-1}\\sum_{j=i+1}^N f(A_i,A_j).\n\nInput\n\nThe input is given from Standard Input in the following format:\nN\r\nA_1 \\ldots A_N\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 2 \\leq N \\leq 2 \\times 10^5\n- 1 \\leq A_i \\leq 10^9\n- All input values are integers.\n\nSample Input 1\n\n3\r\n3 14 15\n\nSample Output 1\n\n2044\r\n\n\n- f(A_1, A_2) = 314\n- f(A_1, A_3) = 315\n- f(A_2, A_3) = 1415\n\nThus, the answer is f(A_1, A_2) + f(A_1, A_3) + f(A_2, A_3) = 2044.\n\nSample Input 2\n\n5\r\n1001 5 1000000 1000000000 100000\n\nSample Output 2\n\n625549048\r\n\nBe sure to calculate the value modulo 998244353.",
+    "platform": "atcoder",
+    "question_id": "abc353_d",
+    "contest_id": "abc353",
+    "contest_date": "2024-05-11T00:00:00",
+    "starter_code": "",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\n# N = int(input())\n# A = list(map(int, input().split()))\n\ndef f(x, y):\n    return int(str(x) + str(y))\n\nN = int(input())\nA = list(map(int, input().split()))\n\nmod = 998244353\ntotal = 0\n\nfor i in range(N-1):\n    x = A[i]\n    for j in range(i+1, N):\n        y = A[j]\n        total += f(x, y)\n        total %= mod\n\nprint(total)\n```"
+    ],
+    "code_list": [
+      "# N = int(input())\n# A = list(map(int, input().split()))\n\ndef f(x, y):\n    return int(str(x) + str(y))\n\nN = int(input())\nA = list(map(int, input().split()))\n\nmod = 998244353\ntotal = 0\n\nfor i in range(N-1):\n    x = A[i]\n    for j in range(i+1, N):\n        y = A[j]\n        total += f(x, y)\n        total %= mod\n\nprint(total)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"TimeoutException()\", \"error_code\": -3, \"error_message\": \"Time Limit Exceeded\", \"inputs\": \"200000\\n928709127 710364850 501270008 433861154 995648492 596392093 118776745 384782478 349655296 539537581 111115036 650357104 5969178 689308608 89809...(truncated) ... 886975200 479100583 974904972 141183778 252385349 663022572 657438388 129994305 13674670 925467037 931861161 512421962 961639275 112795450 587789827\\n\", \"expected\": \"37332745\\n\"}"
+    ],
+    "bug_span": [
+      [
+        13,
+        18
+      ]
+    ],
+    "bug_summary": "Inefficient nested loops causing time limit exceeded for large input size"
+  },
+  {
+    "question_title": "find-the-original-typed-string-i",
+    "question_content": "Alice is attempting to type a specific string on her computer. However, she tends to be clumsy and may press a key for too long, resulting in a character being typed multiple times.\nAlthough Alice tried to focus on her typing, she is aware that she may still have done this at most once.\nYou are given a string word, which represents the final output displayed on Alice's screen.\nReturn the total number of possible original strings that Alice might have intended to type.\n \nExample 1:\n\nInput: word = \"abbcccc\"\nOutput: 5\nExplanation:\nThe possible strings are: \"abbcccc\", \"abbccc\", \"abbcc\", \"abbc\", and \"abcccc\".\n\nExample 2:\n\nInput: word = \"abcd\"\nOutput: 1\nExplanation:\nThe only possible string is \"abcd\".\n\nExample 3:\n\nInput: word = \"aaaa\"\nOutput: 4\n\n \nConstraints:\n\n1 <= word.length <= 100\nword consists only of lowercase English letters.",
+    "platform": "leetcode",
+    "question_id": "3617",
+    "contest_id": "biweekly-contest-142",
+    "contest_date": "2024-10-26T07:30:00",
+    "starter_code": "class Solution:\n    def possibleStringCount(self, word: str) -> int:\n        ",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\nclass Solution:\n    def possibleStringCount(self, word: str) -> int:\n        n = len(word)\n        dp = [1] * (n + 1)\n        dp[n] = 1\n        prev_char = word[-1]\n        for i in range(n - 1, -1, -1):\n            if word[i] == prev_char:\n                dp[i] = dp[i + 1] + (dp[i + 2] if i + 2 <= n else 0)\n            else:\n                dp[i] = dp[i + 1]\n            prev_char = word[i]\n        return dp[0]\n```"
+    ],
+    "code_list": [
+      "class Solution:\n    def possibleStringCount(self, word: str) -> int:\n        n = len(word)\n        dp = [1] * (n + 1)\n        dp[n] = 1\n        prev_char = word[-1]\n        for i in range(n - 1, -1, -1):\n            if word[i] == prev_char:\n                dp[i] = dp[i + 1] + (dp[i + 2] if i + 2 <= n else 0)\n            else:\n                dp[i] = dp[i + 1]\n            prev_char = word[i]\n        return dp[0]"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"10\", \"inputs\": \"['abbcccc']\", \"expected\": \"5\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        4,
+        5
+      ]
+    ],
+    "bug_summary": "Incorrect initialization of dp array size and values; dp should be of length n, not n+1, and dp[n] assignment is out of bounds."
+  },
+  {
+    "question_title": "Count Grid 3",
+    "question_content": "You are given a grid S with H rows and W columns consisting of 1, 2, 3, and ?. The character at the i-th row and j-th column is S_{i,j}.\nBy replacing each ? in S with 1, 2, or 3, we can obtain 3^q different grids, where q is the number of ?. Among these grids, how many satisfy the following condition? Print the count modulo 998244353.\n\n- Any two adjacent (edge-sharing) cells contain different digits.\n\nInput\n\nThe input is given from Standard Input in the following format:\nH W\r\nS_{1,1}S_{1,2}\\ldots S_{1,W}\r\nS_{2,1}S_{2,2}\\ldots S_{2,W}\r\n\\vdots\r\nS_{H,1}S_{H,2}\\ldots S_{H,W}\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 1 \\leq H, W\n- H \\times W \\leq 200\n- H and W are integers.\n- S is a grid with H rows and W columns consisting of 1, 2, 3, and ?.\n\nSample Input 1\n\n2 2\r\n1?\r\n??\n\nSample Output 1\n\n6\r\n\nAmong the grids obtained by replacing each ? in S with 1, 2, or 3, the following six grids satisfy the condition.\n12  12  12  13  13  13\r\n21  23  31  21  31  32\n\nSample Input 2\n\n2 3\r\n123\r\n3?1\n\nSample Output 2\n\n0\r\n\nNone of the grids obtained by replacing ? satisfies the condition.\n\nSample Input 3\n\n8 8\r\n3?1?????\r\n???1????\r\n??????2?\r\n????????\r\n????????\r\n????13??\r\n??13?1??\r\n????????\n\nSample Output 3\n\n779135038",
+    "platform": "atcoder",
+    "question_id": "abc379_g",
+    "contest_id": "abc379",
+    "contest_date": "2024-11-09T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# MOD = 998244353\nMOD = 998244353\n\ndef dfs(grid, i, j, prev):\n    if i == len(grid):\n        return 1\n    if j == len(grid[0]):\n        return dfs(grid, i + 1, 0, -1)\n    if grid[i][j] != '?':\n        if grid[i][j] == prev:\n            return 0\n        return dfs(grid, i, j + 1, grid[i][j])\n    count = 0\n    for val in '123':\n        if val == prev:\n            continue\n        grid[i] = grid[i][:j] + val + grid[i][j + 1:]\n        count += dfs(grid, i, j + 1, val) % MOD\n        grid[i] = grid[i][:j] + '?' + grid[i][j + 1:]\n    return count % MOD\n\ndef solve():\n    H, W = map(int, input().split())\n    grid = [input() for _ in range(H)]\n    ans = dfs(grid, 0, 0, -1)\n    print(ans)\n\nsolve()\n```"
+    ],
+    "code_list": [
+      "# MOD = 998244353\nMOD = 998244353\n\ndef dfs(grid, i, j, prev):\n    if i == len(grid):\n        return 1\n    if j == len(grid[0]):\n        return dfs(grid, i + 1, 0, -1)\n    if grid[i][j] != '?':\n        if grid[i][j] == prev:\n            return 0\n        return dfs(grid, i, j + 1, grid[i][j])\n    count = 0\n    for val in '123':\n        if val == prev:\n            continue\n        grid[i] = grid[i][:j] + val + grid[i][j + 1:]\n        count += dfs(grid, i, j + 1, val) % MOD\n        grid[i] = grid[i][:j] + '?' + grid[i][j + 1:]\n    return count % MOD\n\ndef solve():\n    H, W = map(int, input().split())\n    grid = [input() for _ in range(H)]\n    ans = dfs(grid, 0, 0, -1)\n    print(ans)\n\nsolve()"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"12\\n\", \"inputs\": \"2 2\\n1?\\n??\", \"expected\": \"6\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 12 != 6\"}"
+    ],
+    "bug_span": [
+      [
+        18,
+        18
+      ]
+    ],
+    "bug_summary": "Incorrect modulo operation placement causes wrong count accumulation in dfs function."
+  },
+  {
+    "question_title": "Hierarchical Majority Vote",
+    "question_content": "For a binary string B = B_1 B_2 \\dots B_{3^n} of length 3^n (n \\geq 1), we define an operation to obtain a binary string C = C_1 C_2 \\dots C_{3^{n-1}} of length 3^{n-1} as follows:\n\n- Partition the elements of B into groups of 3 and take the majority value from each group. That is, for i=1,2,\\dots,3^{n-1}, let C_i be the value that appears most frequently among B_{3i-2}, B_{3i-1}, and B_{3i}.\n\nYou are given a binary string A = A_1 A_2 \\dots A_{3^N} of length 3^N. Let A' = A'_1 be the length-1 string obtained by applying the above operation N times to A.\nDetermine the minimum number of elements of A that must be changed (from 0 to 1 or from 1 to 0) in order to change the value of A'_1.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN\r\nA_1 A_2 \\dots A_{3^N}\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- N is an integer with 1 \\leq N \\leq 13.\n- A is a string of length 3^N consisting of 0 and 1.\n\nSample Input 1\n\n2\r\n010011101\n\nSample Output 1\n\n1\r\n\nFor example, with A=010011101, after applying the operation twice, we obtain:\n\n- First operation: The majority of 010 is 0, of 011 is 1, and of 101 is 1, resulting in 011.\n- Second operation: The majority of 011 is 1, yielding 1.\n\nTo change the final value from 1 to 0, one way is to change the 5th character of A from 1 to 0, yielding A=010001101. After the change, the operations yield:\n\n- First operation: The majority of 010 is 0, of 001 is 0, and of 101 is 1, resulting in 001.\n- Second operation: The majority of 001 is 0, yielding 0.\n\nThus, the minimum number of changes required is 1.\n\nSample Input 2\n\n1\r\n000\n\nSample Output 2\n\n2",
+    "platform": "atcoder",
+    "question_id": "abc391_e",
+    "contest_id": "abc391",
+    "contest_date": "2025-02-01T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nimport sys\n\ndef majority_operation(s):\n    n = len(s)\n    result = ''\n    for i in range(0, n, 3):\n        group = s[i:i+3]\n        result += max(set(group), key=group.count)\n    return result\n\ndef min_changes_to_flip(N, A):\n    if N == 0:\n        return 0 if A[0] == '1' else 1\n    target = '0' if A[0] == '1' else '1'\n    changes = 0\n    for _ in range(N):\n        new_A = ''\n        for i in range(0, len(A), 3):\n            group = A[i:i+3]\n            if group.count(target) < 2:\n                changes += 1\n            new_A += target\n        A = new_A\n    return changes\n\nN = int(input())\nA = input()\nprint(min_changes_to_flip(N, A))\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nimport sys\n\ndef majority_operation(s):\n    n = len(s)\n    result = ''\n    for i in range(0, n, 3):\n        group = s[i:i+3]\n        result += max(set(group), key=group.count)\n    return result\n\ndef min_changes_to_flip(N, A):\n    if N == 0:\n        return 0 if A[0] == '1' else 1\n    target = '0' if A[0] == '1' else '1'\n    changes = 0\n    for _ in range(N):\n        new_A = ''\n        for i in range(0, len(A), 3):\n            group = A[i:i+3]\n            if group.count(target) < 2:\n                changes += 1\n            new_A += target\n        A = new_A\n    return changes\n\nN = int(input())\nA = input()\nprint(min_changes_to_flip(N, A))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"1\\n\", \"inputs\": \"1\\n000\", \"expected\": \"2\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 1 != 2\"}"
+    ],
+    "bug_span": [
+      [
+        13,
+        14
+      ]
+    ],
+    "bug_summary": "Incorrect base case handling in min_changes_to_flip for N=0; accessing A[0] causes error and logic is wrong."
+  },
+  {
+    "question_title": "count-beautiful-splits-in-an-array",
+    "question_content": "You are given an array nums.\nA split of an array nums is beautiful if:\n\nThe array nums is split into three subarrays: nums1, nums2, and nums3, such that nums can be formed by concatenating nums1, nums2, and nums3 in that order.\nThe subarray nums1 is a prefix of nums2 OR nums2 is a prefix of nums3.\n\nReturn the number of ways you can make this split.\n \nExample 1:\n\nInput: nums = [1,1,2,1]\nOutput: 2\nExplanation:\nThe beautiful splits are:\n\nA split with nums1 = [1], nums2 = [1,2], nums3 = [1].\nA split with nums1 = [1], nums2 = [1], nums3 = [2,1].\n\n\nExample 2:\n\nInput: nums = [1,2,3,4]\nOutput: 0\nExplanation:\nThere are 0 beautiful splits.\n\n \nConstraints:\n\n1 <= nums.length <= 5000\n0 <= nums[i] <= 50",
+    "platform": "leetcode",
+    "question_id": "3686",
+    "contest_id": "weekly-contest-428",
+    "contest_date": "2024-12-14T18:30:00",
+    "starter_code": "class Solution:\n    def beautifulSplits(self, nums: List[int]) -> int:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nfrom typing import List\n\nclass Solution:\n    def beautifulSplits(self, nums: List[int]) -> int:\n        prefix_sum = [0]\n        for num in nums:\n            prefix_sum.append(prefix_sum[-1] + num)\n        \n        n = len(nums)\n        count = 0\n        for i in range(1, n-1):\n            if prefix_sum[i] == prefix_sum[-1] - prefix_sum[i+1]:\n                count += 1\n            elif prefix_sum[i] == prefix_sum[i+1]:\n                count += 1\n        \n        return count\n```"
+    ],
+    "code_list": [
+      "from typing import List\n\nclass Solution:\n    def beautifulSplits(self, nums: List[int]) -> int:\n        prefix_sum = [0]\n        for num in nums:\n            prefix_sum.append(prefix_sum[-1] + num)\n        \n        n = len(nums)\n        count = 0\n        for i in range(1, n-1):\n            if prefix_sum[i] == prefix_sum[-1] - prefix_sum[i+1]:\n                count += 1\n            elif prefix_sum[i] == prefix_sum[i+1]:\n                count += 1\n        \n        return count"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"0\", \"inputs\": \"[[1, 1, 2, 1]]\", \"expected\": \"2\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        12,
+        15
+      ]
+    ],
+    "bug_summary": "Incorrect conditions for counting beautiful splits; the logic does not correctly check for equal sums of left and right parts."
+  },
+  {
+    "question_title": "maximum-or",
+    "question_content": "You are given a 0-indexed integer array nums of length n and an integer k. In an operation, you can choose an element and multiply it by 2.\nReturn the maximum possible value of nums[0] | nums[1] | ... | nums[n - 1] that can be obtained after applying the operation on nums at most k times.\nNote that a | b denotes the bitwise or between two integers a and b.\n \nExample 1:\n\nInput: nums = [12,9], k = 1\nOutput: 30\nExplanation: If we apply the operation to index 1, our new array nums will be equal to [12,18]. Thus, we return the bitwise or of 12 and 18, which is 30.\n\nExample 2:\n\nInput: nums = [8,1,2], k = 2\nOutput: 35\nExplanation: If we apply the operation twice on index 0, we yield a new array of [32,1,2]. Thus, we return 32|1|2 = 35.\n\n \nConstraints:\n\n1 <= nums.length <= 10^5\n1 <= nums[i] <= 10^9\n1 <= k <= 15",
+    "platform": "leetcode",
+    "question_id": "2730",
+    "contest_id": "biweekly-contest-104",
+    "contest_date": "2023-05-13T00:00:00",
+    "starter_code": "class Solution:\n    def maximumOr(self, nums: List[int], k: int) -> int:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nclass Solution:\n    def maximumOr(self, nums: List[int], k: int) -> int:\n        prefix_or = 0\n        suffix_or = reduce(or_, nums)\n        max_or = 0\n        \n        for i, num in enumerate(nums):\n            new_or = (prefix_or | (num << k) | suffix_or)\n            max_or = max(max_or, new_or)\n            prefix_or |= num\n        \n        return max_or\n```"
+    ],
+    "code_list": [
+      "class Solution:\n    def maximumOr(self, nums: List[int], k: int) -> int:\n        prefix_or = 0\n        suffix_or = reduce(or_, nums)\n        max_or = 0\n        \n        for i, num in enumerate(nums):\n            new_or = (prefix_or | (num << k) | suffix_or)\n            max_or = max(max_or, new_or)\n            prefix_or |= num\n        \n        return max_or"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"31\", \"inputs\": \"[[12, 9], 1]\", \"expected\": \"30\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        4,
+        4
+      ],
+      [
+        8,
+        8
+      ]
+    ],
+    "bug_summary": "Incorrect suffix_or calculation and incorrect bit shift operation in new_or calculation"
+  },
+  {
+    "question_title": "Defect",
+    "question_content": "There is a grid with H rows and W columns. Let (i, j) denote the square at the i-th row from the top and j-th column from the left of the grid.\r\nEach square of the grid is holed or not. There are exactly N holed squares: (a_1, b_1), (a_2, b_2), \\dots, (a_N, b_N).\nWhen the triple of positive integers (i, j, n) satisfies the following condition, the square region whose top-left corner is (i, j) and whose bottom-right corner is (i + n - 1, j + n - 1) is called a holeless square.\n\n- i + n - 1 \\leq H.\n- j + n - 1 \\leq W.\n- For every pair of non-negative integers (k, l) such that 0 \\leq k \\leq n - 1, 0 \\leq l \\leq n - 1, square (i + k, j + l) is not holed.\n\nHow many holeless squares are in the grid?\n\nInput\n\nThe input is given from Standard Input in the following format:\nH W N\r\na_1 b_1\r\na_2 b_2\r\n\\vdots\r\na_N b_N\n\nOutput\n\nPrint the number of holeless squares.\n\nConstraints\n\n\n- 1 \\leq H, W \\leq 3000\n- 0 \\leq N \\leq \\min(H \\times W, 10^5)\n- 1 \\leq a_i \\leq H\n- 1 \\leq b_i \\leq W\n- All (a_i, b_i) are pairwise different.\n- All input values are integers.\n\nSample Input 1\n\n2 3 1\r\n2 3\n\nSample Output 1\n\n6\r\n\nThere are six holeless squares, listed below. For the first five, n = 1, and the top-left and bottom-right corners are the same square.\n\n- The square region whose top-left and bottom-right corners are (1, 1).\n- The square region whose top-left and bottom-right corners are (1, 2).\n- The square region whose top-left and bottom-right corners are (1, 3).\n- The square region whose top-left and bottom-right corners are (2, 1).\n- The square region whose top-left and bottom-right corners are (2, 2).\n- The square region whose top-left corner is (1, 1) and whose bottom-right corner is (2, 2).\n\nSample Input 2\n\n3 2 6\r\n1 1\r\n1 2\r\n2 1\r\n2 2\r\n3 1\r\n3 2\n\nSample Output 2\n\n0\r\n\nThere may be no holeless square.\n\nSample Input 3\n\n1 1 0\n\nSample Output 3\n\n1\r\n\nThe whole grid may be a holeless square.\n\nSample Input 4\n\n3000 3000 0\n\nSample Output 4\n\n9004500500",
+    "platform": "atcoder",
+    "question_id": "abc311_e",
+    "contest_id": "abc311",
+    "contest_date": "2023-07-22T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# H, W, N = map(int, input().split())\n# holes = [tuple(map(int, input().split())) for _ in range(N)]\n\nH, W, N = 3, 3, 1\nholes = [(2, 3)]\n\n# Initialize DP table\ndp = [[0] * (W + 1) for _ in range(H + 1)]\n\n# Mark holed squares\nfor a, b in holes:\n    dp[a][b] = -1\n\n# Fill DP table\nfor i in range(1, H + 1):\n    for j in range(1, W + 1):\n        if dp[i][j] == -1:\n            continue\n        dp[i][j] = min(dp[i][j], dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1\n\n# Calculate the number of holeless squares\nresult = 0\nfor i in range(1, H + 1):\n    for j in range(1, W + 1):\n        if dp[i][j] > 0:\n            result += dp[i][j]\n\nprint(result)\n```"
+    ],
+    "code_list": [
+      "# H, W, N = map(int, input().split())\n# holes = [tuple(map(int, input().split())) for _ in range(N)]\n\nH, W, N = 3, 3, 1\nholes = [(2, 3)]\n\n# Initialize DP table\ndp = [[0] * (W + 1) for _ in range(H + 1)]\n\n# Mark holed squares\nfor a, b in holes:\n    dp[a][b] = -1\n\n# Fill DP table\nfor i in range(1, H + 1):\n    for j in range(1, W + 1):\n        if dp[i][j] == -1:\n            continue\n        dp[i][j] = min(dp[i][j], dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1\n\n# Calculate the number of holeless squares\nresult = 0\nfor i in range(1, H + 1):\n    for j in range(1, W + 1):\n        if dp[i][j] > 0:\n            result += dp[i][j]\n\nprint(result)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"7\\n\", \"inputs\": \"2 3 1\\n2 3\\n\", \"expected\": \"6\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 7 != 6\"}"
+    ],
+    "bug_span": [
+      [
+        19,
+        19
+      ]
+    ],
+    "bug_summary": "DP update line uses dp[i][j] before initialization, causing incorrect minimum calculation."
+  },
+  {
+    "question_title": "longest-alternating-subarray",
+    "question_content": "You are given a 0-indexed integer array nums. A subarray s of length m is called alternating if:\n\nm is greater than 1.\ns_1 = s_0 + 1.\nThe 0-indexed subarray s looks like [s_0, s_1, s_0, s_1,...,s_(m-1) % 2]. In other words, s_1 - s_0 = 1, s_2 - s_1 = -1, s_3 - s_2 = 1, s_4 - s_3 = -1, and so on up to s[m - 1] - s[m - 2] = (-1)^m.\n\nReturn the maximum length of all alternating subarrays present in nums or -1 if no such subarray exists.\nA subarray is a contiguous non-empty sequence of elements within an array.\n \nExample 1:\n\nInput: nums = [2,3,4,3,4]\nOutput: 4\nExplanation: The alternating subarrays are [3,4], [3,4,3], and [3,4,3,4]. The longest of these is [3,4,3,4], which is of length 4.\n\nExample 2:\n\nInput: nums = [4,5,6]\nOutput: 2\nExplanation: [4,5] and [5,6] are the only two alternating subarrays. They are both of length 2.\n\n \nConstraints:\n\n2 <= nums.length <= 100\n1 <= nums[i] <= 10^4",
+    "platform": "leetcode",
+    "question_id": "2870",
+    "contest_id": "biweekly-contest-108",
+    "contest_date": "2023-07-08T00:00:00",
+    "starter_code": "class Solution:\n    def alternatingSubarray(self, nums: List[int]) -> int:\n        ",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\nfrom typing import List\n\nclass Solution:\n    def alternatingSubarray(self, nums: List[int]) -> int:\n        max_length = -1\n        start = 0\n        \n        for end in range(1, len(nums)):\n            if nums[end] == nums[end - 1] + 1:\n                if end - start == 1:\n                    start = end - 1\n                continue\n            else:\n                if (end - start) % 2 == 0 and nums[end] == nums[start]:\n                    max_length = max(max_length, end - start + 1)\n                start = end\n        \n        if (len(nums) - start) % 2 == 0 and nums[-1] == nums[start]:\n            max_length = max(max_length, len(nums) - start)\n        \n        return max_length\n```\n"
+    ],
+    "code_list": [
+      "from typing import List\n\nclass Solution:\n    def alternatingSubarray(self, nums: List[int]) -> int:\n        max_length = -1\n        start = 0\n        \n        for end in range(1, len(nums)):\n            if nums[end] == nums[end - 1] + 1:\n                if end - start == 1:\n                    start = end - 1\n                continue\n            else:\n                if (end - start) % 2 == 0 and nums[end] == nums[start]:\n                    max_length = max(max_length, end - start + 1)\n                start = end\n        \n        if (len(nums) - start) % 2 == 0 and nums[-1] == nums[start]:\n            max_length = max(max_length, len(nums) - start)\n        \n        return max_length"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"-1\", \"inputs\": \"[[2, 3, 4, 3, 4]]\", \"expected\": \"4\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        14,
+        19
+      ]
+    ],
+    "bug_summary": "Incorrect condition and logic for checking alternating subarray and updating max_length."
+  },
+  {
+    "question_title": "Sum of Min of Mod of Linear",
+    "question_content": "You are given positive integers N, M, K, a non-negative integer C, and an integer sequence A=(A_1, A_2, \\ldots, A_N) of length N.\nFind \\displaystyle \\sum_{k=0}^{K-1}\\min_{1\\le i\\le N}\\lbrace(Ck+A_i)\\ \\mathrm{mod}\\ M \\rbrace.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN M C K\nA_1 A_2 \\ldots A_N\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 1 \\le N \\le 10^5\n- 1 \\le M \\le 10^9\n- 0 \\le C < M\n- 1 \\le K \\le 10^9\n- 0 \\le A_i < M\n- All input values are integers.\n\nSample Input 1\n\n2 5 3 3\n1 3\n\nSample Output 1\n\n4\n\nFor k=0, \\lbrace(3k+1)\\ \\mathrm{mod}\\ 5 \\rbrace=1 and \\lbrace(3k+3)\\ \\mathrm{mod}\\ 5 \\rbrace=3, so \\displaystyle \\min_{1\\le i\\le N}\\lbrace(Ck+A_i)\\ \\mathrm{mod}\\ M \\rbrace=1.\nFor k=1, \\lbrace(3k+1)\\ \\mathrm{mod}\\ 5 \\rbrace=4 and \\lbrace(3k+3)\\ \\mathrm{mod}\\ 5 \\rbrace=1, so \\displaystyle \\min_{1\\le i\\le N}\\lbrace(Ck+A_i)\\ \\mathrm{mod}\\ M \\rbrace=1.\nFor k=2, \\lbrace(3k+1)\\ \\mathrm{mod}\\ 5 \\rbrace=2 and \\lbrace(3k+3)\\ \\mathrm{mod}\\ 5 \\rbrace=4, so \\displaystyle \\min_{1\\le i\\le N}\\lbrace(Ck+A_i)\\ \\mathrm{mod}\\ M \\rbrace=2.\nTherefore, the answer is 1+1+2=4. Hence, print 4.\n\nSample Input 2\n\n5 4 3 182\n0 3 2 1 2\n\nSample Output 2\n\n0\n\nSample Input 3\n\n5 718 651 193855\n3 532 44 109 58\n\nSample Output 3\n\n29484897",
+    "platform": "atcoder",
+    "question_id": "arc182_e",
+    "contest_id": "arc182",
+    "contest_date": "2024-08-11T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nimport sys\n\ndef solve():\n    input = sys.stdin.read\n    data = input().split()\n    N = int(data[0])\n    M = int(data[1])\n    C = int(data[2])\n    K = int(data[3])\n    A = list(map(int, data[4:]))\n    \n    min_mod = min([(C * k + a) % M for k in range(K) for a in A])\n    print(min_mod * K)\n\nsolve()\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nimport sys\n\ndef solve():\n    input = sys.stdin.read\n    data = input().split()\n    N = int(data[0])\n    M = int(data[1])\n    C = int(data[2])\n    K = int(data[3])\n    A = list(map(int, data[4:]))\n    \n    min_mod = min([(C * k + a) % M for k in range(K) for a in A])\n    print(min_mod * K)\n\nsolve()"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"3\\n\", \"inputs\": \"2 5 3 3\\n1 3\\n\", \"expected\": \"4\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 3 != 4\"}"
+    ],
+    "bug_span": [
+      [
+        13,
+        14
+      ]
+    ],
+    "bug_summary": "Incorrect calculation of min_mod and output; should compute sum of min of mod for each k, not min over all k and a combined."
+  }
+]

@@ -1,0 +1,482 @@
+[
+  {
+    "question_title": "A. Short Sort",
+    "question_content": "There are three cards with letters $\\texttt{a}$, $\\texttt{b}$, $\\texttt{c}$ placed in a row in some order. You can do the following operation at most once: \n\n \n-  Pick two cards, and swap them.  Is it possible that the row becomes $\\texttt{abc}$ after the operation? Output \"YES\" if it is possible, and \"NO\" otherwise.\n\nInput\n\nThe first line contains a single integer $t$ ($1 \\leq t \\leq 6$) — the number of test cases.\n\nThe only line of each test case contains a single string consisting of each of the three characters $\\texttt{a}$, $\\texttt{b}$, and $\\texttt{c}$ exactly once, representing the cards.\n\nOutput\n\nFor each test case, output \"YES\" if you can make the row $\\texttt{abc}$ with at most one operation, or \"NO\" otherwise.\n\nYou can output the answer in any case (for example, the strings \"yEs\", \"yes\", \"Yes\" and \"YES\" will be recognized as a positive answer).Sample Input 1:\n6\n\nabc\n\nacb\n\nbac\n\nbca\n\ncab\n\ncba\n\n\n\nSample Output 1:\n\nYES\nYES\nYES\nNO\nNO\nYES\n\n\nNote\n\nIn the first test case, we don't need to do any operations, since the row is already $\\texttt{abc}$.\n\nIn the second test case, we can swap $\\texttt{c}$ and $\\texttt{b}$: $\\texttt{acb} \\to \\texttt{abc}$.\n\nIn the third test case, we can swap $\\texttt{b}$ and $\\texttt{a}$: $\\texttt{bac} \\to \\texttt{abc}$.\n\nIn the fourth test case, it is impossible to make $\\texttt{abc}$ using at most one operation.",
+    "platform": "codeforces",
+    "question_id": "1873_A",
+    "contest_id": "1873",
+    "contest_date": "2023-08-21T00:00:00",
+    "starter_code": "",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nt = int(input())\nfor _ in range(t):\n    s = input()\n    if s == 'abc':\n        print('YES')\n    elif s == 'acb' or s == 'bac' or s == 'cab':\n        print('YES')\n    else:\n        print('NO')\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nt = int(input())\nfor _ in range(t):\n    s = input()\n    if s == 'abc':\n        print('YES')\n    elif s == 'acb' or s == 'bac' or s == 'cab':\n        print('YES')\n    else:\n        print('NO')"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"YES\\nYES\\nYES\\nNO\\nYES\\nNO\\n\", \"inputs\": \"6\\nabc\\nacb\\nbac\\nbca\\ncab\\ncba\\n\", \"expected\": \"YES\\nYES\\nYES\\nNO\\nNO\\nYES\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=4: YES != NO\"}"
+    ],
+    "bug_span": [
+      [
+        7,
+        7
+      ]
+    ],
+    "bug_summary": "Line 7 incorrectly checks for 'cab' instead of 'cba', causing wrong outputs."
+  },
+  {
+    "question_title": "B. Good Kid",
+    "question_content": "Slavic is preparing a present for a friend's birthday. He has an array $a$ of $n$ digits and the present will be the product of all these digits. Because Slavic is a good kid who wants to make the biggest product possible, he wants to add $1$ to exactly one of his digits. \n\nWhat is the maximum product Slavic can make?\n\nInput\n\nThe first line contains a single integer $t$ ($1 \\leq t \\leq 10^4$) — the number of test cases.\n\nThe first line of each test case contains a single integer $n$ ($1 \\leq n \\leq 9$) — the number of digits.\n\nThe second line of each test case contains $n$ space-separated integers $a_i$ ($0 \\leq a_i \\leq 9$) — the digits in the array.\n\nOutput\n\nFor each test case, output a single integer — the maximum product Slavic can make, by adding $1$ to exactly one of his digits.Sample Input 1:\n4\n\n4\n\n2 2 1 2\n\n3\n\n0 1 2\n\n5\n\n4 3 2 3 4\n\n9\n\n9 9 9 9 9 9 9 9 9\n\n\n\nSample Output 1:\n\n16\n2\n432\n430467210\n",
+    "platform": "codeforces",
+    "question_id": "1873_B",
+    "contest_id": "1873",
+    "contest_date": "2023-08-21T00:00:00",
+    "starter_code": "",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nimport sys\n\ndef max_product_after_increment(digits):\n    n = len(digits)\n    product = 1\n    for digit in digits:\n        product *= digit\n    \n    for i in range(n):\n        temp_product = product // digits[i] * (digits[i] + 1)\n        if temp_product > product:\n            return temp_product\n    \n    return product\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    digits = list(map(int, input().split()))\n    print(max_product_after_increment(digits))\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nimport sys\n\ndef max_product_after_increment(digits):\n    n = len(digits)\n    product = 1\n    for digit in digits:\n        product *= digit\n    \n    for i in range(n):\n        temp_product = product // digits[i] * (digits[i] + 1)\n        if temp_product > product:\n            return temp_product\n    \n    return product\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    digits = list(map(int, input().split()))\n    print(max_product_after_increment(digits))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"ZeroDivisionError('integer division or modulo by zero')\", \"error_code\": -4, \"error_message\": \"Runtime Error\", \"inputs\": \"4\\n4\\n2 2 1 2\\n3\\n0 1 2\\n5\\n4 3 2 3 4\\n9\\n9 9 9 9 9 9 9 9 9\\n\", \"expected\": \"16\\n2\\n432\\n430467210\\n\"}"
+    ],
+    "bug_span": [
+      [
+        11,
+        11
+      ]
+    ],
+    "bug_summary": "division by zero error on line 11 when digit is zero"
+  },
+  {
+    "question_title": "D. 1D Eraser",
+    "question_content": "You are given a strip of paper $s$ that is $n$ cells long. Each cell is either black or white. In an operation you can take any $k$ consecutive cells and make them all white.\n\nFind the minimum number of operations needed to remove all black cells.\n\nInput\n\nThe first line contains a single integer $t$ ($1 \\leq t \\leq 1000$) — the number of test cases.\n\nThe first line of each test case contains two integers $n$ and $k$ ($1 \\leq k \\leq n \\leq 2 \\cdot 10^5$) — the length of the paper and the integer used in the operation.\n\nThe second line of each test case contains a string $s$ of length $n$ consisting of characters $\\texttt{B}$ (representing a black cell) or $\\texttt{W}$ (representing a white cell).\n\nThe sum of $n$ over all test cases does not exceed $2 \\cdot 10^5$.\n\nOutput\n\nFor each test case, output a single integer — the minimum number of operations needed to remove all black cells.Sample Input 1:\n8\n\n6 3\n\nWBWWWB\n\n7 3\n\nWWBWBWW\n\n5 4\n\nBWBWB\n\n5 5\n\nBBBBB\n\n8 2\n\nBWBWBBBB\n\n10 2\n\nWBBWBBWBBW\n\n4 1\n\nBBBB\n\n3 2\n\nWWW\n\n\n\nSample Output 1:\n\n2\n1\n2\n1\n4\n3\n4\n0\n\n\nNote\n\nIn the first test case you can perform the following operations: $$\\color{red}{\\texttt{WBW}}\\texttt{WWB} \\to \\texttt{WWW}\\color{red}{\\texttt{WWB}} \\to \\texttt{WWWWWW}$$\n\nIn the second test case you can perform the following operations: $$\\texttt{WW}\\color{red}{\\texttt{BWB}}\\texttt{WW} \\to \\texttt{WWWWWWW}$$\n\nIn the third test case you can perform the following operations: $$\\texttt{B}\\color{red}{\\texttt{WBWB}} \\to \\color{red}{\\texttt{BWWW}}\\texttt{W} \\to \\texttt{WWWWW}$$",
+    "platform": "codeforces",
+    "question_id": "1873_D",
+    "contest_id": "1873",
+    "contest_date": "2023-08-21T00:00:00",
+    "starter_code": "",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nfrom collections import deque\n\ndef min_operations(n, k, s):\n    operations = 0\n    queue = deque()\n    for i in range(n):\n        if s[i] == 'B':\n            if queue and queue[0] + k <= i:\n                queue.popleft()\n            queue.append(i)\n        if len(queue) >= k:\n            operations += 1\n            queue.clear()\n    return operations\n\nt = int(input())\nfor _ in range(t):\n    n, k = map(int, input().split())\n    s = input().strip()\n    print(min_operations(n, k, s))\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nfrom collections import deque\n\ndef min_operations(n, k, s):\n    operations = 0\n    queue = deque()\n    for i in range(n):\n        if s[i] == 'B':\n            if queue and queue[0] + k <= i:\n                queue.popleft()\n            queue.append(i)\n        if len(queue) >= k:\n            operations += 1\n            queue.clear()\n    return operations\n\nt = int(input())\nfor _ in range(t):\n    n, k = map(int, input().split())\n    s = input().strip()\n    print(min_operations(n, k, s))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"0\\n0\\n0\\n1\\n2\\n3\\n4\\n0\\n\", \"inputs\": \"8\\n6 3\\nWBWWWB\\n7 3\\nWWBWBWW\\n5 4\\nBWBWB\\n5 5\\nBBBBB\\n8 2\\nBWBWBBBB\\n10 2\\nWBBWBBWBBW\\n4 1\\nBBBB\\n3 2\\nWWW\\n\", \"expected\": \"2\\n1\\n2\\n1\\n4\\n3\\n4\\n0\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 0 != 2\"}"
+    ],
+    "bug_span": [
+      [
+        12,
+        14
+      ]
+    ],
+    "bug_summary": "Incorrect operation trigger logic in lines 12-14 causes miscounting of eraser operations."
+  },
+  {
+    "question_title": "C. Raspberries",
+    "question_content": "You are given an array of integers $a_1, a_2, \\ldots, a_n$ and a number $k$ ($2 \\leq k \\leq 5$). In one operation, you can do the following:\n\n\n-  Choose an index $1 \\leq i \\leq n$,\n-  Set $a_i = a_i + 1$.Find the minimum number of operations needed to make the product of all the numbers in the array $a_1 \\cdot a_2 \\cdot \\ldots \\cdot a_n$ divisible by $k$.\n\nInput\n\nEach test consists of multiple test cases. The first line contains a single integer $t$ ($1 \\leq t \\leq 10^4$) — the number of test cases. Then follows the description of the test cases.\n\nThe first line of each test case contains two integers $n$ and $k$ ($2 \\leq n \\leq 10^5$, $2 \\leq k \\leq 5$) — the size of the array $a$ and the number $k$.\n\nThe second line of each test case contains $n$ integers $a_1, a_2, \\ldots, a_n$ ($1 \\leq a_i \\leq 10$).\n\nIt is guaranteed that the sum of $n$ over all test cases does not exceed $2 \\cdot 10^5$.\n\nOutput\n\nFor each test case, output the minimum number of operations needed to make the product of all the numbers in the array divisible by $k$.Sample Input 1:\n15\n\n2 5\n\n7 3\n\n3 3\n\n7 4 1\n\n5 2\n\n9 7 7 3 9\n\n5 5\n\n5 4 1 2 3\n\n7 4\n\n9 5 1 5 9 5 1\n\n3 4\n\n6 3 6\n\n3 4\n\n6 1 5\n\n3 4\n\n1 5 9\n\n4 4\n\n1 4 1 1\n\n3 4\n\n3 5 3\n\n4 5\n\n8 9 9 3\n\n2 5\n\n1 6\n\n2 5\n\n10 10\n\n4 5\n\n1 6 1 1\n\n2 5\n\n7 7\n\n\n\nSample Output 1:\n\n2\n2\n1\n0\n2\n0\n1\n2\n0\n1\n1\n4\n0\n4\n3\n\n\nNote\n\nIn the first test case, we need to choose the index $i = 2$ twice. After that, the array will be $a = [7, 5]$. The product of all the numbers in the array is $35$.\n\nIn the fourth test case, the product of the numbers in the array is $120$, which is already divisible by $5$, so no operations are needed.\n\nIn the eighth test case, we can perform two operations by choosing $i = 2$ and $i = 3$ in any order. After that, the array will be $a = [1, 6, 10]$. The product of the numbers in the array is $60$.",
+    "platform": "codeforces",
+    "question_id": "1883_C",
+    "contest_id": "1883",
+    "contest_date": "2023-09-22T00:00:00",
+    "starter_code": "",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\n# number of test cases\nt = int(input())\n\nfor _ in range(t):\n    # read n and k\n    n, k = map(int, input().split())\n    # read the array\n    a = list(map(int, input().split()))\n    # initialize operations count\n    operations = 0\n    # initialize count of numbers not contributing to divisibility by k\n    non_contributing = 0\n    # count numbers that are not contributing to divisibility by k\n    for num in a:\n        if num % k != 0:\n            non_contributing += 1\n    # if all numbers are already contributing to divisibility by k, no operations needed\n    if non_contributing == 0:\n        print(0)\n    else:\n        # calculate the minimum operations needed\n        operations = (non_contributing + k - 1) // k\n        print(operations)\n```"
+    ],
+    "code_list": [
+      "# number of test cases\nt = int(input())\n\nfor _ in range(t):\n    # read n and k\n    n, k = map(int, input().split())\n    # read the array\n    a = list(map(int, input().split()))\n    # initialize operations count\n    operations = 0\n    # initialize count of numbers not contributing to divisibility by k\n    non_contributing = 0\n    # count numbers that are not contributing to divisibility by k\n    for num in a:\n        if num % k != 0:\n            non_contributing += 1\n    # if all numbers are already contributing to divisibility by k, no operations needed\n    if non_contributing == 0:\n        print(0)\n    else:\n        # calculate the minimum operations needed\n        operations = (non_contributing + k - 1) // k\n        print(operations)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"1\\n1\\n3\\n1\\n2\\n1\\n1\\n1\\n1\\n1\\n1\\n1\\n0\\n1\\n1\\n\", \"inputs\": \"15\\n2 5\\n7 3\\n3 3\\n7 4 1\\n5 2\\n9 7 7 3 9\\n5 5\\n5 4 1 2 3\\n7 4\\n9 5 1 5 9 5 1\\n3 4\\n6 3 6\\n3 4\\n6 1 5\\n3 4\\n1 5 9\\n4 4\\n1 4 1 1\\n3 4\\n3 5 3\\n4 5\\n8 9 9 3\\n2 5\\n1 6\\n2 5\\n10 10\\n4 5\\n1 6 1 1\\n2 5\\n7 7\\n\", \"expected\": \"2\\n2\\n1\\n0\\n2\\n0\\n1\\n2\\n0\\n1\\n1\\n4\\n0\\n4\\n3\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 1 != 2\"}"
+    ],
+    "bug_span": [
+      [
+        22,
+        22
+      ]
+    ],
+    "bug_summary": "The operation count is computed with an incorrect formula at line 22."
+  },
+  {
+    "question_title": "A. Game with Integers",
+    "question_content": "Vanya and Vova are playing a game. Players are given an integer $n$. On their turn, the player can add $1$ to the current integer or subtract $1$. The players take turns; Vanya starts. If after Vanya's move the integer is divisible by $3$, then he wins. If $10$ moves have passed and Vanya has not won, then Vova wins.\n\nWrite a program that, based on the integer $n$, determines who will win if both players play optimally.\n\nInput\n\nThe first line contains the integer $t$ ($1 \\leq t \\leq 100$) — the number of test cases.\n\nThe single line of each test case contains the integer $n$ ($1 \\leq n \\leq 1000$).\n\nOutput\n\nFor each test case, print \"First\" without quotes if Vanya wins, and \"Second\" without quotes if Vova wins.Sample Input 1:\n6\n\n1\n\n3\n\n5\n\n100\n\n999\n\n1000\n\n\n\nSample Output 1:\n\nFirst\nSecond\nFirst\nFirst\nSecond\nFirst\n",
+    "platform": "codeforces",
+    "question_id": "1899_A",
+    "contest_id": "1899",
+    "contest_date": "2023-10-17T00:00:00",
+    "starter_code": "",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    if n % 3 == 0:\n        print(\"Second\")\n    elif (n + 2) % 3 == 0:\n        print(\"First\")\n    else:\n        print(\"Second\")\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    if n % 3 == 0:\n        print(\"Second\")\n    elif (n + 2) % 3 == 0:\n        print(\"First\")\n    else:\n        print(\"Second\")"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"First\\nSecond\\nSecond\\nFirst\\nSecond\\nFirst\\n\", \"inputs\": \"6\\n1\\n3\\n5\\n100\\n999\\n1000\\n\", \"expected\": \"First\\nSecond\\nFirst\\nFirst\\nSecond\\nFirst\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=2: Second != First\"}"
+    ],
+    "bug_span": [
+      [
+        9,
+        9
+      ]
+    ],
+    "bug_summary": "Incorrect else branch: prints 'Second' when it should print 'First'."
+  },
+  {
+    "question_title": "B. 250 Thousand Tons of TNT",
+    "question_content": "Alex is participating in the filming of another video of BrMeast, and BrMeast asked Alex to prepare 250 thousand tons of TNT, but Alex didn't hear him well, so he prepared $n$ boxes and arranged them in a row waiting for trucks. The $i$-th box from the left weighs $a_i$ tons.\n\nAll trucks that Alex is going to use hold the same number of boxes, denoted by $k$. Loading happens the following way:\n\n \n-  The first $k$ boxes goes to the first truck, \n-  The second $k$ boxes goes to the second truck, \n-  $\\dotsb$ \n-  The last $k$ boxes goes to the $\\frac{n}{k}$-th truck. Upon loading is completed, each truck must have exactly $k$ boxes. In other words, if at some point it is not possible to load exactly $k$ boxes into the truck, then the loading option with that $k$ is not possible.\n\nAlex hates justice, so he wants the maximum absolute difference between the total weights of two trucks to be as great as possible. If there is only one truck, this value is $0$.\n\nAlex has quite a lot of connections, so for every $1 \\leq k \\leq n$, he can find a company such that each of its trucks can hold exactly $k$ boxes. Print the maximum absolute difference between the total weights of any two trucks.\n\nInput\n\nThe first line contains one integer $t$ ($1 \\leq t \\leq 10^4$) — the number of test cases.\n\nThe first line of each test case contains one integer $n$ ($1 \\leq n \\leq 150\\,000$) — the number of boxes.\n\nThe second line contains $n$ integers $a_1, a_2, \\dots, a_n$ ($1 \\leq a_i \\leq 10^9$) — the weights of the boxes.\n\nIt is guaranteed that the sum of $n$ for all test cases does not exceed $150\\,000$.\n\nOutput\n\nFor each test case, print a single integer — the answer to the problem.Sample Input 1:\n5\n\n2\n\n1 2\n\n6\n\n10 2 3 6 1 3\n\n4\n\n1000000000 1000000000 1000000000 1000000000\n\n15\n\n60978 82265 78961 56708 39846 31071 4913 4769 29092 91348 64119 72421 98405 222 14294\n\n8\n\n19957 69913 37531 96991 57838 21008 14207 19198\n\n\n\nSample Output 1:\n\n1\n9\n0\n189114\n112141\n\n\nNote\n\nIn the first case, we should pick two trucks, so the first one will have only the first box, and the second one will have only the second box.\n\nIn the second case, we should pick six trucks, so the maximum will be $10$, the minimum will be $1$, and the answer is $10 - 1 = 9$.\n\nIn the third case, for any possible $k$, the trucks will have the same total weight of boxes, so the answer is $0$.",
+    "platform": "codeforces",
+    "question_id": "1899_B",
+    "contest_id": "1899",
+    "contest_date": "2023-10-17T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nfrom math import gcd\nfrom functools import reduce\n\ndef max_diff(n, a):\n    total_weight = sum(a)\n    k_values = list(range(1, n + 1))\n    common_divisor = reduce(gcd, k_values)\n    max_diff = 0\n    for k in range(1, n + 1):\n        if n % k == 0:\n            current_diff = abs((total_weight // n) * k - total_weight // (n // k))\n            max_diff = max(max_diff, current_diff)\n    return max_diff\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(max_diff(n, a))\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nfrom math import gcd\nfrom functools import reduce\n\ndef max_diff(n, a):\n    total_weight = sum(a)\n    k_values = list(range(1, n + 1))\n    common_divisor = reduce(gcd, k_values)\n    max_diff = 0\n    for k in range(1, n + 1):\n        if n % k == 0:\n            current_diff = abs((total_weight // n) * k - total_weight // (n // k))\n            max_diff = max(max_diff, current_diff)\n    return max_diff\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(max_diff(n, a))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"1\\n1\\n0\\n7\\n3\\n\", \"inputs\": \"5\\n2\\n1 2\\n6\\n10 2 3 6 1 3\\n4\\n1000000000 1000000000 1000000000 1000000000\\n15\\n60978 82265 78961 56708 39846 31071 4913 4769 29092 91348 64119 72421 98405 222 14294\\n8\\n19957 69913 37531 96991 57838 21008 14207 19198\\n\", \"expected\": \"1\\n9\\n0\\n189114\\n112141\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=1: 1 != 9\"}"
+    ],
+    "bug_span": [
+      [
+        12,
+        12
+      ]
+    ],
+    "bug_summary": "Line 12’s formula is incorrect – it uses total_weight and ignores individual TNT values."
+  },
+  {
+    "question_title": "C. Yarik and Array",
+    "question_content": "A subarray is a continuous part of array.\n\nYarik recently found an array $a$ of $n$ elements and became very interested in finding the maximum sum of a non empty subarray. However, Yarik doesn't like consecutive integers with the same parity, so the subarray he chooses must have alternating parities for adjacent elements.\n\nFor example, $[1, 2, 3]$ is acceptable, but $[1, 2, 4]$ is not, as $2$ and $4$ are both even and adjacent.\n\nYou need to help Yarik by finding the maximum sum of such a subarray.\n\nInput\n\nThe first line contains an integer $t$ $(1 \\le t \\le 10^4)$ — number of test cases. Each test case is described as follows.\n\nThe first line of each test case contains an integer $n$ $(1 \\le n \\le 2 \\cdot 10^5)$ — length of the array.\n\nThe second line of each test case contains $n$ integers $a_1, a_2, \\dots, a_n$ $(-10^3 \\le a_i \\le 10^3)$ — elements of the array.\n\nIt is guaranteed that the sum of $n$ for all test cases does not exceed $2 \\cdot 10^5$.\n\nOutput\n\nFor each test case, output a single integer — the answer to the problem.Sample Input 1:\n7\n\n5\n\n1 2 3 4 5\n\n4\n\n9 9 8 8\n\n6\n\n-1 4 -1 0 5 -4\n\n4\n\n-1 2 4 -3\n\n1\n\n-1000\n\n3\n\n101 -99 101\n\n20\n\n-10 5 -8 10 6 -10 7 9 -2 -6 7 2 -4 6 -1 7 -6 -7 4 1\n\n\n\nSample Output 1:\n\n15\n17\n8\n4\n-1000\n101\n10\n",
+    "platform": "codeforces",
+    "question_id": "1899_C",
+    "contest_id": "1899",
+    "contest_date": "2023-10-17T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# number of test cases\nt = int(input())\n\nfor _ in range(t):\n    # length of the array\n    n = int(input())\n    # elements of the array\n    arr = list(map(int, input().split()))\n    \n    # Initialize variables to store the maximum sum\n    max_sum = float('-inf')\n    current_sum = 0\n    parity = None\n    \n    for num in arr:\n        if parity is None:\n            # Start a new subarray with the current number\n            current_sum = num\n            parity = num % 2\n        else:\n            # Check if the current number has the opposite parity\n            if num % 2 != parity:\n                # Update the maximum sum if the current subarray is better\n                max_sum = max(max_sum, current_sum)\n                # Start a new subarray with the current number\n                current_sum = num\n                parity = num % 2\n            else:\n                # Add the current number to the current subarray\n                current_sum += num\n        \n        # Update the maximum sum if the last subarray is better\n        max_sum = max(max_sum, current_sum)\n    \n    print(max_sum)\n```"
+    ],
+    "code_list": [
+      "# number of test cases\nt = int(input())\n\nfor _ in range(t):\n    # length of the array\n    n = int(input())\n    # elements of the array\n    arr = list(map(int, input().split()))\n    \n    # Initialize variables to store the maximum sum\n    max_sum = float('-inf')\n    current_sum = 0\n    parity = None\n    \n    for num in arr:\n        if parity is None:\n            # Start a new subarray with the current number\n            current_sum = num\n            parity = num % 2\n        else:\n            # Check if the current number has the opposite parity\n            if num % 2 != parity:\n                # Update the maximum sum if the current subarray is better\n                max_sum = max(max_sum, current_sum)\n                # Start a new subarray with the current number\n                current_sum = num\n                parity = num % 2\n            else:\n                # Add the current number to the current subarray\n                current_sum += num\n        \n        # Update the maximum sum if the last subarray is better\n        max_sum = max(max_sum, current_sum)\n    \n    print(max_sum)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"5\\n18\\n5\\n6\\n-1000\\n103\\n16\\n\", \"inputs\": \"7\\n5\\n1 2 3 4 5\\n4\\n9 9 8 8\\n6\\n-1 4 -1 0 5 -4\\n4\\n-1 2 4 -3\\n1\\n-1000\\n3\\n101 -99 101\\n20\\n-10 5 -8 10 6 -10 7 9 -2 -6 7 2 -4 6 -1 7 -6 -7 4 1\\n\", \"expected\": \"15\\n17\\n8\\n4\\n-1000\\n101\\n10\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 5 != 15\"}"
+    ],
+    "bug_span": [
+      [
+        21,
+        28
+      ]
+    ],
+    "bug_summary": "The code resets the subarray on encountering an alternate parity instead of extending it, causing incorrect cumulative sums."
+  },
+  {
+    "question_title": "D. Yarik and Musical Notes",
+    "question_content": "Yarik is a big fan of many kinds of music. But Yarik loves not only listening to music but also writing it. He likes electronic music most of all, so he has created his own system of music notes, which, in his opinion, is best for it.\n\nSince Yarik also likes informatics, in his system notes are denoted by integers of $2^k$, where $k \\ge 1$ — a positive integer. But, as you know, you can't use just notes to write music, so Yarik uses combinations of two notes. The combination of two notes $(a, b)$, where $a = 2^k$ and $b = 2^l$, he denotes by the integer $a^b$.\n\nFor example, if $a = 8 = 2^3$, $b = 4 = 2^2$, then the combination $(a, b)$ is denoted by the integer $a^b = 8^4 = 4096$. Note that different combinations can have the same notation, e.g., the combination $(64, 2)$ is also denoted by the integer $4096 = 64^2$.\n\nYarik has already chosen $n$ notes that he wants to use in his new melody. However, since their integers can be very large, he has written them down as an array $a$ of length $n$, then the note $i$ is $b_i = 2^{a_i}$. The integers in array $a$ can be repeated.\n\nThe melody will consist of several combinations of two notes. Yarik was wondering how many pairs of notes $b_i, b_j$ $(i < j)$ exist such that the combination $(b_i, b_j)$ is equal to the combination $(b_j, b_i)$. In other words, he wants to count the number of pairs $(i, j)$ $(i < j)$ such that $b_i^{b_j} = b_j^{b_i}$. Help him find the number of such pairs.\n\nInput\n\nThe first line of the input contains one integer $t$ ($1 \\le t \\le 10^4$) — the number of test cases.\n\nThe first line of each test case contains one integer $n$ ($1 \\leq n \\leq 2 \\cdot 10^5$) — the length of the arrays.\n\nThe next line contains $n$ integers $a_1, a_2, \\dots, a_n$ ($1 \\leq a_i \\leq 10^9$) — array $a$.\n\nIt is guaranteed that the sum of $n$ over all test cases does not exceed $2 \\cdot 10^5$.\n\nOutput\n\nFor each test case, output the number of pairs that satisfy the given condition.Sample Input 1:\n5\n\n1\n\n2\n\n4\n\n3 1 3 2\n\n2\n\n1000 1000\n\n3\n\n1 1 1\n\n19\n\n2 4 1 6 2 8 5 4 2 10 5 10 8 7 4 3 2 6 10\n\n\n\nSample Output 1:\n\n0\n2\n1\n3\n19\n",
+    "platform": "codeforces",
+    "question_id": "1899_D",
+    "contest_id": "1899",
+    "contest_date": "2023-10-17T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# number of test cases\nt = int(input())\n\nfor _ in range(t):\n    # length of the array\n    n = int(input())\n    # array of integers\n    a = list(map(int, input().split()))\n    \n    # dictionary to store the frequency of each integer in the array\n    freq = {}\n    for num in a:\n        if num in freq:\n            freq[num] += 1\n        else:\n            freq[num] = 1\n    \n    # count the number of pairs\n    count = 0\n    for num in freq:\n        count += freq[num] * (freq[num] - 1) // 2\n    \n    print(count)\n```"
+    ],
+    "code_list": [
+      "# number of test cases\nt = int(input())\n\nfor _ in range(t):\n    # length of the array\n    n = int(input())\n    # array of integers\n    a = list(map(int, input().split()))\n    \n    # dictionary to store the frequency of each integer in the array\n    freq = {}\n    for num in a:\n        if num in freq:\n            freq[num] += 1\n        else:\n            freq[num] = 1\n    \n    # count the number of pairs\n    count = 0\n    for num in freq:\n        count += freq[num] * (freq[num] - 1) // 2\n    \n    print(count)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"0\\n1\\n1\\n3\\n15\\n\", \"inputs\": \"5\\n1\\n2\\n4\\n3 1 3 2\\n2\\n1000 1000\\n3\\n1 1 1\\n19\\n2 4 1 6 2 8 5 4 2 10 5 10 8 7 4 3 2 6 10\\n\", \"expected\": \"0\\n2\\n1\\n3\\n19\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=1: 1 != 2\"}"
+    ],
+    "bug_span": [
+      [
+        20,
+        21
+      ]
+    ],
+    "bug_summary": "Incorrect pair counting logic causing wrong pair count."
+  },
+  {
+    "question_title": "maximum-or",
+    "question_content": "You are given a 0-indexed integer array nums of length n and an integer k. In an operation, you can choose an element and multiply it by 2.\nReturn the maximum possible value of nums[0] | nums[1] | ... | nums[n - 1] that can be obtained after applying the operation on nums at most k times.\nNote that a | b denotes the bitwise or between two integers a and b.\n \nExample 1:\n\nInput: nums = [12,9], k = 1\nOutput: 30\nExplanation: If we apply the operation to index 1, our new array nums will be equal to [12,18]. Thus, we return the bitwise or of 12 and 18, which is 30.\n\nExample 2:\n\nInput: nums = [8,1,2], k = 2\nOutput: 35\nExplanation: If we apply the operation twice on index 0, we yield a new array of [32,1,2]. Thus, we return 32|1|2 = 35.\n\n \nConstraints:\n\n1 <= nums.length <= 10^5\n1 <= nums[i] <= 10^9\n1 <= k <= 15",
+    "platform": "leetcode",
+    "question_id": "2730",
+    "contest_id": "biweekly-contest-104",
+    "contest_date": "2023-05-13T00:00:00",
+    "starter_code": "class Solution:\n    def maximumOr(self, nums: List[int], k: int) -> int:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nclass Solution:\n    def maximumOr(self, nums: List[int], k: int) -> int:\n        prefix_or = 0\n        suffix_or = reduce(or_, nums)\n        max_or = 0\n        \n        for i, num in enumerate(nums):\n            new_or = (prefix_or | (num << k) | suffix_or)\n            max_or = max(max_or, new_or)\n            prefix_or |= num\n        \n        return max_or\n```"
+    ],
+    "code_list": [
+      "class Solution:\n    def maximumOr(self, nums: List[int], k: int) -> int:\n        prefix_or = 0\n        suffix_or = reduce(or_, nums)\n        max_or = 0\n        \n        for i, num in enumerate(nums):\n            new_or = (prefix_or | (num << k) | suffix_or)\n            max_or = max(max_or, new_or)\n            prefix_or |= num\n        \n        return max_or"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"31\", \"inputs\": \"[[12, 9], 1]\", \"expected\": \"30\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        4,
+        4
+      ]
+    ],
+    "bug_summary": "suffix_or is computed once and never updated, causing inaccurate OR tracking during iteration"
+  },
+  {
+    "question_title": "maximum-strength-of-a-group",
+    "question_content": "You are given a 0-indexed integer array nums representing the score of students in an exam. The teacher would like to form one non-empty group of students with maximal strength, where the strength of a group of students of indices i_0, i_1, i_2, ... , i_k is defined as nums[i_0] * nums[i_1] * nums[i_2] * ... * nums[i_k​].\nReturn the maximum strength of a group the teacher can create.\n \nExample 1:\n\nInput: nums = [3,-1,-5,2,5,-9]\nOutput: 1350\nExplanation: One way to form a group of maximal strength is to group the students at indices [0,2,3,4,5]. Their strength is 3 * (-5) * 2 * 5 * (-9) = 1350, which we can show is optimal.\n\nExample 2:\n\nInput: nums = [-4,-5,-4]\nOutput: 20\nExplanation: Group the students at indices [0, 1] . Then, we’ll have a resulting strength of 20. We cannot achieve greater strength.\n\n \nConstraints:\n\n1 <= nums.length <= 13\n-9 <= nums[i] <= 9",
+    "platform": "leetcode",
+    "question_id": "2754",
+    "contest_id": "biweekly-contest-105",
+    "contest_date": "2023-05-27T00:00:00",
+    "starter_code": "class Solution:\n    def maxStrength(self, nums: List[int]) -> int:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nfrom typing import List\n\nclass Solution:\n    def maxStrength(self, nums: List[int]) -> int:\n        positive_nums = [num for num in nums if num > 0]\n        negative_nums = [num for num in nums if num < 0]\n        zero_count = nums.count(0)\n        \n        if len(nums) == 1:\n            return nums[0]\n        \n        if len(negative_nums) % 2 != 0 and zero_count == 0:\n            negative_nums.pop()\n        \n        product = 1\n        for num in positive_nums + negative_nums:\n            product *= num\n        \n        return product\n```"
+    ],
+    "code_list": [
+      "from typing import List\n\nclass Solution:\n    def maxStrength(self, nums: List[int]) -> int:\n        positive_nums = [num for num in nums if num > 0]\n        negative_nums = [num for num in nums if num < 0]\n        zero_count = nums.count(0)\n        \n        if len(nums) == 1:\n            return nums[0]\n        \n        if len(negative_nums) % 2 != 0 and zero_count == 0:\n            negative_nums.pop()\n        \n        product = 1\n        for num in positive_nums + negative_nums:\n            product *= num\n        \n        return product"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"150\", \"inputs\": \"[[3, -1, -5, 2, 5, -9]]\", \"expected\": \"1350\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        13,
+        13
+      ]
+    ],
+    "bug_summary": "Incorrect removal of a negative number: should remove the one with smallest absolute value for maximum product."
+  },
+  {
+    "question_title": "count-of-integers",
+    "question_content": "You are given two numeric strings num1 and num2 and two integers max_sum and min_sum. We denote an integer x to be good if:\n\nnum1 <= x <= num2\nmin_sum <= digit_sum(x) <= max_sum.\n\nReturn the number of good integers. Since the answer may be large, return it modulo 10^9 + 7.\nNote that digit_sum(x) denotes the sum of the digits of x.\n \nExample 1:\n\nInput: num1 = \"1\", num2 = \"12\", min_sum = 1, max_sum = 8\nOutput: 11\nExplanation: There are 11 integers whose sum of digits lies between 1 and 8 are 1,2,3,4,5,6,7,8,10,11, and 12. Thus, we return 11.\n\nExample 2:\n\nInput: num1 = \"1\", num2 = \"5\", min_sum = 1, max_sum = 5\nOutput: 5\nExplanation: The 5 integers whose sum of digits lies between 1 and 5 are 1,2,3,4, and 5. Thus, we return 5.\n\n \nConstraints:\n\n1 <= num1 <= num2 <= 10^22\n1 <= min_sum <= max_sum <= 400",
+    "platform": "leetcode",
+    "question_id": "2757",
+    "contest_id": "weekly-contest-348",
+    "contest_date": "2023-06-04T00:00:00",
+    "starter_code": "class Solution:\n    def count(self, num1: str, num2: str, min_sum: int, max_sum: int) -> int:\n        ",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\nclass Solution:\n    def count(self, num1: str, num2: str, min_sum: int, max_sum: int) -> int:\n        mod = 10**9 + 7\n        \n        def digit_sum(n: int) -> int:\n            return sum(int(digit) for digit in str(n))\n        \n        def dfs(index: int, current_sum: int, is_limit: bool, is_num: bool) -> int:\n            if index == len(num2):\n                return int(is_num and min_sum <= current_sum <= max_sum)\n            if not is_num:\n                return 0\n            if (index, current_sum, is_limit) in memo:\n                return memo[(index, current_sum, is_limit)]\n            ans = 0\n            if not is_limit:\n                ans = dfs(index + 1, current_sum, False, False)\n            low = 0 if is_num else 1\n            high = int(num2[index]) if is_limit else 9\n            for digit in range(low, high + 1):\n                ans += dfs(index + 1, current_sum + digit, is_limit and digit == high, True)\n            memo[(index, current_sum, is_limit)] = ans\n            return ans\n        \n        memo = {}\n        count1 = dfs(0, 0, True, False)\n        memo = {}\n        count2 = dfs(0, 0, True, False)\n        return (count2 - count1 + mod) % mod\n```"
+    ],
+    "code_list": [
+      "class Solution:\n    def count(self, num1: str, num2: str, min_sum: int, max_sum: int) -> int:\n        mod = 10**9 + 7\n        \n        def digit_sum(n: int) -> int:\n            return sum(int(digit) for digit in str(n))\n        \n        def dfs(index: int, current_sum: int, is_limit: bool, is_num: bool) -> int:\n            if index == len(num2):\n                return int(is_num and min_sum <= current_sum <= max_sum)\n            if not is_num:\n                return 0\n            if (index, current_sum, is_limit) in memo:\n                return memo[(index, current_sum, is_limit)]\n            ans = 0\n            if not is_limit:\n                ans = dfs(index + 1, current_sum, False, False)\n            low = 0 if is_num else 1\n            high = int(num2[index]) if is_limit else 9\n            for digit in range(low, high + 1):\n                ans += dfs(index + 1, current_sum + digit, is_limit and digit == high, True)\n            memo[(index, current_sum, is_limit)] = ans\n            return ans\n        \n        memo = {}\n        count1 = dfs(0, 0, True, False)\n        memo = {}\n        count2 = dfs(0, 0, True, False)\n        return (count2 - count1 + mod) % mod"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"0\", \"inputs\": \"['1', '12', 1, 8]\", \"expected\": \"11\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        26,
+        28
+      ]
+    ],
+    "bug_summary": "Both DFS calls use num2 instead of using num1 for the lower bound calculation."
+  },
+  {
+    "question_title": "find-the-distinct-difference-array",
+    "question_content": "You are given a 0-indexed array nums of length n.\nThe distinct difference array of nums is an array diff of length n such that diff[i] is equal to the number of distinct elements in the suffix nums[i + 1, ..., n - 1] subtracted from the number of distinct elements in the prefix nums[0, ..., i].\nReturn the distinct difference array of nums.\nNote that nums[i, ..., j] denotes the subarray of nums starting at index i and ending at index j inclusive. Particularly, if i > j then nums[i, ..., j] denotes an empty subarray.\n \nExample 1:\n\nInput: nums = [1,2,3,4,5]\nOutput: [-3,-1,1,3,5]\nExplanation: For index i = 0, there is 1 element in the prefix and 4 distinct elements in the suffix. Thus, diff[0] = 1 - 4 = -3.\nFor index i = 1, there are 2 distinct elements in the prefix and 3 distinct elements in the suffix. Thus, diff[1] = 2 - 3 = -1.\nFor index i = 2, there are 3 distinct elements in the prefix and 2 distinct elements in the suffix. Thus, diff[2] = 3 - 2 = 1.\nFor index i = 3, there are 4 distinct elements in the prefix and 1 distinct element in the suffix. Thus, diff[3] = 4 - 1 = 3.\nFor index i = 4, there are 5 distinct elements in the prefix and no elements in the suffix. Thus, diff[4] = 5 - 0 = 5.\n\nExample 2:\n\nInput: nums = [3,2,3,4,2]\nOutput: [-2,-1,0,2,3]\nExplanation: For index i = 0, there is 1 element in the prefix and 3 distinct elements in the suffix. Thus, diff[0] = 1 - 3 = -2.\nFor index i = 1, there are 2 distinct elements in the prefix and 3 distinct elements in the suffix. Thus, diff[1] = 2 - 3 = -1.\nFor index i = 2, there are 2 distinct elements in the prefix and 2 distinct elements in the suffix. Thus, diff[2] = 2 - 2 = 0.\nFor index i = 3, there are 3 distinct elements in the prefix and 1 distinct element in the suffix. Thus, diff[3] = 3 - 1 = 2.\nFor index i = 4, there are 3 distinct elements in the prefix and no elements in the suffix. Thus, diff[4] = 3 - 0 = 3.\n\n \nConstraints:\n\n1 <= n == nums.length <= 50\n1 <= nums[i] <= 50",
+    "platform": "leetcode",
+    "question_id": "2777",
+    "contest_id": "weekly-contest-344",
+    "contest_date": "2023-05-07T00:00:00",
+    "starter_code": "class Solution:\n    def distinctDifferenceArray(self, nums: List[int]) -> List[int]:\n        ",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\nfrom collections import defaultdict\n\nclass Solution:\n    def distinctDifferenceArray(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        prefix_count = defaultdict(int)\n        suffix_count = defaultdict(int)\n        for num in nums:\n            suffix_count[num] += 1\n        prefix_diff, suffix_diff = 0, len(suffix_count)\n        result = []\n        for i in range(n):\n            prefix_count[nums[i]] += 1\n            suffix_count[nums[i]] -= 1\n            if suffix_count[nums[i]] == 0:\n                del suffix_count[nums[i]]\n            result.append(prefix_diff - suffix_diff)\n            prefix_diff += 1\n            suffix_diff -= 1\n        return result\n```"
+    ],
+    "code_list": [
+      "from collections import defaultdict\n\nclass Solution:\n    def distinctDifferenceArray(self, nums: List[int]) -> List[int]:\n        n = len(nums)\n        prefix_count = defaultdict(int)\n        suffix_count = defaultdict(int)\n        for num in nums:\n            suffix_count[num] += 1\n        prefix_diff, suffix_diff = 0, len(suffix_count)\n        result = []\n        for i in range(n):\n            prefix_count[nums[i]] += 1\n            suffix_count[nums[i]] -= 1\n            if suffix_count[nums[i]] == 0:\n                del suffix_count[nums[i]]\n            result.append(prefix_diff - suffix_diff)\n            prefix_diff += 1\n            suffix_diff -= 1\n        return result"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"[-5, -3, -1, 1, 3]\", \"inputs\": \"[[1, 2, 3, 4, 5]]\", \"expected\": \"[-3, -1, 1, 3, 5]\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        17,
+        19
+      ]
+    ],
+    "bug_summary": "Distinct counter updates and result computation are applied incorrectly, leading to wrong differences."
+  },
+  {
+    "question_title": "number-of-adjacent-elements-with-the-same-color",
+    "question_content": "There is a 0-indexed array nums of length n. Initially, all elements are uncolored (has a value of 0).\nYou are given a 2D integer array queries where queries[i] = [index_i, color_i].\nFor each query, you color the index index_i with the color color_i in the array nums.\nReturn an array answer of the same length as queries where answer[i] is the number of adjacent elements with the same color after the i^th query.\nMore formally, answer[i] is the number of indices j, such that 0 <= j < n - 1 and nums[j] == nums[j + 1] and nums[j] != 0 after the i^th query.\n \nExample 1:\n\nInput: n = 4, queries = [[0,2],[1,2],[3,1],[1,1],[2,1]]\nOutput: [0,1,1,0,2]\nExplanation: Initially array nums = [0,0,0,0], where 0 denotes uncolored elements of the array.\n- After the 1^st query nums = [2,0,0,0]. The count of adjacent elements with the same color is 0.\n- After the 2^nd query nums = [2,2,0,0]. The count of adjacent elements with the same color is 1.\n- After the 3^rd query nums = [2,2,0,1]. The count of adjacent elements with the same color is 1.\n- After the 4^th query nums = [2,1,0,1]. The count of adjacent elements with the same color is 0.\n- After the 5^th query nums = [2,1,1,1]. The count of adjacent elements with the same color is 2.\n\nExample 2:\n\nInput: n = 1, queries = [[0,100000]]\nOutput: [0]\nExplanation: Initially array nums = [0], where 0 denotes uncolored elements of the array.\n- After the 1^st query nums = [100000]. The count of adjacent elements with the same color is 0.\n\n \nConstraints:\n\n1 <= n <= 10^5\n1 <= queries.length <= 10^5\nqueries[i].length == 2\n0 <= index_i <= n - 1\n1 <=  color_i <= 10^5",
+    "platform": "leetcode",
+    "question_id": "2779",
+    "contest_id": "weekly-contest-344",
+    "contest_date": "2023-05-07T00:00:00",
+    "starter_code": "class Solution:\n    def colorTheArray(self, n: int, queries: List[List[int]]) -> List[int]:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nclass Solution:\n    def colorTheArray(self, n: int, queries: List[List[int]]) -> List[int]:\n        nums = [0] * n\n        answer = []\n        count = 0\n        \n        for index, color in queries:\n            if index > 0 and nums[index - 1] == color and nums[index - 1] != 0:\n                count -= 1\n            if index < n - 1 and nums[index + 1] == color and nums[index + 1] != 0:\n                count -= 1\n            if nums[index] != 0:\n                if index > 0 and nums[index - 1] == nums[index]:\n                    count -= 1\n                if index < n - 1 and nums[index + 1] == nums[index]:\n                    count -= 1\n            nums[index] = color\n            if index > 0 and nums[index - 1] == color and nums[index - 1] != 0:\n                count += 1\n            if index < n - 1 and nums[index + 1] == color and nums[index + 1] != 0:\n                count += 1\n            answer.append(count)\n        \n        return answer\n```"
+    ],
+    "code_list": [
+      "class Solution:\n    def colorTheArray(self, n: int, queries: List[List[int]]) -> List[int]:\n        nums = [0] * n\n        answer = []\n        count = 0\n        \n        for index, color in queries:\n            if index > 0 and nums[index - 1] == color and nums[index - 1] != 0:\n                count -= 1\n            if index < n - 1 and nums[index + 1] == color and nums[index + 1] != 0:\n                count -= 1\n            if nums[index] != 0:\n                if index > 0 and nums[index - 1] == nums[index]:\n                    count -= 1\n                if index < n - 1 and nums[index + 1] == nums[index]:\n                    count -= 1\n            nums[index] = color\n            if index > 0 and nums[index - 1] == color and nums[index - 1] != 0:\n                count += 1\n            if index < n - 1 and nums[index + 1] == color and nums[index + 1] != 0:\n                count += 1\n            answer.append(count)\n        \n        return answer"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"[0, 0, 0, -1, -1]\", \"inputs\": \"[4, [[0, 2], [1, 2], [3, 1], [1, 1], [2, 1]]]\", \"expected\": \"[0, 1, 1, 0, 2]\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        8,
+        11
+      ]
+    ],
+    "bug_summary": "Incorrect pre-update subtraction uses new color instead of old value, causing wrong count adjustments"
+  },
+  {
+    "question_title": "semi-ordered-permutation",
+    "question_content": "You are given a 0-indexed permutation of n integers nums.\nA permutation is called semi-ordered if the first number equals 1 and the last number equals n. You can perform the below operation as many times as you want until you make nums a semi-ordered permutation:\n\nPick two adjacent elements in nums, then swap them.\n\nReturn the minimum number of operations to make nums a semi-ordered permutation.\nA permutation is a sequence of integers from 1 to n of length n containing each number exactly once.\n \nExample 1:\n\nInput: nums = [2,1,4,3]\nOutput: 2\nExplanation: We can make the permutation semi-ordered using these sequence of operations: \n1 - swap i = 0 and j = 1. The permutation becomes [1,2,4,3].\n2 - swap i = 2 and j = 3. The permutation becomes [1,2,3,4].\nIt can be proved that there is no sequence of less than two operations that make nums a semi-ordered permutation. \n\nExample 2:\n\nInput: nums = [2,4,1,3]\nOutput: 3\nExplanation: We can make the permutation semi-ordered using these sequence of operations:\n1 - swap i = 1 and j = 2. The permutation becomes [2,1,4,3].\n2 - swap i = 0 and j = 1. The permutation becomes [1,2,4,3].\n3 - swap i = 2 and j = 3. The permutation becomes [1,2,3,4].\nIt can be proved that there is no sequence of less than three operations that make nums a semi-ordered permutation.\n\nExample 3:\n\nInput: nums = [1,3,4,2,5]\nOutput: 0\nExplanation: The permutation is already a semi-ordered permutation.\n\n \nConstraints:\n\n2 <= nums.length == n <= 50\n1 <= nums[i] <= 50\nnums is a permutation.",
+    "platform": "leetcode",
+    "question_id": "2785",
+    "contest_id": "weekly-contest-348",
+    "contest_date": "2023-06-04T00:00:00",
+    "starter_code": "class Solution:\n    def semiOrderedPermutation(self, nums: List[int]) -> int:\n        ",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\nfrom typing import List\n\nclass Solution:\n    def semiOrderedPermutation(self, nums: List[int]) -> int:\n        n = len(nums)\n        one_index, n_index = nums.index(1), nums.index(n)\n        operations = 0\n        \n        if one_index > n_index:\n            operations += one_index + (n - 1 - n_index)\n        else:\n            operations += one_index + (n - 1 - n_index) - (n_index - one_index - 1)\n        \n        return operations\n```"
+    ],
+    "code_list": [
+      "from typing import List\n\nclass Solution:\n    def semiOrderedPermutation(self, nums: List[int]) -> int:\n        n = len(nums)\n        one_index, n_index = nums.index(1), nums.index(n)\n        operations = 0\n        \n        if one_index > n_index:\n            operations += one_index + (n - 1 - n_index)\n        else:\n            operations += one_index + (n - 1 - n_index) - (n_index - one_index - 1)\n        \n        return operations"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"4\", \"inputs\": \"[[2, 4, 1, 3]]\", \"expected\": \"3\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        10,
+        10
+      ]
+    ],
+    "bug_summary": "Missing subtraction of 1 in the branch when one_index > n_index causes an off-by-one error."
+  },
+  {
+    "question_title": "neighboring-bitwise-xor",
+    "question_content": "A 0-indexed array derived with length n is derived by computing the bitwise XOR (⊕) of adjacent values in a binary array original of length n.\nSpecifically, for each index i in the range [0, n - 1]:\n\nIf i = n - 1, then derived[i] = original[i] ⊕ original[0].\nOtherwise, derived[i] = original[i] ⊕ original[i + 1].\n\nGiven an array derived, your task is to determine whether there exists a valid binary array original that could have formed derived.\nReturn true if such an array exists or false otherwise.\n\nA binary array is an array containing only 0's and 1's\n\n \nExample 1:\n\nInput: derived = [1,1,0]\nOutput: true\nExplanation: A valid original array that gives derived is [0,1,0].\nderived[0] = original[0] ⊕ original[1] = 0 ⊕ 1 = 1 \nderived[1] = original[1] ⊕ original[2] = 1 ⊕ 0 = 1\nderived[2] = original[2] ⊕ original[0] = 0 ⊕ 0 = 0\n\nExample 2:\n\nInput: derived = [1,1]\nOutput: true\nExplanation: A valid original array that gives derived is [0,1].\nderived[0] = original[0] ⊕ original[1] = 1\nderived[1] = original[1] ⊕ original[0] = 1\n\nExample 3:\n\nInput: derived = [1,0]\nOutput: false\nExplanation: There is no valid original array that gives derived.\n\n \nConstraints:\n\nn == derived.length\n1 <= n <= 10^5\nThe values in derived are either 0's or 1's",
+    "platform": "leetcode",
+    "question_id": "2792",
+    "contest_id": "weekly-contest-345",
+    "contest_date": "2023-05-14T00:00:00",
+    "starter_code": "class Solution:\n    def doesValidArrayExist(self, derived: List[int]) -> bool:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nclass Solution:\n    def doesValidArrayExist(self, derived: List[int]) -> bool:\n        n = len(derived)\n        if derived[0] == 0:\n            return True\n        for i in range(1, n):\n            if derived[i] != derived[i-1]:\n                return False\n        return True\n```"
+    ],
+    "code_list": [
+      "class Solution:\n    def doesValidArrayExist(self, derived: List[int]) -> bool:\n        n = len(derived)\n        if derived[0] == 0:\n            return True\n        for i in range(1, n):\n            if derived[i] != derived[i-1]:\n                return False\n        return True"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"False\", \"inputs\": \"[[1, 1, 0]]\", \"expected\": \"True\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        4,
+        8
+      ]
+    ],
+    "bug_summary": "Incorrect logic condition checking the derived array validity in lines 4-8."
+  },
+  {
+    "question_title": "find-the-punishment-number-of-an-integer",
+    "question_content": "Given a positive integer n, return the punishment number of n.\nThe punishment number of n is defined as the sum of the squares of all integers i such that:\n\n1 <= i <= n\nThe decimal representation of i * i can be partitioned into contiguous substrings such that the sum of the integer values of these substrings equals i.\n\n \nExample 1:\n\nInput: n = 10\nOutput: 182\nExplanation: There are exactly 3 integers i that satisfy the conditions in the statement:\n- 1 since 1 * 1 = 1\n- 9 since 9 * 9 = 81 and 81 can be partitioned into 8 + 1.\n- 10 since 10 * 10 = 100 and 100 can be partitioned into 10 + 0.\nHence, the punishment number of 10 is 1 + 81 + 100 = 182\n\nExample 2:\n\nInput: n = 37\nOutput: 1478\nExplanation: There are exactly 4 integers i that satisfy the conditions in the statement:\n- 1 since 1 * 1 = 1. \n- 9 since 9 * 9 = 81 and 81 can be partitioned into 8 + 1. \n- 10 since 10 * 10 = 100 and 100 can be partitioned into 10 + 0. \n- 36 since 36 * 36 = 1296 and 1296 can be partitioned into 1 + 29 + 6.\nHence, the punishment number of 37 is 1 + 81 + 100 + 1296 = 1478\n\n \nConstraints:\n\n1 <= n <= 1000",
+    "platform": "leetcode",
+    "question_id": "2802",
+    "contest_id": "weekly-contest-346",
+    "contest_date": "2023-05-21T00:00:00",
+    "starter_code": "class Solution:\n    def punishmentNumber(self, n: int) -> int:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nclass Solution:\n    def punishmentNumber(self, n: int) -> int:\n        def is_valid(i):\n            square = str(i * i)\n            for size in range(1, len(square) + 1):\n                for start in range(len(square) - size + 1):\n                    parts = [int(square[start:start+size])]\n                    if sum(parts) == i:\n                        return True\n                    for split in range(1, size):\n                        parts = [int(square[start:start+split]), int(square[start+split:start+size])]\n                        if sum(parts) == i:\n                            return True\n            return False\n        \n        result = 0\n        for i in range(1, n + 1):\n            if is_valid(i):\n                result += i * i\n        return result\n```"
+    ],
+    "code_list": [
+      "class Solution:\n    def punishmentNumber(self, n: int) -> int:\n        def is_valid(i):\n            square = str(i * i)\n            for size in range(1, len(square) + 1):\n                for start in range(len(square) - size + 1):\n                    parts = [int(square[start:start+size])]\n                    if sum(parts) == i:\n                        return True\n                    for split in range(1, size):\n                        parts = [int(square[start:start+split]), int(square[start+split:start+size])]\n                        if sum(parts) == i:\n                            return True\n            return False\n        \n        result = 0\n        for i in range(1, n + 1):\n            if is_valid(i):\n                result += i * i\n        return result"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"243\", \"inputs\": \"[10]\", \"expected\": \"182\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        3,
+        14
+      ]
+    ],
+    "bug_summary": "The is_valid function only considers single and two-part splits, failing to partition the entire square string."
+  }
+]

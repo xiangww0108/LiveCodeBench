@@ -1,0 +1,756 @@
+[
+  {
+    "question_title": "Make it Forest",
+    "question_content": "You are given a simple undirected graph with N vertices and M edges, where the vertices are labeled 1 to N. The i-th edge connects vertices u_i and v_i.\r\nWhat is the minimum number of edges that need to be deleted from this graph so that the graph becomes a forest?\n\nWhat is a forest?\r\n\r\nA simple undirected graph F is called a forest if and only if F does not contain any cycle.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN M\r\nu_1 v_1\r\nu_2 v_2\r\n\\vdots\r\nu_M v_M\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 1 \\leq N \\leq 2 \\times 10^5\n- 0 \\leq M \\leq \\min \\left( \\frac{N(N-1)}{2}, 2 \\times 10^5\\right)\n- 1 \\leq u_i < v_i \\leq N\n- The given graph is simple.\n- All input values are integers.\n\nSample Input 1\n\n4 4\r\n1 2\r\n1 3\r\n2 4\r\n3 4\n\nSample Output 1\n\n1\r\n\nFor example, if you delete the first edge, the graph becomes a forest.\n\nSample Input 2\n\n5 0\n\nSample Output 2\n\n0\n\nSample Input 3\n\n10 10\r\n7 9\r\n4 6\r\n6 10\r\n2 5\r\n5 6\r\n5 9\r\n6 8\r\n4 8\r\n1 5\r\n1 4\n\nSample Output 3\n\n2",
+    "platform": "atcoder",
+    "question_id": "abc399_c",
+    "contest_id": "abc399",
+    "contest_date": "2025-03-29T00:00:00",
+    "starter_code": "",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\n# NUMBER OF VERTICES AND EDGES\nN, M = map(int, input().split())\n\n# ADJACENCY LIST\nadj = [[] for _ in range(N)]\nfor _ in range(M):\n    u, v = map(int, input().split())\n    u -= 1\n    v -= 1\n    adj[u].append(v)\n    adj[v].append(u)\n\n# VISITED ARRAY\nvisited = [False] * N\n\n# COUNT OF CYCLES\ncycle_count = 0\n\n# DFS FUNCTION TO DETECT CYCLES\ndef dfs(node, parent):\n    global cycle_count\n    visited[node] = True\n    for neighbor in adj[node]:\n        if not visited[neighbor]:\n            if dfs(neighbor, node):\n                cycle_count += 1\n        elif neighbor != parent:\n            cycle_count += 1\n    return cycle_count\n\n# DETECT CYCLES IN THE GRAPH\ndfs(0, -1)\n\n# MINIMUM NUMBER OF EDGES TO DELETE = CYCLE COUNT\nprint(cycle_count)\n```"
+    ],
+    "code_list": [
+      "# NUMBER OF VERTICES AND EDGES\nN, M = map(int, input().split())\n\n# ADJACENCY LIST\nadj = [[] for _ in range(N)]\nfor _ in range(M):\n    u, v = map(int, input().split())\n    u -= 1\n    v -= 1\n    adj[u].append(v)\n    adj[v].append(u)\n\n# VISITED ARRAY\nvisited = [False] * N\n\n# COUNT OF CYCLES\ncycle_count = 0\n\n# DFS FUNCTION TO DETECT CYCLES\ndef dfs(node, parent):\n    global cycle_count\n    visited[node] = True\n    for neighbor in adj[node]:\n        if not visited[neighbor]:\n            if dfs(neighbor, node):\n                cycle_count += 1\n        elif neighbor != parent:\n            cycle_count += 1\n    return cycle_count\n\n# DETECT CYCLES IN THE GRAPH\ndfs(0, -1)\n\n# MINIMUM NUMBER OF EDGES TO DELETE = CYCLE COUNT\nprint(cycle_count)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"NameError(\\\"name 'cycle_count' is not defined\\\")\", \"error_code\": -4, \"error_message\": \"Runtime Error\", \"inputs\": \"4 4\\n1 2\\n1 3\\n2 4\\n3 4\", \"expected\": \"1\"}"
+    ],
+    "bug_span": [
+      [
+        26,
+        28
+      ]
+    ],
+    "bug_summary": "Incorrect cycle counting logic in DFS causes overcounting and runtime error."
+  },
+  {
+    "question_title": "Blue Spring",
+    "question_content": "Takahashi is planning an N-day train trip.\nFor each day, he can pay the regular fare or use a one-day pass.\nHere, for 1\\leq i\\leq N, the regular fare for the i-th day of the trip is F_i yen.\nOn the other hand, a batch of D one-day passes is sold for P yen. You can buy as many passes as you want, but only in units of D.\nEach purchased pass can be used on any day, and it is fine to have some leftovers at the end of the trip.\nFind the minimum possible total cost for the N-day trip, that is, the cost of purchasing one-day passes plus the total regular fare for the days not covered by one-day passes.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN D P\nF_1 F_2 \\ldots F_N\n\nOutput\n\nPrint the minimum possible total cost for the N-day trip.\n\nConstraints\n\n\n- 1\\leq N\\leq 2\\times 10^5\n- 1\\leq D\\leq 2\\times 10^5\n- 1\\leq P\\leq 10^9\n- 1\\leq F_i\\leq 10^9\n- All input values are integers.\n\nSample Input 1\n\n5 2 10\n7 1 6 3 6\n\nSample Output 1\n\n20\n\nIf he buys just one batch of one-day passes and uses them for the first and third days, the total cost will be (10\\times 1)+(0+1+0+3+6)=20, which is the minimum cost needed.\nThus, print 20.\n\nSample Input 2\n\n3 1 10\n1 2 3\n\nSample Output 2\n\n6\n\nThe minimum cost is achieved by paying the regular fare for all three days.\n\nSample Input 3\n\n8 3 1000000000\n1000000000 1000000000 1000000000 1000000000 1000000000 1000000000 1000000000 1000000000\n\nSample Output 3\n\n3000000000\n\nThe minimum cost is achieved by buying three batches of one-day passes and using them for all eight days.\nNote that the answer may not fit into a 32-bit integer type.",
+    "platform": "atcoder",
+    "question_id": "abc318_c",
+    "contest_id": "abc318",
+    "contest_date": "2023-09-02T00:00:00",
+    "starter_code": "",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nimport sys\ninput = sys.stdin.read\nN, D, P = map(int, input().split())\nF = list(map(int, input().split()))\ndp = [0] * (N + 1)\nfor i in range(1, N + 1):\n    dp[i] = dp[i - 1] + F[i - 1]\n    for j in range(i - D, i):\n        dp[i] = min(dp[i], dp[j] + (i - j) * F[i - 1])\n    for j in range(i // D + 1):\n        dp[i] = min(dp[i], dp[i - j * D] + j * P)\nprint(dp[N])\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nimport sys\ninput = sys.stdin.read\nN, D, P = map(int, input().split())\nF = list(map(int, input().split()))\ndp = [0] * (N + 1)\nfor i in range(1, N + 1):\n    dp[i] = dp[i - 1] + F[i - 1]\n    for j in range(i - D, i):\n        dp[i] = min(dp[i], dp[j] + (i - j) * F[i - 1])\n    for j in range(i // D + 1):\n        dp[i] = min(dp[i], dp[i - j * D] + j * P)\nprint(dp[N])"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"ValueError('too many values to unpack (expected 3)')\", \"error_code\": -4, \"error_message\": \"Runtime Error\", \"inputs\": \"5 2 10\\n7 1 6 3 6\\n\", \"expected\": \"20\\n\"}"
+    ],
+    "bug_span": [
+      [
+        9,
+        10
+      ]
+    ],
+    "bug_summary": "Loop in lines 9-10 accesses dp[j] with j possibly negative, causing runtime error"
+  },
+  {
+    "question_title": "Count Arrays",
+    "question_content": "You are given positive integers N, M, and a sequence A = (A_1, A_2, \\dots, A_N) of length N, each element being an integer between 1 and N, inclusive.\nFind the number, modulo 998244353, of sequences x = (x_1, x_2, \\dots, x_N) of length N, each element being an integer between 1 and M, inclusive, that satisfy the following condition:\n\n- x_i \\leq x_{A_i} for every i (1 \\leq i \\leq N).\n\nInput\n\nThe input is given from Standard Input in the following format:\nN M\r\nA_1 A_2 \\dots A_N\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 1 \\leq N, M \\leq 2025\n- 1 \\leq A_i \\leq N\n- All input values are integers.\n\nSample Input 1\n\n3 3\r\n2 1 1\n\nSample Output 1\n\n6\r\n\nThe sequences x=(1,1,1),(2,2,1),(2,2,2),(3,3,1),(3,3,2),(3,3,3) satisfy the condition.\n\nSample Input 2\n\n4 9\r\n1 1 1 1\n\nSample Output 2\n\n2025\n\nSample Input 3\n\n10 5\r\n9 4 5 5 4 2 1 5 7 2\n\nSample Output 3\n\n10010",
+    "platform": "atcoder",
+    "question_id": "abc387_f",
+    "contest_id": "abc387",
+    "contest_date": "2025-01-04T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# PYTHON PROGRAM\nfrom collections import defaultdict\n\ndef solve():\n    n, m = map(int, input().split())\n    a = list(map(int, input().split()))\n    dp = [0] * (n + 1)\n    dp[0] = 1\n    mod = 998244353\n    max_val = [0] * (n + 1)\n    \n    for i in range(n):\n        max_val[a[i]] = max(max_val[a[i]], i + 1)\n    \n    for i in range(1, n + 1):\n        dp[i] = dp[i - 1] * m % mod\n        for j in range(max_val[i], i):\n            dp[i] = (dp[i] - dp[j - 1] * (m - (i - j)) % mod + mod) % mod\n    \n    print(dp[n])\n\nsolve()\n```"
+    ],
+    "code_list": [
+      "# PYTHON PROGRAM\nfrom collections import defaultdict\n\ndef solve():\n    n, m = map(int, input().split())\n    a = list(map(int, input().split()))\n    dp = [0] * (n + 1)\n    dp[0] = 1\n    mod = 998244353\n    max_val = [0] * (n + 1)\n    \n    for i in range(n):\n        max_val[a[i]] = max(max_val[a[i]], i + 1)\n    \n    for i in range(1, n + 1):\n        dp[i] = dp[i - 1] * m % mod\n        for j in range(max_val[i], i):\n            dp[i] = (dp[i] - dp[j - 1] * (m - (i - j)) % mod + mod) % mod\n    \n    print(dp[n])\n\nsolve()"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"14\\n\", \"inputs\": \"3 3\\n2 1 1\", \"expected\": \"6\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 14 != 6\"}"
+    ],
+    "bug_span": [
+      [
+        13,
+        13
+      ],
+      [
+        17,
+        18
+      ]
+    ],
+    "bug_summary": "Incorrect usage of max_val indexing and flawed dp state transitions causing wrong count calculation"
+  },
+  {
+    "question_title": "Divisible by 3",
+    "question_content": "We call a positive integer n a good integer if and only if the sum of its positive divisors is divisible by 3.\nYou are given two positive integers N and M. Find the number, modulo 998244353, of length-M sequences A of positive integers such that the product of the elements in A is a good integer not exceeding N.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN M\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 1 \\leq N \\leq 10^{10}\n- 1 \\leq M \\leq 10^5\n- N and M are integers.\n\nSample Input 1\n\n10 1\n\nSample Output 1\n\n5\n\nThere are five sequences that satisfy the conditions:\n\n- (2)\n- (5)\n- (6)\n- (8)\n- (10)\n\nSample Input 2\n\n4 2\n\nSample Output 2\n\n2\n\nThere are two sequences that satisfy the conditions:\n\n- (1, 2)\n- (2, 1)\n\nSample Input 3\n\n370 907\n\nSample Output 3\n\n221764640\n\nSample Input 4\n\n10000000000 100000\n\nSample Output 4\n\n447456146",
+    "platform": "atcoder",
+    "question_id": "abc370_g",
+    "contest_id": "abc370",
+    "contest_date": "2024-09-07T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\nfrom math import isqrt\nfrom functools import cache\n\n@cache\ndef divisors_sum(n):\n    if n == 1:\n        return 1\n    divisors = 1\n    for i in range(2, isqrt(n) + 1):\n        if n % i == 0:\n            divisors += i\n            if i != n // i:\n                divisors += n // i\n    return divisors\n\n@cache\ndef is_good(n):\n    return divisors_sum(n) % 3 == 0\n\ndef count_good_sequences(N, M):\n    MOD = 998244353\n    dp = [0] * (M + 1)\n    dp[0] = 1\n    for m in range(1, M + 1):\n        for n in range(1, N + 1):\n            if is_good(n):\n                dp[m] = (dp[m] + dp[m - 1]) % MOD\n            else:\n                dp[m] = (dp[m] + dp[m - 1] * (n - 1)) % MOD\n    return dp[M]\n\nN, M = map(int, input().split())\nprint(count_good_sequences(N, M))\n```"
+    ],
+    "code_list": [
+      "from math import isqrt\nfrom functools import cache\n\n@cache\ndef divisors_sum(n):\n    if n == 1:\n        return 1\n    divisors = 1\n    for i in range(2, isqrt(n) + 1):\n        if n % i == 0:\n            divisors += i\n            if i != n // i:\n                divisors += n // i\n    return divisors\n\n@cache\ndef is_good(n):\n    return divisors_sum(n) % 3 == 0\n\ndef count_good_sequences(N, M):\n    MOD = 998244353\n    dp = [0] * (M + 1)\n    dp[0] = 1\n    for m in range(1, M + 1):\n        for n in range(1, N + 1):\n            if is_good(n):\n                dp[m] = (dp[m] + dp[m - 1]) % MOD\n            else:\n                dp[m] = (dp[m] + dp[m - 1] * (n - 1)) % MOD\n    return dp[M]\n\nN, M = map(int, input().split())\nprint(count_good_sequences(N, M))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"39\\n\", \"inputs\": \"10 1\\n\", \"expected\": \"5\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 39 != 5\"}"
+    ],
+    "bug_span": [
+      [
+        27,
+        29
+      ]
+    ],
+    "bug_summary": "Incorrect dynamic programming state update logic in count_good_sequences function."
+  },
+  {
+    "question_title": "Another Shuffle Window",
+    "question_content": "You are given a permutation P of (1,2,\\dots,N) and an integer K.  \nFind the expected value, modulo 998244353, of the inversion number of P after performing the following operation:\n\n- First, choose an integer i uniformly at random between 1 and N - K + 1, inclusive.\n- Then, shuffle P_i, P_{i+1}, \\dots, P_{i+K-1} uniformly at random.\n\n\nWhat is the inversion number?\r\nThe inversion number of a sequence (A_1, A_2, \\dots, A_N) is the number of integer pairs (i, j) satisfying 1 \\le i < j \\le N and A_i > A_j.\r\n\n\nWhat does \"expected value modulo 998244353\" mean?\r\nIt can be proved that the sought expected value is always rational. Under the constraints of this problem, when this value is represented as an irreducible fraction \\frac{P}{Q}, it can also be proved that Q \\not\\equiv 0 \\pmod{998244353}. Thus, there is a unique integer R satisfying R \\times Q \\equiv P \\pmod{998244353}, \\ 0 \\le R < 998244353. Report this integer R.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN K\r\nP_1 P_2 \\dots P_N\n\nOutput\n\nPrint the answer in one line.\n\nConstraints\n\n\n- All input values are integers.\n- 1 \\le K \\le N \\le 2 \\times 10^5\n- P is a permutation of (1,2,\\dots,N).\n\nSample Input 1\n\n4 2\r\n1 4 2 3\n\nSample Output 1\n\n166374061\r\n\nThe operation changes the permutation P into the following:\n\n- (1,4,2,3) ... probability 1/2\n- (4,1,2,3) ... probability 1/6\n- (1,2,4,3) ... probability 1/6\n- (1,4,3,2) ... probability 1/6\n\nThe expected value of the inversion number is \\displaystyle 2 \\times \\frac{1}{2} + 3 \\times \\frac{1}{6} + 1 \\times \\frac{1}{6} + 3 \\times \\frac{1}{6} = \\frac{13}{6}.\n\\displaystyle \\frac{13}{6} modulo 998244353 is 166374061, so print this number.\n\nSample Input 2\n\n1 1\r\n1\n\nSample Output 2\n\n0\n\nSample Input 3\n\n10 6\r\n7 4 10 5 6 1 8 2 3 9\n\nSample Output 3\n\n499122200",
+    "platform": "atcoder",
+    "question_id": "abc380_g",
+    "contest_id": "abc380",
+    "contest_date": "2024-11-16T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# mod = 998244353\n# N, K = map(int, input().split())\n# P = list(map(int, input().split()))\n\ndef solve(N, K, P):\n    mod = 998244353\n    inv = [0] * (N + 1)\n    for i in range(1, N + 1):\n        inv[i] = pow(i, mod - 2, mod)\n    \n    fact = [1] * (N + 1)\n    for i in range(1, N + 1):\n        fact[i] = fact[i - 1] * i % mod\n    \n    def comb(n, r):\n        return fact[n] * pow(fact[r] * fact[n - r] % mod, mod - 2, mod) % mod\n    \n    def calc_inversions(P):\n        cnt = [0] * (N + 1)\n        inversions = 0\n        for i in range(N - 1, -1, -1):\n            for j in range(P[i] - 1, 0, -1):\n                inversions = (inversions + cnt[j]) % mod\n            for j in range(P[i]):\n                cnt[j + 1] += 1\n        return inversions\n    \n    inversions = calc_inversions(P)\n    \n    ans = 0\n    for i in range(1, N - K + 2):\n        left = i - 1\n        right = N - i\n        for j in range(1, K + 1):\n            ans = (ans + inversions * comb(left, j - 1) * comb(right, K - j) % mod * fact[K] % mod * inv[j] % mod * inv[K - j] % mod) % mod\n            inversions = (inversions - comb(P[i + j - 1], j) + comb(P[i + j - 1], j) * (j - 1) // j) % mod\n    \n    print(ans)\n\nN, K = map(int, input().split())\nP = list(map(int, input().split()))\nsolve(N, K, P)\n```"
+    ],
+    "code_list": [
+      "# mod = 998244353\n# N, K = map(int, input().split())\n# P = list(map(int, input().split()))\n\ndef solve(N, K, P):\n    mod = 998244353\n    inv = [0] * (N + 1)\n    for i in range(1, N + 1):\n        inv[i] = pow(i, mod - 2, mod)\n    \n    fact = [1] * (N + 1)\n    for i in range(1, N + 1):\n        fact[i] = fact[i - 1] * i % mod\n    \n    def comb(n, r):\n        return fact[n] * pow(fact[r] * fact[n - r] % mod, mod - 2, mod) % mod\n    \n    def calc_inversions(P):\n        cnt = [0] * (N + 1)\n        inversions = 0\n        for i in range(N - 1, -1, -1):\n            for j in range(P[i] - 1, 0, -1):\n                inversions = (inversions + cnt[j]) % mod\n            for j in range(P[i]):\n                cnt[j + 1] += 1\n        return inversions\n    \n    inversions = calc_inversions(P)\n    \n    ans = 0\n    for i in range(1, N - K + 2):\n        left = i - 1\n        right = N - i\n        for j in range(1, K + 1):\n            ans = (ans + inversions * comb(left, j - 1) * comb(right, K - j) % mod * fact[K] % mod * inv[j] % mod * inv[K - j] % mod) % mod\n            inversions = (inversions - comb(P[i + j - 1], j) + comb(P[i + j - 1], j) * (j - 1) // j) % mod\n    \n    print(ans)\n\nN, K = map(int, input().split())\nP = list(map(int, input().split()))\nsolve(N, K, P)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"IndexError('list index out of range')\", \"error_code\": -4, \"error_message\": \"Runtime Error\", \"inputs\": \"4 2\\n1 4 2 3\", \"expected\": \"166374061\"}"
+    ],
+    "bug_span": [
+      [
+        36,
+        36
+      ]
+    ],
+    "bug_summary": "Invalid arithmetic and indexing in updating 'inversions' causing runtime error"
+  },
+  {
+    "question_title": "Maximize Distance",
+    "question_content": "You are given a directed graph with N vertices and M edges. The vertices are numbered 1,2,\\dots,N. Edge j (j=1,2,\\dots,M) goes from vertex u_j to vertex v_j. It is guaranteed that vertex N is reachable from vertex 1.\nInitially, all edges have weight 0. We choose exactly K out of the M edges and change their weights to 1. Find the maximum possible value of the shortest distance from vertex 1 to vertex N in the resulting graph.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN M K\r\nu_1 v_1\r\nu_2 v_2\r\n\\vdots\r\nu_M v_M\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 2 \\leq N \\leq 30\n- 1 \\leq K \\leq M \\leq 100\n- 1 \\leq u_j, v_j \\leq N\n- u_j \\neq v_j\n- In the given graph, vertex N is reachable from vertex 1.\n- All input values are integers.\n\nSample Input 1\n\n3 3 2\r\n1 2\r\n2 3\r\n1 3\n\nSample Output 1\n\n1\r\n\nBy choosing edges 1,3, the shortest distance from vertex 1 to vertex 3 becomes 1. There is no way to make the shortest distance 2 or greater, so the answer is 1.\n\nSample Input 2\n\n4 4 3\r\n1 2\r\n1 3\r\n3 2\r\n2 4\n\nSample Output 2\n\n2\r\n\nBy choosing edges 1,2,4, the shortest distance from vertex 1 to vertex 4 becomes 2. There is no way to make the shortest distance 3 or greater, so the answer is 2.\n\nSample Input 3\n\n2 2 1\r\n1 2\r\n1 2\n\nSample Output 3\n\n0\r\n\nNote that there may be multi-edges.",
+    "platform": "atcoder",
+    "question_id": "abc397_g",
+    "contest_id": "abc397",
+    "contest_date": "2025-03-15T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# NUMBER_OF_VERTICES NUMBER_OF_EDGES NUMBER_OF_EDGES_TO_CHANGE\nfrom collections import deque\nfrom heapq import heappush, heappop\n\ndef dijkstra(n, edges, k):\n    # Initialize the distance array\n    dist = [float('inf')] * (n + 1)\n    dist[1] = 0\n    # Priority queue to store (distance, vertex)\n    pq = [(0, 1)]\n    # Counter for the number of edges with weight 1\n    weight_one_count = 0\n    # Dictionary to store the edges\n    graph = [[] for _ in range(n + 1)]\n    for u, v in edges:\n        graph[u].append(v)\n    \n    while pq:\n        d, u = heappop(pq)\n        if d > dist[u]:\n            continue\n        if u == n:\n            break\n        for v in graph[u]:\n            if weight_one_count < k:\n                new_dist = d + 1\n            else:\n                new_dist = d\n            if new_dist < dist[v]:\n                dist[v] = new_dist\n                heappush(pq, (new_dist, v))\n            if new_dist == 1:\n                weight_one_count += 1\n    return dist[n]\n\n# Read input\nN, M, K = map(int, input().split())\nedges = [tuple(map(int, input().split())) for _ in range(M)]\n\n# Solve the problem\nmax_distance = dijkstra(N, edges, K)\nprint(max_distance)\n```"
+    ],
+    "code_list": [
+      "# NUMBER_OF_VERTICES NUMBER_OF_EDGES NUMBER_OF_EDGES_TO_CHANGE\nfrom collections import deque\nfrom heapq import heappush, heappop\n\ndef dijkstra(n, edges, k):\n    # Initialize the distance array\n    dist = [float('inf')] * (n + 1)\n    dist[1] = 0\n    # Priority queue to store (distance, vertex)\n    pq = [(0, 1)]\n    # Counter for the number of edges with weight 1\n    weight_one_count = 0\n    # Dictionary to store the edges\n    graph = [[] for _ in range(n + 1)]\n    for u, v in edges:\n        graph[u].append(v)\n    \n    while pq:\n        d, u = heappop(pq)\n        if d > dist[u]:\n            continue\n        if u == n:\n            break\n        for v in graph[u]:\n            if weight_one_count < k:\n                new_dist = d + 1\n            else:\n                new_dist = d\n            if new_dist < dist[v]:\n                dist[v] = new_dist\n                heappush(pq, (new_dist, v))\n            if new_dist == 1:\n                weight_one_count += 1\n    return dist[n]\n\n# Read input\nN, M, K = map(int, input().split())\nedges = [tuple(map(int, input().split())) for _ in range(M)]\n\n# Solve the problem\nmax_distance = dijkstra(N, edges, K)\nprint(max_distance)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"2\\n\", \"inputs\": \"5 23 6\\n1 2\\n2 3\\n3 4\\n4 5\\n2 1\\n5 2\\n3 4\\n3 5\\n5 3\\n4 5\\n3 4\\n3 4\\n3 1\\n2 4\\n3 4\\n4 2\\n2 4\\n5 2\\n1 3\\n2 5\\n2 4\\n1 4\\n2 4\", \"expected\": \"1\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 2 != 1\"}"
+    ],
+    "bug_span": [
+      [
+        15,
+        16
+      ]
+    ],
+    "bug_summary": "Edges are treated as unweighted and only one direction is stored, causing incorrect graph representation and distance calculation."
+  },
+  {
+    "question_title": "Tangency of Cuboids",
+    "question_content": "There are N rectangular cuboids in a three-dimensional space.\nThese cuboids do not overlap.  Formally, for any two different cuboids among them, their intersection has a volume of 0.\nThe diagonal of the i-th cuboid is a segment that connects two points (X_{i,1},Y_{i,1},Z_{i,1}) and (X_{i,2},Y_{i,2},Z_{i,2}), and its edges are all parallel to one of the coordinate axes.\nFor each cuboid, find the number of other cuboids that share a face with it.\r\nFormally, for each i, find the number of j with 1\\leq j \\leq N and j\\neq i such that the intersection of the surfaces of the i-th and j-th cuboids has a positive area.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN\r\nX_{1,1} Y_{1,1} Z_{1,1} X_{1,2} Y_{1,2} Z_{1,2}\r\n\\vdots\r\nX_{N,1} Y_{N,1} Z_{N,1} X_{N,2} Y_{N,2} Z_{N,2}\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 1 \\leq N \\leq 10^5\n- 0 \\leq X_{i,1} < X_{i,2} \\leq 100\n- 0 \\leq Y_{i,1} < Y_{i,2} \\leq 100\n- 0 \\leq Z_{i,1} < Z_{i,2} \\leq 100\n- Cuboids do not have an intersection with a positive volume.\n- All input values are integers.\n\nSample Input 1\n\n4\r\n0 0 0 1 1 1\r\n0 0 1 1 1 2\r\n1 1 1 2 2 2\r\n3 3 3 4 4 4\n\nSample Output 1\n\n1\r\n1\r\n0\r\n0\r\n\nThe 1-st and 2-nd cuboids share a rectangle whose diagonal is the segment connecting two points (0,0,1) and (1,1,1).\r\nThe 1-st and 3-rd cuboids share a point (1,1,1), but do not share a surface.\n\nSample Input 2\n\n3\r\n0 0 10 10 10 20\r\n3 4 1 15 6 10\r\n0 9 6 1 20 10\n\nSample Output 2\n\n2\r\n1\r\n1\n\nSample Input 3\n\n8\r\n0 0 0 1 1 1\r\n0 0 1 1 1 2\r\n0 1 0 1 2 1\r\n0 1 1 1 2 2\r\n1 0 0 2 1 1\r\n1 0 1 2 1 2\r\n1 1 0 2 2 1\r\n1 1 1 2 2 2\n\nSample Output 3\n\n3\r\n3\r\n3\r\n3\r\n3\r\n3\r\n3\r\n3",
+    "platform": "atcoder",
+    "question_id": "abc312_e",
+    "contest_id": "abc312",
+    "contest_date": "2023-07-29T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# NUMBER_OF_SHARING_FACES\nfrom collections import defaultdict\n\nN = int(input())\ncuboids = []\nfor _ in range(N):\n    X1, Y1, Z1, X2, Y2, Z2 = map(int, input().split())\n    cuboids.append(((X1, Y1, Z1), (X2, Y2, Z2)))\n\nans = []\nfor i in range(N):\n    cnt = 0\n    for j in range(N):\n        if i == j:\n            continue\n        (x1, y1, z1), (x2, y2, z2) = cuboids[i]\n        (x1_other, y1_other, z1_other), (x2_other, y2_other, z2_other) = cuboids[j]\n        if x1 <= x1_other < x2 and x1 <= x2_other < x2:\n            if y1 <= y1_other < y2 and y1 <= y2_other < y2:\n                if z1 <= z1_other < z2 and z1 <= z2_other < z2:\n                    cnt += 1\n        if y1 <= y1_other < y2 and y1 <= y2_other < y2:\n            if x1 <= x1_other < x2 and x1 <= x2_other < x2:\n                if z1 <= z1_other < z2 and z1 <= z2_other < z2:\n                    cnt += 1\n        if z1 <= z1_other < z2 and z1 <= z2_other < z2:\n            if x1 <= x1_other < x2 and x1 <= x2_other < x2:\n                if y1 <= y1_other < y2 and y1 <= y2_other < y2:\n                    cnt += 1\n    ans.append(cnt)\n\nfor a in ans:\n    print(a)\n```"
+    ],
+    "code_list": [
+      "# NUMBER_OF_SHARING_FACES\nfrom collections import defaultdict\n\nN = int(input())\ncuboids = []\nfor _ in range(N):\n    X1, Y1, Z1, X2, Y2, Z2 = map(int, input().split())\n    cuboids.append(((X1, Y1, Z1), (X2, Y2, Z2)))\n\nans = []\nfor i in range(N):\n    cnt = 0\n    for j in range(N):\n        if i == j:\n            continue\n        (x1, y1, z1), (x2, y2, z2) = cuboids[i]\n        (x1_other, y1_other, z1_other), (x2_other, y2_other, z2_other) = cuboids[j]\n        if x1 <= x1_other < x2 and x1 <= x2_other < x2:\n            if y1 <= y1_other < y2 and y1 <= y2_other < y2:\n                if z1 <= z1_other < z2 and z1 <= z2_other < z2:\n                    cnt += 1\n        if y1 <= y1_other < y2 and y1 <= y2_other < y2:\n            if x1 <= x1_other < x2 and x1 <= x2_other < x2:\n                if z1 <= z1_other < z2 and z1 <= z2_other < z2:\n                    cnt += 1\n        if z1 <= z1_other < z2 and z1 <= z2_other < z2:\n            if x1 <= x1_other < x2 and x1 <= x2_other < x2:\n                if y1 <= y1_other < y2 and y1 <= y2_other < y2:\n                    cnt += 1\n    ans.append(cnt)\n\nfor a in ans:\n    print(a)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"0\\n0\\n0\\n0\\n\", \"inputs\": \"4\\n0 0 0 1 1 1\\n0 0 1 1 1 2\\n1 1 1 2 2 2\\n3 3 3 4 4 4\\n\", \"expected\": \"1\\n1\\n0\\n0\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 0 != 1\"}"
+    ],
+    "bug_span": [
+      [
+        18,
+        21
+      ]
+    ],
+    "bug_summary": "Incorrect condition for counting touching cuboids; conditions do not correctly check for face tangency."
+  },
+  {
+    "question_title": "Shortest Duplicate Subarray",
+    "question_content": "You are given a positive integer N and an integer sequence A = (A_1,A_2,\\dots,A_N) of length N.\nDetermine whether there exists a non-empty (contiguous) subarray of A that has a repeated value, occurring multiple times in A. If such a subarray exists, find the length of the shortest such subarray.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN\r\nA_1 A_2 \\dots A_N\n\nOutput\n\nIf there is no (contiguous) subarray satisfying the condition in the problem statement, print -1. Otherwise, print the length of the shortest such subarray.\n\nConstraints\n\n\n- 1 \\leq N \\leq 2 \\times 10^5\n- 1 \\leq A_i \\leq 10^6 \\ (1 \\leq i \\leq N)\n- All input values are integers.\n\nSample Input 1\n\n5\r\n3 9 5 3 1\n\nSample Output 1\n\n4\r\n\n(3,9,5,3) and (3,9,5,3,1) satisfy the condition. The shorter one is (3,9,5,3), which has length 4.\n\nSample Input 2\n\n4\r\n2 5 3 1\n\nSample Output 2\n\n-1\r\n\nThere is no subarray that satisfies the condition.\n\nSample Input 3\n\n10\r\n1 1 2 3 5 8 13 21 34 55\n\nSample Output 3\n\n2",
+    "platform": "atcoder",
+    "question_id": "abc395_c",
+    "contest_id": "abc395",
+    "contest_date": "2025-03-01T00:00:00",
+    "starter_code": "",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\n# N = int(input())\n# A = list(map(int, input().split()))\n\nN = 10\nA = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]\n\nfrom collections import defaultdict\n\ndef shortest_repeated_subarray(N, A):\n    seen = defaultdict(int)\n    min_length = float('inf')\n    \n    for i in range(N):\n        for j in range(i+1, N+1):\n            subarray = A[i:j]\n            if len(subarray) > 1 and subarray in seen:\n                min_length = min(min_length, len(subarray))\n            else:\n                seen[tuple(subarray)] = 1\n                \n    return min_length if min_length != float('inf') else -1\n\nprint(shortest_repeated_subarray(N, A))\n```"
+    ],
+    "code_list": [
+      "# N = int(input())\n# A = list(map(int, input().split()))\n\nN = 10\nA = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]\n\nfrom collections import defaultdict\n\ndef shortest_repeated_subarray(N, A):\n    seen = defaultdict(int)\n    min_length = float('inf')\n    \n    for i in range(N):\n        for j in range(i+1, N+1):\n            subarray = A[i:j]\n            if len(subarray) > 1 and subarray in seen:\n                min_length = min(min_length, len(subarray))\n            else:\n                seen[tuple(subarray)] = 1\n                \n    return min_length if min_length != float('inf') else -1\n\nprint(shortest_repeated_subarray(N, A))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"TypeError(\\\"unhashable type: 'list'\\\")\", \"error_code\": -4, \"error_message\": \"Runtime Error\", \"inputs\": \"5\\n3 9 5 3 1\", \"expected\": \"4\"}"
+    ],
+    "bug_span": [
+      [
+        16,
+        19
+      ]
+    ],
+    "bug_summary": "Incorrect use of 'seen' dictionary with list keys and logic error in checking repeated subarrays; should use tuple keys and correct membership check."
+  },
+  {
+    "question_title": "Chords",
+    "question_content": "There are 2N points placed at equal intervals on a circle, numbered 1 to 2N in a clockwise direction starting from a certain point.\nThere are also N chords on the circle, with the i-th chord connecting points A_i and B_i.\nIt is guaranteed that all the values A_1,\\dots,A_N,B_1,\\dots,B_N are distinct.\nDetermine whether there is an intersection between the chords.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN\nA_1 B_1\nA_2 B_2\n\\vdots\nA_N B_N\n\nOutput\n\nIf there is an intersection between the chords, print Yes; otherwise, print No.\n\nConstraints\n\n\n- 2\\leq N \\leq 2\\times 10^5\n- 1\\leq A_i,B_i \\leq 2N\n- A_1,\\dots,A_N,B_1,\\dots,B_N are all distinct\n- All input values are integers\n\nSample Input 1\n\n3\n1 3\n4 2\n5 6\n\nSample Output 1\n\nYes\n\n\nAs shown in the figure, chord 1 (the line segment connecting points 1 and 3) and chord 2 (the line segment connecting points 4 and 2) intersect, so print Yes.\n\nSample Input 2\n\n3\n6 1\n4 3\n2 5\n\nSample Output 2\n\nNo\n\n\nAs shown in the figure, there is no intersection between the chords, so print No.\n\nSample Input 3\n\n4\n2 4\n3 7\n8 6\n5 1\n\nSample Output 3\n\nYes",
+    "platform": "atcoder",
+    "question_id": "abc338_e",
+    "contest_id": "abc338",
+    "contest_date": "2024-01-27T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nN = int(input())\nchords = []\nfor i in range(N):\n    A, B = map(int, input().split())\n    chords.append((A, B))\n\nfor i in range(N):\n    for j in range(i+1, N):\n        a1, b1 = chords[i]\n        a2, b2 = chords[j]\n        if (min(a1, b1) < min(a2, b2) < max(a1, b1) < max(a2, b2)) or (min(a2, b2) < min(a1, b1) < max(a2, b2) < max(a1, b1)):\n            print('Yes')\n            exit()\nprint('No')\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nN = int(input())\nchords = []\nfor i in range(N):\n    A, B = map(int, input().split())\n    chords.append((A, B))\n\nfor i in range(N):\n    for j in range(i+1, N):\n        a1, b1 = chords[i]\n        a2, b2 = chords[j]\n        if (min(a1, b1) < min(a2, b2) < max(a1, b1) < max(a2, b2)) or (min(a2, b2) < min(a1, b1) < max(a2, b2) < max(a1, b1)):\n            print('Yes')\n            exit()\nprint('No')"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"TimeoutException()\", \"error_code\": -3, \"error_message\": \"Time Limit Exceeded\", \"inputs\": \"14929\\n2485 28022\\n6731 24876\\n15157 18524\\n19556 13775\\n26595 4420\\n2105 28306\\n24433 7334\\n20608 12399\\n27532 3145\\n27544 3133\\n24370 7415\\n2650 27897\\n28636 168...(truncated) ...705\\n3849 27006\\n3023 27626\\n29570 399\\n19023 14472\\n12397 20610\\n18972 14539\\n8668 23401\\n29676 247\\n19349 14024\\n24084 7793\\n6504 25053\\n10646 10647\\n26668 4325\\n\", \"expected\": \"No\\n\"}"
+    ],
+    "bug_span": [
+      [
+        8,
+        14
+      ]
+    ],
+    "bug_summary": "Inefficient nested loops causing time limit exceeded for large input size"
+  },
+  {
+    "question_title": "Switch Seats",
+    "question_content": "N couples are seated in a line.\nCount the number of pairs of couples such that neither couple was originally sitting next to each other, and both couples can end up sitting next to each other by swapping seats among those four people.\n\nThere is a sequence A = (A_1, A_2, \\dots, A_{2N}) of length 2N. Each of the integers 1, 2, \\dots, N appears exactly twice in A.\nFind the number of integer pairs (a, b) satisfying 1 \\leq a < b \\leq N and all of the following conditions:\n\n- The two occurrences of a in A are not adjacent.\n- The two occurrences of b in A are not adjacent.\n- By performing the following operation one or more times in any order, it is possible to reach a state where the two occurrences of a in A are adjacent and the two occurrences of b in A are also adjacent.\n- Choose an integer pair (i, j) (1 \\leq i \\leq 2N, 1 \\leq j \\leq 2N) such that A_i = a and A_j = b, and swap A_i with A_j.\n\n\n\nYou are given T test cases; solve each of them.\n\nInput\n\nThe input is given from Standard Input in the following format, where \\mathrm{case}_i denotes the i-th test case:\nT\n\\mathrm{case}_1\n\\mathrm{case}_2\n\\vdots\n\\mathrm{case}_T\n\nEach test case is given in the following format:\nN\nA_1 A_2 \\dots A_{2N}\n\nOutput\n\nPrint T lines. The i-th line should contain the answer for the i-th test case.\n\nConstraints\n\n\n- 1 \\leq T \\leq 2 \\times 10^5\n- 1 \\leq N \\leq 2 \\times 10^5\n- 1 \\leq A_i \\leq N\n- Each of 1, 2, \\dots, N appears exactly twice in A.\n- The sum of N over all test cases is at most 2 \\times 10^5.\n- All input values are integers.\n\nSample Input 1\n\n3\n3\n1 2 3 3 1 2\n4\n1 1 2 2 3 3 4 4\n5\n1 2 3 4 5 1 2 3 4 5\n\nSample Output 1\n\n1\n0\n4\n\nConsider the first test case.\n(a, b) = (1, 2) satisfies the conditions in the problem statement, for the following reasons:\n\n- The two occurrences of 1 in A are not adjacent.\n- The two occurrences of 2 in A are not adjacent.\n- By performing the operation where (i, j) = (1, 6) and swapping A_1 with A_6, you can reach a state where the two occurrences of 1 are adjacent and the two occurrences of 2 are also adjacent.\n\n(1, 2) is the only pair (a, b) that satisfies the conditions.",
+    "platform": "atcoder",
+    "question_id": "abc399_d",
+    "contest_id": "abc399",
+    "contest_date": "2025-03-29T00:00:00",
+    "starter_code": "",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\n# number of test cases\nT = int(input())\n\nfor _ in range(T):\n    # number of couples\n    N = int(input())\n    # sequence A\n    A = list(map(int, input().split()))\n    # dictionary to store the positions of each number\n    positions = {}\n    # list to store the positions of each number\n    pos_list = [0] * (N + 1)\n    # list to store the number of valid pairs for each number\n    valid_pairs = [0] * (N + 1)\n    \n    # populate the positions dictionary and pos_list\n    for i, num in enumerate(A):\n        if num in positions:\n            positions[num].append(i)\n            pos_list[num] = i\n        else:\n            positions[num] = [i]\n    \n    # calculate the number of valid pairs for each number\n    for num in positions:\n        if positions[num][0] + 1 < positions[num][1]:\n            valid_pairs[num] += 1\n        if positions[num][0] - 1 > 0 and A[positions[num][0] - 1] == num:\n            valid_pairs[num] += 1\n        if positions[num][1] + 1 <= 2 * N and A[positions[num][1] + 1] == num:\n            valid_pairs[num] += 1\n        if positions[num][1] - 1 > 0 and A[positions[num][1] - 1] == num:\n            valid_pairs[num] += 1\n    \n    # calculate the number of valid pairs (a, b)\n    result = 0\n    for i in range(1, N + 1):\n        for j in range(i + 1, N + 1):\n            if valid_pairs[i] > 0 and valid_pairs[j] > 0:\n                result += 1\n    \n    print(result)\n```"
+    ],
+    "code_list": [
+      "# number of test cases\nT = int(input())\n\nfor _ in range(T):\n    # number of couples\n    N = int(input())\n    # sequence A\n    A = list(map(int, input().split()))\n    # dictionary to store the positions of each number\n    positions = {}\n    # list to store the positions of each number\n    pos_list = [0] * (N + 1)\n    # list to store the number of valid pairs for each number\n    valid_pairs = [0] * (N + 1)\n    \n    # populate the positions dictionary and pos_list\n    for i, num in enumerate(A):\n        if num in positions:\n            positions[num].append(i)\n            pos_list[num] = i\n        else:\n            positions[num] = [i]\n    \n    # calculate the number of valid pairs for each number\n    for num in positions:\n        if positions[num][0] + 1 < positions[num][1]:\n            valid_pairs[num] += 1\n        if positions[num][0] - 1 > 0 and A[positions[num][0] - 1] == num:\n            valid_pairs[num] += 1\n        if positions[num][1] + 1 <= 2 * N and A[positions[num][1] + 1] == num:\n            valid_pairs[num] += 1\n        if positions[num][1] - 1 > 0 and A[positions[num][1] - 1] == num:\n            valid_pairs[num] += 1\n    \n    # calculate the number of valid pairs (a, b)\n    result = 0\n    for i in range(1, N + 1):\n        for j in range(i + 1, N + 1):\n            if valid_pairs[i] > 0 and valid_pairs[j] > 0:\n                result += 1\n    \n    print(result)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"IndexError('list index out of range')\", \"error_code\": -4, \"error_message\": \"Runtime Error\", \"inputs\": \"3\\n3\\n1 2 3 3 1 2\\n4\\n1 1 2 2 3 3 4 4\\n5\\n1 2 3 4 5 1 2 3 4 5\", \"expected\": \"1\\n0\\n4\"}"
+    ],
+    "bug_span": [
+      [
+        30,
+        31
+      ]
+    ],
+    "bug_summary": "Index out of range error due to incorrect boundary check when accessing A[positions[num][1] + 1]"
+  },
+  {
+    "question_title": "Christmas Color Grid 1",
+    "question_content": "This problem has a similar setting to Problem G. Differences in the problem statement are indicated in red.\nThere is a grid with H rows and W columns, where each cell is painted red or green.\nLet (i,j) denote the cell in the i-th row from the top and the j-th column from the left.\nThe color of cell (i,j) is represented by the character S_{i,j}, where S_{i,j} = . means cell (i,j) is red, and S_{i,j} = # means cell (i,j) is green.\nThe number of green connected components in the grid is the number of connected components in the graph with the vertex set being the green cells and the edge set being the edges connecting two adjacent green cells. Here, two cells (x,y) and (x',y') are considered adjacent when |x-x'| + |y-y'| = 1.\nConsider choosing one red cell uniformly at random and repainting it green. Print the expected value of the number of green connected components in the grid after repainting, modulo 998244353.\n\nWhat does \"print the expected value modulo 998244353\" mean? \r\nIt can be proved that the sought expected value is always rational.\r\nFurthermore, the constraints of this problem guarantee that if that value is expressed as \\frac{P}{Q} using two coprime integers P and Q, there is exactly one integer R such that R \\times Q \\equiv P \\pmod{998244353} and 0 \\leq R < 998244353. Print this R.\n\nInput\n\nThe input is given from Standard Input in the following format:\nH W\r\nS_{1,1}S_{1,2}\\ldotsS_{1,W}\r\nS_{2,1}S_{2,2}\\ldotsS_{2,W}\r\n\\vdots\r\nS_{H,1}S_{H,2}\\ldotsS_{H,W}\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 1 \\leq H,W \\leq 1000\n- S_{i,j} = . or S_{i,j} = #.\n- There is at least one (i,j) such that S_{i,j} = ..\n\nSample Input 1\n\n3 3\r\n##.\r\n#.#\r\n#..\n\nSample Output 1\n\n499122178\r\n\nIf cell (1,3) is repainted green, the number of green connected components becomes 1.\nIf cell (2,2) is repainted green, the number of green connected components becomes 1.\nIf cell (3,2) is repainted green, the number of green connected components becomes 2.\nIf cell (3,3) is repainted green, the number of green connected components becomes 2.\nTherefore, the expected value of the number of green connected components after choosing one red cell uniformly at random and repainting it green is (1+1+2+2)/4 = 3/2.\n\nSample Input 2\n\n4 5\r\n..#..\r\n.###.\r\n#####\r\n..#..\n\nSample Output 2\n\n598946613\n\nSample Input 3\n\n3 4\r\n#...\r\n.#.#\r\n..##\n\nSample Output 3\n\n285212675",
+    "platform": "atcoder",
+    "question_id": "abc334_e",
+    "contest_id": "abc334",
+    "contest_date": "2023-12-23T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\nfrom collections import defaultdict\nfrom math import comb\n\ndef solve():\n    H, W = map(int, input().split())\n    grid = [input() for _ in range(H)]\n    red = defaultdict(int)\n    green = defaultdict(int)\n    for i in range(H):\n        for j in range(W):\n            if grid[i][j] == '.':\n                red[(i, j)] = 1\n            else:\n                green[(i, j)] = 1\n    mod = 998244353\n\n    def dfs(x, y, color):\n        if (x, y) in color:\n            color.pop((x, y))\n            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:\n                nx, ny = x + dx, y + dy\n                if 0 <= nx < H and 0 <= ny < W and (nx, ny) in color:\n                    dfs(nx, ny, color)\n\n    def count_components(color):\n        components = 0\n        for (x, y) in color:\n            if (x, y) in color:\n                dfs(x, y, color)\n                components += 1\n        return components\n\n    total_red = len(red)\n    total_green = len(green)\n    total_components = count_components(green)\n\n    expected_value = 0\n    for (x, y) in red:\n        new_green = green.copy()\n        new_green[(x, y)] = 1\n        new_components = count_components(new_green)\n        expected_value += new_components - total_components\n        expected_value %= mod\n\n    expected_value = (expected_value * comb(total_red, 1) + total_components * (total_green)) % mod\n    expected_value = (expected_value * pow(comb(total_red, 1), mod - 2, mod)) % mod\n\n    print(expected_value)\n\nsolve()\n```"
+    ],
+    "code_list": [
+      "from collections import defaultdict\nfrom math import comb\n\ndef solve():\n    H, W = map(int, input().split())\n    grid = [input() for _ in range(H)]\n    red = defaultdict(int)\n    green = defaultdict(int)\n    for i in range(H):\n        for j in range(W):\n            if grid[i][j] == '.':\n                red[(i, j)] = 1\n            else:\n                green[(i, j)] = 1\n    mod = 998244353\n\n    def dfs(x, y, color):\n        if (x, y) in color:\n            color.pop((x, y))\n            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:\n                nx, ny = x + dx, y + dy\n                if 0 <= nx < H and 0 <= ny < W and (nx, ny) in color:\n                    dfs(nx, ny, color)\n\n    def count_components(color):\n        components = 0\n        for (x, y) in color:\n            if (x, y) in color:\n                dfs(x, y, color)\n                components += 1\n        return components\n\n    total_red = len(red)\n    total_green = len(green)\n    total_components = count_components(green)\n\n    expected_value = 0\n    for (x, y) in red:\n        new_green = green.copy()\n        new_green[(x, y)] = 1\n        new_components = count_components(new_green)\n        expected_value += new_components - total_components\n        expected_value %= mod\n\n    expected_value = (expected_value * comb(total_red, 1) + total_components * (total_green)) % mod\n    expected_value = (expected_value * pow(comb(total_red, 1), mod - 2, mod)) % mod\n\n    print(expected_value)\n\nsolve()"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"RuntimeError('dictionary changed size during iteration')\", \"error_code\": -4, \"error_message\": \"Runtime Error\", \"inputs\": \"3 3\\n##.\\n#.#\\n#..\\n\", \"expected\": \"499122178\\n\"}"
+    ],
+    "bug_span": [
+      [
+        11,
+        14
+      ]
+    ],
+    "bug_summary": "Incorrectly classifying '.' cells as red and others as green; should be reversed to match problem context."
+  },
+  {
+    "question_title": "maximize-active-section-with-trade-i",
+    "question_content": "You are given a binary string s of length n, where:\n\n'1' represents an active section.\n'0' represents an inactive section.\n\nYou can perform at most one trade to maximize the number of active sections in s. In a trade, you:\n\nConvert a contiguous block of '1's that is surrounded by '0's to all '0's.\nAfterward, convert a contiguous block of '0's that is surrounded by '1's to all '1's.\n\nReturn the maximum number of active sections in s after making the optimal trade.\nNote: Treat s as if it is augmented with a '1' at both ends, forming t = '1' + s + '1'. The augmented '1's do not contribute to the final count.\n \nExample 1:\n\nInput: s = \"01\"\nOutput: 1\nExplanation:\nBecause there is no block of '1's surrounded by '0's, no valid trade is possible. The maximum number of active sections is 1.\n\nExample 2:\n\nInput: s = \"0100\"\nOutput: 4\nExplanation:\n\nString \"0100\" → Augmented to \"101001\".\nChoose \"0100\", convert \"101001\" → \"100001\" → \"111111\".\nThe final string without augmentation is \"1111\". The maximum number of active sections is 4.\n\n\nExample 3:\n\nInput: s = \"1000100\"\nOutput: 7\nExplanation:\n\nString \"1000100\" → Augmented to \"110001001\".\nChoose \"000100\", convert \"110001001\" → \"110000001\" → \"111111111\".\nThe final string without augmentation is \"1111111\". The maximum number of active sections is 7.\n\n\nExample 4:\n\nInput: s = \"01010\"\nOutput: 4\nExplanation:\n\nString \"01010\" → Augmented to \"1010101\".\nChoose \"010\", convert \"1010101\" → \"1000101\" → \"1111101\".\nThe final string without augmentation is \"11110\". The maximum number of active sections is 4.\n\n\n \nConstraints:\n\n1 <= n == s.length <= 10^5\ns[i] is either '0' or '1'",
+    "platform": "leetcode",
+    "question_id": "3805",
+    "contest_id": "biweekly-contest-153",
+    "contest_date": "2025-03-29T07:30:00",
+    "starter_code": "class Solution:\n    def maxActiveSectionsAfterTrade(self, s: str) -> int:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nclass Solution:\n    def maxActiveSectionsAfterTrade(self, s: str) -> int:\n        n = len(s)\n        max_gap = 0\n        current_gap = 0\n        prev_char = '1'\n        \n        for char in s:\n            if char == '1':\n                if prev_char == '0':\n                    max_gap = max(max_gap, current_gap)\n                    current_gap = 0\n                prev_char = '1'\n            else:\n                current_gap += 1\n                prev_char = '0'\n        \n        return max(max_gap + 1, s.count('1'))\n```"
+    ],
+    "code_list": [
+      "class Solution:\n    def maxActiveSectionsAfterTrade(self, s: str) -> int:\n        n = len(s)\n        max_gap = 0\n        current_gap = 0\n        prev_char = '1'\n        \n        for char in s:\n            if char == '1':\n                if prev_char == '0':\n                    max_gap = max(max_gap, current_gap)\n                    current_gap = 0\n                prev_char = '1'\n            else:\n                current_gap += 1\n                prev_char = '0'\n        \n        return max(max_gap + 1, s.count('1'))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"2\", \"inputs\": \"['01']\", \"expected\": \"1\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        6,
+        6
+      ]
+    ],
+    "bug_summary": "Incorrect initialization of prev_char to '1' causes wrong gap calculation for strings starting with '0'."
+  },
+  {
+    "question_title": "Adjacent GCD",
+    "question_content": "Define the score of a sequence of positive integers B = (B_1, B_2, \\dots, B_k) as \\displaystyle \\sum_{i=1}^{k-1} \\gcd(B_i, B_{i+1}).\r\nGiven a sequence of positive integers A = (A_1, A_2, \\dots, A_N), solve the following problem for m = 1, 2, \\dots, N.\n\n- There are 2^m - 1 non-empty subsequences of the sequence (A_1, A_2, \\dots, A_m). Find the sum of the scores of all those subsequences, modulo 998244353. Two subsequences are distinguished if they are taken from different positions in the sequence, even if they coincide as sequences.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN\r\nA_1 A_2 \\dots A_N\n\nOutput\n\nPrint N lines. The i-th line should contain the answer for m = i.\n\nConstraints\n\n\n- 1 \\leq N \\leq 5 \\times 10^5\n- 1 \\leq A_i \\leq 10^5\n- All input values are integers.\n\nSample Input 1\n\n3\r\n9 6 4\n\nSample Output 1\n\n0\r\n3\r\n11\r\n\nConsider the case m = 3. Here are the non-empty subsequences of (A_1, A_2, A_3) = (9, 6, 4) and their scores.\n\n- (9): Score is 0.\n- (6): Score is 0.\n- (4): Score is 0.\n- (9, 6): Score is \\gcd(9, 6) = 3.\n- (9, 4): Score is \\gcd(9, 4) = 1.\n- (6, 4): Score is \\gcd(6, 4) = 2.\n- (9, 6, 4): Score is \\gcd(9, 6) + \\gcd(6, 4) = 3 + 2 = 5.\n\nTherefore, the answer for m = 3 is 0 + 0 + 0 + 3 + 1 + 2 + 5 = 11.\n\nSample Input 2\n\n5\r\n3 8 12 6 9\n\nSample Output 2\n\n0\r\n1\r\n13\r\n57\r\n155\n\nSample Input 3\n\n10\r\n47718 21994 74148 76721 98917 73766 29598 59035 69293 29127\n\nSample Output 3\n\n0\r\n2\r\n14\r\n35\r\n97\r\n372\r\n866\r\n1859\r\n4273\r\n43287",
+    "platform": "atcoder",
+    "question_id": "arc185_e",
+    "contest_id": "arc185",
+    "contest_date": "2024-10-13T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\nfrom math import gcd\nfrom collections import defaultdict\nfrom sys import stdin, stdout\n\ndef solve():\n    n = int(input())\n    a = list(map(int, input().split()))\n    mod = 998244353\n    prefix_gcd = [0] * (n + 1)\n    suffix_gcd = [0] * (n + 1)\n    for i in range(n):\n        prefix_gcd[i + 1] = gcd(prefix_gcd[i], a[i])\n    for i in range(n - 1, -1, -1):\n        suffix_gcd[i] = gcd(suffix_gcd[i + 1], a[i])\n    ans = [0] * n\n    for i in range(n):\n        ans[i] = (prefix_gcd[i] * (i + 1) - prefix_gcd[i] * (i // prefix_gcd[i] + 1) + suffix_gcd[i + 1] * (n - i) - suffix_gcd[i + 1] * ((n - i - 1) // suffix_gcd[i + 1] + 1)) % mod\n    for i in range(n):\n        for j in range(i + 1, n):\n            if gcd(a[i], a[j]) > 1:\n                ans[i] += (j - i - 1) * (i + 1) * (n - j) * gcd(a[i], a[j]) % mod\n                ans[i] %= mod\n                ans[j] += (j - i - 1) * (i + 1) * (n - j) * gcd(a[i], a[j]) % mod\n                ans[j] %= mod\n    for i in range(n):\n        stdout.write(str(sum(ans[:i + 1]) % mod) + '\\n')\n\nsolve()\n```"
+    ],
+    "code_list": [
+      "from math import gcd\nfrom collections import defaultdict\nfrom sys import stdin, stdout\n\ndef solve():\n    n = int(input())\n    a = list(map(int, input().split()))\n    mod = 998244353\n    prefix_gcd = [0] * (n + 1)\n    suffix_gcd = [0] * (n + 1)\n    for i in range(n):\n        prefix_gcd[i + 1] = gcd(prefix_gcd[i], a[i])\n    for i in range(n - 1, -1, -1):\n        suffix_gcd[i] = gcd(suffix_gcd[i + 1], a[i])\n    ans = [0] * n\n    for i in range(n):\n        ans[i] = (prefix_gcd[i] * (i + 1) - prefix_gcd[i] * (i // prefix_gcd[i] + 1) + suffix_gcd[i + 1] * (n - i) - suffix_gcd[i + 1] * ((n - i - 1) // suffix_gcd[i + 1] + 1)) % mod\n    for i in range(n):\n        for j in range(i + 1, n):\n            if gcd(a[i], a[j]) > 1:\n                ans[i] += (j - i - 1) * (i + 1) * (n - j) * gcd(a[i], a[j]) % mod\n                ans[i] %= mod\n                ans[j] += (j - i - 1) * (i + 1) * (n - j) * gcd(a[i], a[j]) % mod\n                ans[j] %= mod\n    for i in range(n):\n        stdout.write(str(sum(ans[:i + 1]) % mod) + '\\n')\n\nsolve()"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"ZeroDivisionError('integer division or modulo by zero')\", \"error_code\": -4, \"error_message\": \"Runtime Error\", \"inputs\": \"3\\n9 6 4\", \"expected\": \"0\\n3\\n11\"}"
+    ],
+    "bug_span": [
+      [
+        17,
+        17
+      ]
+    ],
+    "bug_summary": "Division by zero error when prefix_gcd[i] or suffix_gcd[i+1] is zero in line 17"
+  },
+  {
+    "question_title": "Piano 3",
+    "question_content": "Takahashi has a piano with 100 keys arranged in a row.\r\nThe i-th key from the left is called key i.\nHe will play music by pressing N keys one by one.\r\nFor the i-th press, he will press key A_i, using his left hand if S_i= L, and his right hand if S_i= R.\nBefore starting to play, he can place both of his hands on any keys he likes, and his fatigue level at this point is 0.\r\nDuring the performance, if he moves one hand from key x to key y, the fatigue level increases by |y-x| (conversely, the fatigue level does not increase for any reason other than moving hands).\r\nTo press a certain key with a hand, that hand must be placed on that key.\nFind the minimum possible fatigue level at the end of the performance.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN\r\nA_1 S_1\r\nA_2 S_2\r\n\\vdots\r\nA_N S_N\n\nOutput\n\nPrint the minimum fatigue level at the end of the performance.\n\nConstraints\n\n\n- 1 \\leq N \\leq 100\n- 1 \\leq A_i \\leq 100\n- N and A_i are integers.\n- S_i is L or R.\n\nSample Input 1\n\n4\r\n3 L\r\n6 R\r\n9 L\r\n1 R\n\nSample Output 1\n\n11\r\n\nFor example, the performance can be done as follows:\n\n- Initially, place the left hand on key 3 and the right hand on key 6.\n- Press key 3 with the left hand.\n- Press key 6 with the right hand.\n- Move the left hand from key 3 to key 9. The fatigue level increases by |9-3| = 6.\n- Move the right hand from key 6 to key 1. The fatigue level increases by |1-6| = 5.\n- Press key 9 with the left hand.\n- Press key 1 with the right hand.\n\nIn this case, the fatigue level at the end of the performance is 6+5 = 11, which is the minimum possible.\n\nSample Input 2\n\n3\r\n2 L\r\n2 L\r\n100 L\n\nSample Output 2\n\n98\n\nSample Input 3\n\n8\r\n22 L\r\n75 L\r\n26 R\r\n45 R\r\n72 R\r\n81 R\r\n47 L\r\n29 R\n\nSample Output 3\n\n188",
+    "platform": "atcoder",
+    "question_id": "abc369_b",
+    "contest_id": "abc369",
+    "contest_date": "2024-08-31T00:00:00",
+    "starter_code": "",
+    "difficulty": "easy",
+    "output_list": [
+      "```python\n# number of presses\nN = int(input())\n\n# initialize positions of left and right hands\nleft_hand = 1\nright_hand = 100\n\n# initialize total fatigue\ntotal_fatigue = 0\n\n# process each press\nfor i in range(N):\n    key, hand = input().split()\n    key = int(key)\n    \n    # calculate fatigue for moving the appropriate hand\n    if hand == 'L':\n        total_fatigue += abs(key - left_hand)\n        left_hand = key\n    else:\n        total_fatigue += abs(key - right_hand)\n        right_hand = key\n\n# print the total fatigue\nprint(total_fatigue)\n```"
+    ],
+    "code_list": [
+      "# number of presses\nN = int(input())\n\n# initialize positions of left and right hands\nleft_hand = 1\nright_hand = 100\n\n# initialize total fatigue\ntotal_fatigue = 0\n\n# process each press\nfor i in range(N):\n    key, hand = input().split()\n    key = int(key)\n    \n    # calculate fatigue for moving the appropriate hand\n    if hand == 'L':\n        total_fatigue += abs(key - left_hand)\n        left_hand = key\n    else:\n        total_fatigue += abs(key - right_hand)\n        right_hand = key\n\n# print the total fatigue\nprint(total_fatigue)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"107\\n\", \"inputs\": \"4\\n3 L\\n6 R\\n9 L\\n1 R\\n\", \"expected\": \"11\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 107 != 11\"}"
+    ],
+    "bug_span": [
+      [
+        6,
+        6
+      ]
+    ],
+    "bug_summary": "Initial position of right_hand is incorrectly set to 100 instead of 10, causing incorrect fatigue calculation."
+  },
+  {
+    "question_title": "sum-of-imbalance-numbers-of-all-subarrays",
+    "question_content": "The imbalance number of a 0-indexed integer array arr of length n is defined as the number of indices in sarr = sorted(arr) such that:\n\n0 <= i < n - 1, and\nsarr[i+1] - sarr[i] > 1\n\nHere, sorted(arr) is the function that returns the sorted version of arr.\nGiven a 0-indexed integer array nums, return the sum of imbalance numbers of all its subarrays.\nA subarray is a contiguous non-empty sequence of elements within an array.\n \nExample 1:\n\nInput: nums = [2,3,1,4]\nOutput: 3\nExplanation: There are 3 subarrays with non-zero imbalance numbers:\n- Subarray [3, 1] with an imbalance number of 1.\n- Subarray [3, 1, 4] with an imbalance number of 1.\n- Subarray [1, 4] with an imbalance number of 1.\nThe imbalance number of all other subarrays is 0. Hence, the sum of imbalance numbers of all the subarrays of nums is 3. \n\nExample 2:\n\nInput: nums = [1,3,3,3,5]\nOutput: 8\nExplanation: There are 7 subarrays with non-zero imbalance numbers:\n- Subarray [1, 3] with an imbalance number of 1.\n- Subarray [1, 3, 3] with an imbalance number of 1.\n- Subarray [1, 3, 3, 3] with an imbalance number of 1.\n- Subarray [1, 3, 3, 3, 5] with an imbalance number of 2. \n- Subarray [3, 3, 3, 5] with an imbalance number of 1. \n- Subarray [3, 3, 5] with an imbalance number of 1.\n- Subarray [3, 5] with an imbalance number of 1.\nThe imbalance number of all other subarrays is 0. Hence, the sum of imbalance numbers of all the subarrays of nums is 8. \n \nConstraints:\n\n1 <= nums.length <= 1000\n1 <= nums[i] <= nums.length",
+    "platform": "leetcode",
+    "question_id": "2849",
+    "contest_id": "weekly-contest-352",
+    "contest_date": "2023-07-02T00:00:00",
+    "starter_code": "class Solution:\n    def sumImbalanceNumbers(self, nums: List[int]) -> int:\n        ",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\nfrom typing import List\n\nclass Solution:\n    def sumImbalanceNumbers(self, nums: List[int]) -> int:\n        n = len(nums)\n        ans = 0\n        for i in range(n):\n            sarr = sorted(nums[i:])\n            imbalance = 0\n            for j in range(len(sarr) - 1):\n                if sarr[j+1] - sarr[j] > 1:\n                    imbalance += 1\n            ans += imbalance\n        return ans\n```"
+    ],
+    "code_list": [
+      "from typing import List\n\nclass Solution:\n    def sumImbalanceNumbers(self, nums: List[int]) -> int:\n        n = len(nums)\n        ans = 0\n        for i in range(n):\n            sarr = sorted(nums[i:])\n            imbalance = 0\n            for j in range(len(sarr) - 1):\n                if sarr[j+1] - sarr[j] > 1:\n                    imbalance += 1\n            ans += imbalance\n        return ans"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"2\", \"inputs\": \"[[2, 3, 1, 4]]\", \"expected\": \"3\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        8,
+        13
+      ]
+    ],
+    "bug_summary": "Incorrect imbalance calculation logic; imbalance should be counted for subarrays, not just sorted suffixes, and the counting method is flawed."
+  },
+  {
+    "question_title": "Accumulating Many Times",
+    "question_content": "You are given N length-M sequences, where each element is 0 or 1. The i-th sequence is A_i = (A_{i, 1}, A_{i, 2}, \\dots, A_{i, M}).\nFor integers i, j \\ (1 \\leq i, j \\leq N), define f(i, j) as follows:\n\n- \nf(i, j) := The smallest non-negative integer x such that A_i and A_j become identical after performing the following operation x times, or 0 if such x does not exist.\n\n- \nFor all integers k \\ (1 \\leq k \\leq M) simultaneously, replace A_{i, k} with \\displaystyle \\left (\\sum_{l=1}^{k} A_{i, l} \\right ) \\bmod 2.\n\n\n\n\nFind \\displaystyle \\sum_{i=1}^{N} \\sum_{j=i}^{N} f(i, j), modulo 998244353.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN M\nA_{1, 1} A_{1, 2} \\cdots A_{1, M}\nA_{2, 1} A_{2, 2} \\cdots A_{2, M}\n\\vdots\nA_{N, 1} A_{N, 2} \\cdots A_{N, M}\n\nOutput\n\nPrint the answer in one line.\n\nConstraints\n\n\n- 1 \\leq N \\times M \\leq 10^6\n- A_{i, j} \\in \\{0, 1\\}\n\nSample Input 1\n\n4 3\n1 0 0\n1 1 0\n1 0 1\n0 1 1\n\nSample Output 1\n\n8\n\nf(1, 1) = 0, f(1, 2) = 3, f(1, 3) = 2, f(1, 4) = 0, f(2, 2) = 0, f(2, 3) = 3, f(2, 4) = 0, f(3, 3) = 0, f(3, 4) = 0, f(4, 4) = 0, so print their sum, 8.\n\nSample Input 2\n\n7 6\n1 0 0 0 0 0\n1 1 1 0 0 0\n1 0 1 1 0 0\n1 0 0 0 1 1\n1 0 0 0 0 1\n1 0 0 0 0 0\n1 1 1 1 1 1\n\nSample Output 2\n\n6",
+    "platform": "atcoder",
+    "question_id": "arc184_e",
+    "contest_id": "arc184",
+    "contest_date": "2024-09-22T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nfrom collections import defaultdict\n\ndef solve():\n    mod = 998244353\n    n, m = map(int, input().split())\n    sequences = [list(map(int, input().split())) for _ in range(n)]\n    \n    def f(i, j):\n        x = 0\n        for k in range(m):\n            if sequences[i][k] != sequences[j][k]:\n                x += 1\n                for l in range(k, m):\n                    sequences[i][l] = (sequences[i][l] + sequences[i][l-1]) % 2\n                    sequences[j][l] = (sequences[j][l] + sequences[j][l-1]) % 2\n            if sequences[i] == sequences[j]:\n                return x\n        return 0\n    \n    dp = defaultdict(int)\n    ans = 0\n    for i in range(n-1, -1, -1):\n        for j in range(i, n):\n            x = f(i, j)\n            if x != 0:\n                ans += x\n                ans %= mod\n                for k in range(x):\n                    dp[tuple(sequences[j])] += 1\n                    for l in range(m):\n                        sequences[j][l] = (sequences[j][l] + sequences[j][l-1]) % 2\n            else:\n                ans += dp[tuple(sequences[j])]\n                ans %= mod\n    print(ans)\n\nsolve()\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nfrom collections import defaultdict\n\ndef solve():\n    mod = 998244353\n    n, m = map(int, input().split())\n    sequences = [list(map(int, input().split())) for _ in range(n)]\n    \n    def f(i, j):\n        x = 0\n        for k in range(m):\n            if sequences[i][k] != sequences[j][k]:\n                x += 1\n                for l in range(k, m):\n                    sequences[i][l] = (sequences[i][l] + sequences[i][l-1]) % 2\n                    sequences[j][l] = (sequences[j][l] + sequences[j][l-1]) % 2\n            if sequences[i] == sequences[j]:\n                return x\n        return 0\n    \n    dp = defaultdict(int)\n    ans = 0\n    for i in range(n-1, -1, -1):\n        for j in range(i, n):\n            x = f(i, j)\n            if x != 0:\n                ans += x\n                ans %= mod\n                for k in range(x):\n                    dp[tuple(sequences[j])] += 1\n                    for l in range(m):\n                        sequences[j][l] = (sequences[j][l] + sequences[j][l-1]) % 2\n            else:\n                ans += dp[tuple(sequences[j])]\n                ans %= mod\n    print(ans)\n\nsolve()"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"0\\n\", \"inputs\": \"4 3\\n1 0 0\\n1 1 0\\n1 0 1\\n0 1 1\", \"expected\": \"8\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 0 != 8\"}"
+    ],
+    "bug_span": [
+      [
+        14,
+        16
+      ]
+    ],
+    "bug_summary": "Modifying sequences[i] and sequences[j] inside nested loops causes incorrect accumulation and comparison."
+  },
+  {
+    "question_title": "minimum-amount-of-damage-dealt-to-bob",
+    "question_content": "You are given an integer power and two integer arrays damage and health, both having length n.\nBob has n enemies, where enemy i will deal Bob damage[i] points of damage per second while they are alive (i.e. health[i] > 0).\nEvery second, after the enemies deal damage to Bob, he chooses one of the enemies that is still alive and deals power points of damage to them.\nDetermine the minimum total amount of damage points that will be dealt to Bob before all n enemies are dead.\n \nExample 1:\n\nInput: power = 4, damage = [1,2,3,4], health = [4,5,6,8]\nOutput: 39\nExplanation:\n\nAttack enemy 3 in the first two seconds, after which enemy 3 will go down, the number of damage points dealt to Bob is 10 + 10 = 20 points.\nAttack enemy 2 in the next two seconds, after which enemy 2 will go down, the number of damage points dealt to Bob is 6 + 6 = 12 points.\nAttack enemy 0 in the next second, after which enemy 0 will go down, the number of damage points dealt to Bob is 3 points.\nAttack enemy 1 in the next two seconds, after which enemy 1 will go down, the number of damage points dealt to Bob is 2 + 2 = 4 points.\n\n\nExample 2:\n\nInput: power = 1, damage = [1,1,1,1], health = [1,2,3,4]\nOutput: 20\nExplanation:\n\nAttack enemy 0 in the first second, after which enemy 0 will go down, the number of damage points dealt to Bob is 4 points.\nAttack enemy 1 in the next two seconds, after which enemy 1 will go down, the number of damage points dealt to Bob is 3 + 3 = 6 points.\nAttack enemy 2 in the next three seconds, after which enemy 2 will go down, the number of damage points dealt to Bob is 2 + 2 + 2 = 6 points.\nAttack enemy 3 in the next four seconds, after which enemy 3 will go down, the number of damage points dealt to Bob is 1 + 1 + 1 + 1 = 4 points.\n\n\nExample 3:\n\nInput: power = 8, damage = [40], health = [59]\nOutput: 320\n\n \nConstraints:\n\n1 <= power <= 10^4\n1 <= n == damage.length == health.length <= 10^5\n1 <= damage[i], health[i] <= 10^4",
+    "platform": "leetcode",
+    "question_id": "3531",
+    "contest_id": "biweekly-contest-138",
+    "contest_date": "2024-08-31T07:30:00",
+    "starter_code": "class Solution:\n    def minDamage(self, power: int, damage: List[int], health: List[int]) -> int:\n        ",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\nclass Solution:\n    def minDamage(self, power: int, damage: List[int], health: List[int]) -> int:\n        n = len(damage)\n        dp = [0] * (n + 1)\n        for i in range(n - 1, -1, -1):\n            time_to_die = (health[i] + damage[i] - 1) // damage[i]\n            if power >= health[i]:\n                dp[i] = max(dp[i + 1], health[i])\n            else:\n                dp[i] = max(dp[i + 1] + time_to_die * power, health[i] - time_to_die * damage[i])\n        return dp[0]\n```\n"
+    ],
+    "code_list": [
+      "class Solution:\n    def minDamage(self, power: int, damage: List[int], health: List[int]) -> int:\n        n = len(damage)\n        dp = [0] * (n + 1)\n        for i in range(n - 1, -1, -1):\n            time_to_die = (health[i] + damage[i] - 1) // damage[i]\n            if power >= health[i]:\n                dp[i] = max(dp[i + 1], health[i])\n            else:\n                dp[i] = max(dp[i + 1] + time_to_die * power, health[i] - time_to_die * damage[i])\n        return dp[0]"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"28\", \"inputs\": \"[4, [1, 2, 3, 4], [4, 5, 6, 8]]\", \"expected\": \"39\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        10,
+        10
+      ]
+    ],
+    "bug_summary": "Incorrect dp state update logic in line 10; the formula does not correctly compute minimum damage."
+  },
+  {
+    "question_title": "Falling Bars",
+    "question_content": "There is a grid with H rows and W columns.\r\nLet (i,j) denote the cell at the i-th row from the top and the j-th column from the left.\nThere are N horizontal bars numbered from 1 to N placed on the grid.\r\nBar i consists of L_i blocks of size 1 \\times 1 connected horizontally, and its leftmost block is initially at cell (R_i, C_i).\r\nThat is, initially, bar i occupies the cells (R_i, C_i), (R_i, C_i + 1), \\dots, (R_i, C_i + L_i - 1).\r\nIt is guaranteed that there is no cell occupied by two different bars.\nThe current time is t = 0.\r\nAt every time t = 0.5 + n for some non-negative integer n, the following occurs in order of i = 1, 2, \\dots, N:\n\n- If bar i is not on the bottom row (the H-th row), and none of the cells directly below the cells occupied by bar i is occupied by any bar, then bar i moves down by one cell. That is, if at that time bar i occupies the cells (r,C_i),(r,C_i+1),\\dots,(r,C_i+L_i-1)\\ (r < H), and the cell (r + 1, C_i + j) is not occupied by any bar for all j (0 \\leq j \\leq L_i - 1), then bar i now occupies (r + 1, C_i), (r + 1, C_i + 1), \\dots, (r + 1, C_i + L_i - 1).\n- Otherwise, nothing happens.\n\nLet (R'_i, C_i), (R'_i, C_i + 1), \\dots, (R'_i, C_i + L_i - 1) be the cells occupied by bar i at time t = 10^{100}. Find R'_1, R'_2, \\dots, R'_N.\n\nInput\n\nThe input is given from Standard Input in the following format:\nH W N\r\nR_1 C_1 L_1\r\nR_2 C_2 L_2\r\n\\vdots\r\nR_N C_N L_N\n\nOutput\n\nPrint N lines.\r\nThe i-th line (1 \\leq i \\leq N) should contain R'_i.\n\nConstraints\n\n\n- 1 \\leq H, W \\leq 2 \\times 10^5\n- 1 \\leq N \\leq 2 \\times 10^5\n- 1 \\leq R_i \\leq H\n- 1 \\leq C_i \\leq W\n- 1 \\leq L_i \\leq W - C_i + 1\n- In the initial state, there is no cell occupied by two different bars.\n- All input values are integers.\n\nSample Input 1\n\n4 4 4\r\n1 2 3\r\n3 2 2\r\n2 1 2\r\n2 4 1\n\nSample Output 1\n\n2\r\n4\r\n3\r\n4\r\n\nThe following three diagrams represent the grid at times t = 0, 1, and 2 from left to right.\r\nColored rectangles represent the bars, and the number inside each rectangle indicates its bar number.\n\nThe changes in the grid state are explained as follows:\n\n- At t = 0.5:\n- i = 1: The cells directly below bar 1 are (2,2),(2,3),(2,4). Among these, (2,2) is occupied by bar 3 and (2,4) is occupied by bar 4, so nothing happens.\n- i = 2: The cells directly below bar 2 are (4,2),(4,3), which are not occupied by any other bar, so bar 2 moves down by one cell.\n- i = 3: The cells directly below bar 3 are (3,1),(3,2), which are not occupied by any other bar, so bar 3 moves down by one cell.\n- i = 4: The cell directly below bar 4 is (3,4), which is not occupied by any other bar, so bar 4 moves down by one cell.\n\n\n- At t = 1.5:\n- i = 1: The cells directly below bar 1 are (2,2),(2,3),(2,4), which are not occupied by any other bar, so bar 1 moves down by one cell.\n- i = 2: Bar 2 is on the bottom row, so nothing happens.\n- i = 3: The cells directly below bar 3 are (4,1),(4,2). Among these, (4,2) is occupied by bar 2, so nothing happens.\n- i = 4: The cell directly below bar 4 is (4,4), which is not occupied by any other bar, so bar 4 moves down by one cell.\n\n\n\nAt times t = 2.5, 3.5, \\dots, there is no bar such that the cells directly below it are all unoccupied, so nothing happens. Thus, the grid at time t = 10^{100} is the same as at t = 2 (the rightmost diagram above).\nTherefore, R'_1 = 2, R'_2 = 4, R'_3 = 3, R'_4 = 4.\n\nSample Input 2\n\n382 382 3\r\n3 3 3\r\n8 8 8\r\n2 2 2\n\nSample Output 2\n\n382\r\n382\r\n381\n\nSample Input 3\n\n5 10 8\r\n2 2 1\r\n4 3 1\r\n4 8 2\r\n1 2 2\r\n2 5 3\r\n5 4 3\r\n4 5 2\r\n1 5 2\n\nSample Output 3\n\n5\r\n5\r\n5\r\n4\r\n3\r\n5\r\n4\r\n2",
+    "platform": "atcoder",
+    "question_id": "abc382_f",
+    "contest_id": "abc382",
+    "contest_date": "2024-11-30T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# READ INPUTS\nH, W, N = map(int, input().split())\nbars = [tuple(map(int, input().split())) for _ in range(N)]\n\n# DETERMINE THE FINAL ROW FOR EACH BAR\nfor R, C, L in bars:\n    print(min(H, R + (10**100 - C) // L))\n```"
+    ],
+    "code_list": [
+      "# READ INPUTS\nH, W, N = map(int, input().split())\nbars = [tuple(map(int, input().split())) for _ in range(N)]\n\n# DETERMINE THE FINAL ROW FOR EACH BAR\nfor R, C, L in bars:\n    print(min(H, R + (10**100 - C) // L))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"4\\n4\\n4\\n4\\n\", \"inputs\": \"4 4 4\\n1 2 3\\n3 2 2\\n2 1 2\\n2 4 1\", \"expected\": \"2\\n4\\n3\\n4\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 4 != 2\"}"
+    ],
+    "bug_span": [
+      [
+        7,
+        7
+      ]
+    ],
+    "bug_summary": "Incorrect calculation of final row for each bar; the formula does not correctly compute the falling distance."
+  },
+  {
+    "question_title": "Flip Row or Col",
+    "question_content": "There is a H \\times W grid, and each cell contains 0 or 1. The cell at the i-th row from the top and the j-th column from the left contains an integer A_{i,j}.\nYou can perform the following two operations any number of times in any order:\n\n- Operation X: Choose an integer x (1 \\leq x \\leq H). For every integer 1 \\leq y \\leq W, replace A_{x,y} with 1 - A_{x,y}.\n- Operation Y: Choose an integer y (1 \\leq y \\leq W). For every integer 1 \\leq x \\leq H, replace A_{x,y} with 1 - A_{x,y}.\n\nFind the minimum possible value of \\displaystyle \\sum_{x=1}^H\\sum_{y=1}^W A_{x,y} after the process.\n\nInput\n\nThe input is given from Standard Input in the following format:\nH W\nA_{1,1}A_{1,2}\\ldots A_{1,W}\nA_{2,1}A_{2,2}\\ldots A_{2,W}\n\\vdots\nA_{H,1}A_{H,2}\\ldots A_{H,W}\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 1 \\leq H \\leq 2\\times 10^5\n- 1 \\leq W \\leq 18\n- H and W are integers.\n- A_{i,1}A_{i,2}\\ldots A_{i,W} is a length-W string consisting of 0 and 1.\n\nSample Input 1\n\n3 3\n100\n010\n110\n\nSample Output 1\n\n2\n\nBy performing the following operations, the grid changes as shown below, and you get \\displaystyle \\sum_{x=1}^H\\sum_{y=1}^W A_{x,y} = 2.\n\n- Operation Y with y=1\n- Operation X with x=2\n\n\nIt is impossible to make \\displaystyle \\sum_{x=1}^H\\sum_{y=1}^W A_{x,y} \\leq 1, so the answer is 2.\n\nSample Input 2\n\n3 4\n1111\n1111\n1111\n\nSample Output 2\n\n0\n\nSample Input 3\n\n10 5\n10000\n00111\n11000\n01000\n10110\n01110\n10101\n00100\n00100\n10001\n\nSample Output 3\n\n13",
+    "platform": "atcoder",
+    "question_id": "abc396_g",
+    "contest_id": "abc396",
+    "contest_date": "2025-03-08T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# H W\nH, W = map(int, input().split())\n# A_{i,1}A_{i,2}\\ldots A_{i,W}\nA = [input() for _ in range(H)]\n\n# Calculate the number of 1s in each column\ncol_counts = [sum(A[i][j] == '1' for i in range(H)) for j in range(W)]\n\n# Calculate the minimum possible value\nmin_value = min(sum(col_counts) - col * 2 for col in col_counts)\n\nprint(min_value)\n```"
+    ],
+    "code_list": [
+      "# H W\nH, W = map(int, input().split())\n# A_{i,1}A_{i,2}\\ldots A_{i,W}\nA = [input() for _ in range(H)]\n\n# Calculate the number of 1s in each column\ncol_counts = [sum(A[i][j] == '1' for i in range(H)) for j in range(W)]\n\n# Calculate the minimum possible value\nmin_value = min(sum(col_counts) - col * 2 for col in col_counts)\n\nprint(min_value)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"0\\n\", \"inputs\": \"3 3\\n100\\n010\\n110\", \"expected\": \"2\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 0 != 2\"}"
+    ],
+    "bug_span": [
+      [
+        10,
+        10
+      ]
+    ],
+    "bug_summary": "Incorrect calculation of min_value; logic to find minimum flips is wrong"
+  },
+  {
+    "question_title": "shortest-uncommon-substring-in-an-array",
+    "question_content": "You are given an array arr of size n consisting of non-empty strings.\nFind a string array answer of size n such that:\n\nanswer[i] is the shortest substring of arr[i] that does not occur as a substring in any other string in arr. If multiple such substrings exist, answer[i] should be the lexicographically smallest. And if no such substring exists, answer[i] should be an empty string.\n\nReturn the array answer.\n \nExample 1:\n\nInput: arr = [\"cab\",\"ad\",\"bad\",\"c\"]\nOutput: [\"ab\",\"\",\"ba\",\"\"]\nExplanation: We have the following:\n- For the string \"cab\", the shortest substring that does not occur in any other string is either \"ca\" or \"ab\", we choose the lexicographically smaller substring, which is \"ab\".\n- For the string \"ad\", there is no substring that does not occur in any other string.\n- For the string \"bad\", the shortest substring that does not occur in any other string is \"ba\".\n- For the string \"c\", there is no substring that does not occur in any other string.\n\nExample 2:\n\nInput: arr = [\"abc\",\"bcd\",\"abcd\"]\nOutput: [\"\",\"\",\"abcd\"]\nExplanation: We have the following:\n- For the string \"abc\", there is no substring that does not occur in any other string.\n- For the string \"bcd\", there is no substring that does not occur in any other string.\n- For the string \"abcd\", the shortest substring that does not occur in any other string is \"abcd\".\n\n \nConstraints:\n\nn == arr.length\n2 <= n <= 100\n1 <= arr[i].length <= 20\narr[i] consists only of lowercase English letters.",
+    "platform": "leetcode",
+    "question_id": "3356",
+    "contest_id": "weekly-contest-388",
+    "contest_date": "2024-03-09T00:00:00",
+    "starter_code": "class Solution:\n    def shortestSubstrings(self, arr: List[str]) -> List[str]:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nfrom typing import List\n\nclass Solution:\n    def shortestSubstrings(self, arr: List[str]) -> List[str]:\n        from collections import defaultdict\n        \n        def is_unique(sub, substrings):\n            return all(sub not in s for s in substrings if s != sub)\n        \n        result = []\n        for i, s in enumerate(arr):\n            min_len = float('inf')\n            min_sub = \"\"\n            for start in range(len(s)):\n                for end in range(start + 1, len(s) + 1):\n                    sub = s[start:end]\n                    if is_unique(sub, [arr[j] for j in range(len(arr)) if j != i]):\n                        if len(sub) < min_len or (len(sub) == min_len and sub < min_sub):\n                            min_len = len(sub)\n                            min_sub = sub\n            result.append(min_sub)\n        \n        return result\n```"
+    ],
+    "code_list": [
+      "from typing import List\n\nclass Solution:\n    def shortestSubstrings(self, arr: List[str]) -> List[str]:\n        from collections import defaultdict\n        \n        def is_unique(sub, substrings):\n            return all(sub not in s for s in substrings if s != sub)\n        \n        result = []\n        for i, s in enumerate(arr):\n            min_len = float('inf')\n            min_sub = \"\"\n            for start in range(len(s)):\n                for end in range(start + 1, len(s) + 1):\n                    sub = s[start:end]\n                    if is_unique(sub, [arr[j] for j in range(len(arr)) if j != i]):\n                        if len(sub) < min_len or (len(sub) == min_len and sub < min_sub):\n                            min_len = len(sub)\n                            min_sub = sub\n            result.append(min_sub)\n        \n        return result"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"['c', '', 'ad', '']\", \"inputs\": \"[['cab', 'ad', 'bad', 'c']]\", \"expected\": \"['ab', '', 'ba', '']\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        8,
+        8
+      ]
+    ],
+    "bug_summary": "The uniqueness check is incorrect; it should check if the substring is not in any other string, not excluding the substring itself."
+  },
+  {
+    "question_title": "Sensors",
+    "question_content": "There are zero or more sensors placed on a grid of H rows and W columns. Let (i, j) denote the square in the i-th row from the top and the j-th column from the left. \r\nWhether each square contains a sensor is given by the strings S_1, S_2, \\ldots, S_H, each of length W. (i, j) contains a sensor if and only if the j-th character of S_i is #.\r\nThese sensors interact with other sensors in the squares horizontally, vertically, or diagonally adjacent to them and operate as one sensor.\r\nHere, a cell (x, y) and a cell (x', y') are said to be horizontally, vertically, or diagonally adjacent if and only if \\max(|x-x'|,|y-y'|) = 1.\r\nNote that if sensor A interacts with sensor B and sensor A interacts with sensor C, then sensor B and sensor C also interact.\nConsidering the interacting sensors as one sensor, find the number of sensors on this grid.\n\nInput\n\nThe input is given from Standard Input in the following format:\nH W\r\nS_1\r\nS_2\r\n\\vdots\r\nS_H\n\nOutput\n\nPrint the answer.\n\nConstraints\n\n\n- 1 \\leq H, W \\leq 1000\n- H and W are integers.\n- S_i is a string of length W where each character is # or ..\n\nSample Input 1\n\n5 6\r\n.##...\r\n...#..\r\n....##\r\n#.#...\r\n..#...\n\nSample Output 1\n\n3\r\n\nWhen considering the interacting sensors as one sensor, the following three sensors exist:\n\n- The interacting sensors at (1,2),(1,3),(2,4),(3,5),(3,6)\n- The sensor at (4,1)\n- The interacting sensors at (4,3),(5,3)\n\nSample Input 2\n\n3 3\r\n#.#\r\n.#.\r\n#.#\n\nSample Output 2\n\n1\n\nSample Input 3\n\n4 2\r\n..\r\n..\r\n..\r\n..\n\nSample Output 3\n\n0\n\nSample Input 4\n\n5 47\r\n.#..#..#####..#...#..#####..#...#...###...#####\r\n.#.#...#.......#.#...#......##..#..#...#..#....\r\n.##....#####....#....#####..#.#.#..#......#####\r\n.#.#...#........#....#......#..##..#...#..#....\r\n.#..#..#####....#....#####..#...#...###...#####\n\nSample Output 4\n\n7",
+    "platform": "atcoder",
+    "question_id": "abc325_c",
+    "contest_id": "abc325",
+    "contest_date": "2023-10-21T00:00:00",
+    "starter_code": "",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nH, W = map(int, input().split())\ngrid = [input() for _ in range(H)]\n\ndef merge_sensors(grid):\n    merged = [[False] * W for _ in range(H)]\n    for i in range(H):\n        for j in range(W):\n            if grid[i][j] == '#':\n                merged[i][j] = True\n                for di, dj in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]:\n                    ni, nj = i + di, j + dj\n                    if 0 <= ni < H and 0 <= nj < W and grid[ni][nj] == '#':\n                        merged[i][j] = False\n                        break\n    return sum(sum(row) for row in merged)\n\nprint(merge_sensors(grid))\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nH, W = map(int, input().split())\ngrid = [input() for _ in range(H)]\n\ndef merge_sensors(grid):\n    merged = [[False] * W for _ in range(H)]\n    for i in range(H):\n        for j in range(W):\n            if grid[i][j] == '#':\n                merged[i][j] = True\n                for di, dj in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]:\n                    ni, nj = i + di, j + dj\n                    if 0 <= ni < H and 0 <= nj < W and grid[ni][nj] == '#':\n                        merged[i][j] = False\n                        break\n    return sum(sum(row) for row in merged)\n\nprint(merge_sensors(grid))"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"1\\n\", \"inputs\": \"5 6\\n.##...\\n...#..\\n....##\\n#.#...\\n..#...\\n\", \"expected\": \"3\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 1 != 3\"}"
+    ],
+    "bug_span": [
+      [
+        14,
+        15
+      ]
+    ],
+    "bug_summary": "Incorrectly unmarking merged[i][j] when a neighboring '#' is found, causing wrong sensor count."
+  },
+  {
+    "question_title": "find-longest-special-substring-that-occurs-thrice-i",
+    "question_content": "You are given a string s that consists of lowercase English letters.\nA string is called special if it is made up of only a single character. For example, the string \"abc\" is not special, whereas the strings \"ddd\", \"zz\", and \"f\" are special.\nReturn the length of the longest special substring of s which occurs at least thrice, or -1 if no special substring occurs at least thrice.\nA substring is a contiguous non-empty sequence of characters within a string.\n \nExample 1:\n\nInput: s = \"aaaa\"\nOutput: 2\nExplanation: The longest special substring which occurs thrice is \"aa\": substrings \"aaaa\", \"aaaa\", and \"aaaa\".\nIt can be shown that the maximum length achievable is 2.\n\nExample 2:\n\nInput: s = \"abcdef\"\nOutput: -1\nExplanation: There exists no special substring which occurs at least thrice. Hence return -1.\n\nExample 3:\n\nInput: s = \"abcaba\"\nOutput: 1\nExplanation: The longest special substring which occurs thrice is \"a\": substrings \"abcaba\", \"abcaba\", and \"abcaba\".\nIt can be shown that the maximum length achievable is 1.\n\n \nConstraints:\n\n3 <= s.length <= 50\ns consists of only lowercase English letters.",
+    "platform": "leetcode",
+    "question_id": "3267",
+    "contest_id": "weekly-contest-378",
+    "contest_date": "2023-12-30T00:00:00",
+    "starter_code": "class Solution:\n    def maximumLength(self, s: str) -> int:\n        ",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\nclass Solution:\n    def maximumLength(self, s: str) -> int:\n        from collections import defaultdict\n        \n        def is_special(sub):\n            return len(set(sub)) == 1\n        \n        length_count = defaultdict(list)\n        i = 0\n        while i < len(s):\n            j = i + 1\n            while j <= len(s) and is_special(s[i:j]):\n                j += 1\n            length_count[s[i]].append(j - i)\n            i = j\n        \n        max_length = -1\n        for char, lengths in length_count.items():\n            lengths.sort(reverse=True)\n            if len(lengths) >= 3:\n                max_length = max(max_length, lengths[2])\n        \n        return max_length\n```"
+    ],
+    "code_list": [
+      "class Solution:\n    def maximumLength(self, s: str) -> int:\n        from collections import defaultdict\n        \n        def is_special(sub):\n            return len(set(sub)) == 1\n        \n        length_count = defaultdict(list)\n        i = 0\n        while i < len(s):\n            j = i + 1\n            while j <= len(s) and is_special(s[i:j]):\n                j += 1\n            length_count[s[i]].append(j - i)\n            i = j\n        \n        max_length = -1\n        for char, lengths in length_count.items():\n            lengths.sort(reverse=True)\n            if len(lengths) >= 3:\n                max_length = max(max_length, lengths[2])\n        \n        return max_length"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"-1\", \"inputs\": \"['aaaa']\", \"expected\": \"2\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "bug_span": [
+      [
+        14,
+        15
+      ]
+    ],
+    "bug_summary": "Incorrectly updates i to j, skipping characters and causing wrong substring length counts"
+  },
+  {
+    "question_title": "A^n",
+    "question_content": "You are given a positive integer N between 1 and 10^9, inclusive.\nFind one pair of positive integers (A, M) satisfying the following conditions. It can be proved that such a pair of integers always exists under the constraints.\n\n- Both A and M are positive integers between 1 and 10^{18}, inclusive.\n- There exists a positive integer n such that A^n - 1 is a multiple of M, and the smallest such n is N.\n\nYou are given T test cases; solve each of them.\n\nInput\n\nThe input is given from Standard Input in the following format:\nT\n\\text{case}_1\n\\text{case}_2\n\\vdots\n\\text{case}_T\n\nHere, \\text{case}_i denotes the i-th test case.\nEach test case is given in the following format:\nN\n\nOutput\n\nFor each test case, print a pair of positive integers (A, M) in the following format:\nA M\n\nIf there are multiple valid solutions, any one of them is considered correct.\n\nConstraints\n\n\n- 1 \\le T \\le 10^4\n- 1 \\le N \\le 10^9\n- All input values are integers.\n\nSample Input 1\n\n4\n3\n16\n1\n55\n\nSample Output 1\n\n2 7\n11 68\n20250126 1\n33 662\n\nConsider \\text{case}_1.\nFor example, if we choose (A,M)=(2,7), then:\n\n- When n=1: 2^1 - 1 = 1 is not a multiple of 7.\n- When n=2: 2^2 - 1 = 3 is not a multiple of 7.\n- When n=3: 2^3 - 1 = 7 is a multiple of 7.\n\nHence, the smallest n for which A^n - 1 is a multiple of M is 3. Therefore, (A,M)=(2,7) is a correct solution. Other valid solutions include (A,M)=(100,777).",
+    "platform": "atcoder",
+    "question_id": "arc191_c",
+    "contest_id": "arc191",
+    "contest_date": "2025-01-26T00:00:00",
+    "starter_code": "",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nT = int(input())\nfor _ in range(T):\n    N = int(input())\n    A = 2\n    M = (A**N - 1)\n    print(A, M)\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nT = int(input())\nfor _ in range(T):\n    N = int(input())\n    A = 2\n    M = (A**N - 1)\n    print(A, M)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"2 7\\n2 65535\\n2 1\\n2 36028797018963967\\n\", \"inputs\": \"4\\n3\\n16\\n1\\n55\", \"expected\": \"2 7\\n11 68\\n20250126 1\\n33 662\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=1: 2 65535 != 11 68\"}"
+    ],
+    "bug_span": [
+      [
+        5,
+        6
+      ]
+    ],
+    "bug_summary": "Incorrect calculation of A and M; A should be 11, and M should be (A^N - 1) // (A - 1) to match expected output."
+  },
+  {
+    "question_title": "Sum of Numbers Greater Than Me",
+    "question_content": "You are given a sequence A=(A_1,\\ldots,A_N) of length N.\nFor each i=1,\\ldots,N, solve the following problem.\nProblem: Find the sum of all elements in A that are greater than A_i.\n\nInput\n\nThe input is given from Standard Input in the following format:\nN\r\nA_1 \\ldots A_N\n\nOutput\n\nFor each 1\\leq k\\leq N, let B_k be the answer to the problem when i=k. Print B_1,\\ldots,B_N in this order, separated by spaces.\n\nConstraints\n\n\n- 1 \\leq N \\leq 2\\times 10^5\n- 1 \\leq A_i \\leq 10^6\n- All input values are integers.\n\nSample Input 1\n\n5\r\n1 4 1 4 2\n\nSample Output 1\n\n10 0 10 0 8\r\n\n\n- For i=1, the sum of elements greater than A_1=1 is 4+4+2=10.\n- For i=2, the sum of elements greater than A_2=4 is 0.\n- For i=3, the sum of elements greater than A_3=1 is 4+4+2=10.\n- For i=4, the sum of elements greater than A_4=4 is 0.\n- For i=5, the sum of elements greater than A_5=2 is 4+4=8.\n\nSample Input 2\n\n10\r\n31 42 59 26 53 58 97 93 23 54\n\nSample Output 2\n\n456 414 190 487 361 249 0 97 513 307\n\nSample Input 3\n\n50\r\n1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1\n\nSample Output 3\n\n0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    "platform": "atcoder",
+    "question_id": "abc331_c",
+    "contest_id": "abc331",
+    "contest_date": "2023-12-02T00:00:00",
+    "starter_code": "",
+    "difficulty": "medium",
+    "output_list": [
+      "```python\n# YOUR CODE HERE\nn = int(input())\na = list(map(int, input().split()))\ns = sum(a)\ncount = [0] * (max(a) + 1)\nprefix_sum = [0] * (max(a) + 1)\n\nfor i in range(n):\n    count[a[i]] += 1\n\nfor i in range(1, len(count)):\n    prefix_sum[i] = prefix_sum[i - 1] + count[i] * i\n\noutput = []\nfor i in range(n):\n    s -= a[i] * count[a[i]]\n    output.append(s)\n    count[a[i]] -= 1\n\nprint(*output)\n```"
+    ],
+    "code_list": [
+      "# YOUR CODE HERE\nn = int(input())\na = list(map(int, input().split()))\ns = sum(a)\ncount = [0] * (max(a) + 1)\nprefix_sum = [0] * (max(a) + 1)\n\nfor i in range(n):\n    count[a[i]] += 1\n\nfor i in range(1, len(count)):\n    prefix_sum[i] = prefix_sum[i - 1] + count[i] * i\n\noutput = []\nfor i in range(n):\n    s -= a[i] * count[a[i]]\n    output.append(s)\n    count[a[i]] -= 1\n\nprint(*output)"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"output\": \"10 2 1 -3 -5\\n\", \"inputs\": \"5\\n1 4 1 4 2\\n\", \"expected\": \"10 0 10 0 8\\n\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 10 2 1 -3 -5 != 10 0 10 0 8\"}"
+    ],
+    "bug_span": [
+      [
+        16,
+        17
+      ]
+    ],
+    "bug_summary": "Incorrect calculation of sum of numbers greater than current element; s is decremented wrongly and appended before updating count."
+  },
+  {
+    "question_title": "sorted-gcd-pair-queries",
+    "question_content": "You are given an integer array nums of length n and an integer array queries.\nLet gcdPairs denote an array obtained by calculating the GCD of all possible pairs (nums[i], nums[j]), where 0 <= i < j < n, and then sorting these values in ascending order.\nFor each query queries[i], you need to find the element at index queries[i] in gcdPairs.\nReturn an integer array answer, where answer[i] is the value at gcdPairs[queries[i]] for each query.\nThe term gcd(a, b) denotes the greatest common divisor of a and b.\n \nExample 1:\n\nInput: nums = [2,3,4], queries = [0,2,2]\nOutput: [1,2,2]\nExplanation:\ngcdPairs = [gcd(nums[0], nums[1]), gcd(nums[0], nums[2]), gcd(nums[1], nums[2])] = [1, 2, 1].\nAfter sorting in ascending order, gcdPairs = [1, 1, 2].\nSo, the answer is [gcdPairs[queries[0]], gcdPairs[queries[1]], gcdPairs[queries[2]]] = [1, 2, 2].\n\nExample 2:\n\nInput: nums = [4,4,2,1], queries = [5,3,1,0]\nOutput: [4,2,1,1]\nExplanation:\ngcdPairs sorted in ascending order is [1, 1, 1, 2, 2, 4].\n\nExample 3:\n\nInput: nums = [2,2], queries = [0,0]\nOutput: [2,2]\nExplanation:\ngcdPairs = [2].\n\n \nConstraints:\n\n2 <= n == nums.length <= 10^5\n1 <= nums[i] <= 5 * 10^4\n1 <= queries.length <= 10^5\n0 <= queries[i] < n * (n - 1) / 2",
+    "platform": "leetcode",
+    "question_id": "3583",
+    "contest_id": "weekly-contest-418",
+    "contest_date": "2024-10-05T19:30:00",
+    "starter_code": "class Solution:\n    def gcdValues(self, nums: List[int], queries: List[int]) -> List[int]:\n        ",
+    "difficulty": "hard",
+    "output_list": [
+      "```python\nfrom math import gcd\nfrom typing import List\n\nclass Solution:\n    def gcdValues(self, nums: List[int], queries: List[int]) -> List[int]:\n        n = len(nums)\n        gcd_pairs = []\n        for i in range(n):\n            for j in range(i + 1, n):\n                gcd_pairs.append(gcd(nums[i], nums[j]))\n        gcd_pairs.sort()\n        \n        result = []\n        for query in queries:\n            result.append(gcd_pairs[query])\n        return result\n```"
+    ],
+    "code_list": [
+      "from math import gcd\nfrom typing import List\n\nclass Solution:\n    def gcdValues(self, nums: List[int], queries: List[int]) -> List[int]:\n        n = len(nums)\n        gcd_pairs = []\n        for i in range(n):\n            for j in range(i + 1, n):\n                gcd_pairs.append(gcd(nums[i], nums[j]))\n        gcd_pairs.sort()\n        \n        result = []\n        for query in queries:\n            result.append(gcd_pairs[query])\n        return result"
+    ],
+    "graded_list": [
+      false
+    ],
+    "pass@1": 0.0,
+    "metadata": [
+      "{\"error\": \"TimeoutException()\", \"error_code\": -3, \"error_message\": \"Time Limit Exceeded\", \"inputs\": \"[[13869, 10363, 24800, 29218, 41662, 15752, 42929, 48554, 28752, 29897, 45482, 733, 14964, 42346, 18002, 29306, 18410, 43403, 46427, 37589, 258, 22776...(truncated) ..., 890828276, 1232891719, 518705472, 1186426029, 558572903, 607097778, 173998145, 380717965, 1013380168, 406332655, 744089826, 1181715617, 1083035445]]\", \"expected\": \"[27, 1, 1, 1, 1, 1, 2, 2, 15, 1, 4, 9, 3, 2, 5, 2, 1, 1, 12, 1, 1, 1, 1, 2, 2, 1, 1, 2, 1, 1, 1, 1, 96, 3, 2, 4, 1, 1, 1, 1, 1, 4, 1, 1, 6, 1, 1, 1, 5...(truncated) ...1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 3, 2, 2, 1, 1, 1, 2, 3, 2, 1, 11, 6, 4, 2, 1, 1, 1, 2, 1, 2, 2, 3, 2, 5, 1, 4, 2, 44, 1, 12, 1, 1, 1, 1, 3, 1, 1, 11, 5]\"}"
+    ],
+    "bug_span": [
+      [
+        8,
+        10
+      ]
+    ],
+    "bug_summary": "Inefficient nested loops generating all gcd pairs causing time limit exceeded"
+  }
+]
