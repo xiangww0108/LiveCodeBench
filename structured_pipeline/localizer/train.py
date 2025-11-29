@@ -11,7 +11,7 @@ from transformers import (
 # ================= CONFIGURATION =================
 MODEL_ID = "Qwen/Qwen2.5-Coder-3B-Instruct"
 # Output directory for the saved model
-OUTPUT_DIR = "./localizer_3B_FullSFT"
+OUTPUT_DIR = "/opt/dlami/nvme/localizer_3B_FullSFT"
 # Your Hugging Face Repo to push to
 HUB_MODEL_ID = "Intellegen4/Qwen2.5-Coder-3B-Localizer-FullSFT"
 
@@ -111,13 +111,11 @@ def train():
         output_dir=OUTPUT_DIR,
         num_train_epochs=3,
         
-        # Batch Size for 48GB VRAM (g6e.4xlarge)
-        per_device_train_batch_size=4, 
-        per_device_eval_batch_size=4,
-        gradient_accumulation_steps=4,
+        per_device_train_batch_size=2, 
+        per_device_eval_batch_size=2,
+        gradient_accumulation_steps=8,
         
-        # Optimizer
-        optim="adamw_torch",            
+        optim="paged_adamw_8bit",            
         learning_rate=2e-5,             
         lr_scheduler_type="cosine",
         warmup_ratio=0.1,
@@ -146,6 +144,7 @@ def train():
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
+        # FIXED: 'tokenizer' was renamed to 'processing_class' in recent trl versions
         processing_class=tokenizer,
     )
 

@@ -6,7 +6,7 @@ from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 # Use the path to your saved model (or the Hub ID after uploading)
-MODEL_PATH = "./localizer_3B_FullSFT" 
+MODEL_PATH = "/opt/dlami/nvme/localizer_3B_FullSFT" 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 def parse_span(text):
