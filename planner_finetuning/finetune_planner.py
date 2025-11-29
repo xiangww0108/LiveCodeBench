@@ -24,8 +24,8 @@ OUTPUT_DIR = "./planner-finetuned"
 HF_REPO = "Intellegen4/planner-qwen3-4b"  # Your repo for uploading
 
 # Training hyperparameters
-BATCH_SIZE = 2  # Reduced for full fine-tuning
-GRADIENT_ACCUM_STEPS = 8  # Increased to maintain effective batch size
+BATCH_SIZE = 1  # Reduced for full fine-tuning
+GRADIENT_ACCUM_STEPS = 16  # Increased to maintain effective batch size
 LEARNING_RATE = 2e-5  # Lower learning rate for full fine-tuning
 NUM_EPOCHS = 3
 MAX_LENGTH = 2048
@@ -202,7 +202,7 @@ def evaluate_planner(model, tokenizer, test_data, device):
         predictions=predictions,
         references=references,
         lang="en",
-        model_type="microsoft/deberta-xlarge-mnli"
+        model_type="microsoft/deberta-base-mnli"  # Using base model instead of xlarge to save memory
     )
     
     # Compute ROUGE
@@ -283,10 +283,11 @@ def main():
     print("Loading model...")
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
-        torch_dtype=torch.float16 if device == "cuda" else torch.float32,
+        torch_dtype=torch.bfloat16 if device == "cuda" else torch.float32,
         device_map="auto",
         trust_remote_code=True
     )
+    model.gradient_checkpointing_enable()
     
     # Print model info
     print(f"Model loaded: {MODEL_NAME}")
@@ -318,11 +319,12 @@ def main():
         logging_steps=10,
         save_steps=100,
         save_total_limit=2,
-        fp16=device == "cuda",
+        bf16=device == "cuda",
         report_to="none",
         warmup_steps=50,
         lr_scheduler_type="cosine",
-        optim="adamw_torch"
+        optim="adamw_torch",
+        gradient_checkpointing=True,
     )
     
     # Data collator
