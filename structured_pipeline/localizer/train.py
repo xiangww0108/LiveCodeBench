@@ -1,5 +1,6 @@
 import torch
 import json
+import os
 from datasets import load_dataset
 from trl import SFTTrainer, SFTConfig
 from transformers import (
@@ -68,7 +69,6 @@ def train():
     )
     
     # B. Load Eval Data (from root test-pre.json because it has labels)
-    # We cannot use test.json because it misses 'bug_span'
     try:
         eval_ds = load_dataset(
             "Intellegen4/Qwen3-TrainTest-data", 
@@ -112,8 +112,6 @@ def train():
         num_train_epochs=3,
         
         # Batch Size for 48GB VRAM (g6e.4xlarge)
-        # 3B Model + 8k Context = ~20-25GB static. 
-        # Batch size 4 fills the rest efficiently.
         per_device_train_batch_size=4, 
         per_device_eval_batch_size=4,
         gradient_accumulation_steps=4,
@@ -131,17 +129,15 @@ def train():
         # Logging & Saving
         logging_steps=10,
         save_strategy="epoch",
-        evaluation_strategy="steps",
+        eval_strategy="steps",
         eval_steps=50,
         
         # Hub Upload
         push_to_hub=True,
         hub_model_id=HUB_MODEL_ID,
         
-        # Data params
-        max_seq_length=MAX_SEQ_LENGTH,
-        dataset_text_field="messages",
-        packing=False,
+        max_length=MAX_SEQ_LENGTH,
+        
         report_to="none"
     )
 
@@ -150,7 +146,7 @@ def train():
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
     )
 
     print("--- 4. Starting Training ---")
