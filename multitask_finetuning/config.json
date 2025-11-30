@@ -1,0 +1,16 @@
+{
+    "model_name": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+
+    "output_dir": "./multitask-qwen25-1.5b",
+
+    "max_seq_len": 2048,
+
+    "batch_size": 8,
+    "grad_accum": 4,
+    "epochs": 5,
+    "lr": 1e-5,
+    "warmup_ratio": 0.05,
+
+    "train_file": "data/Qwen3-TrainTest-data/multitask-step-by-step/train-multitask.json",
+    "eval_file": "data/Qwen3-TrainTest-data/multitask-step-by-step/test.json"
+}
