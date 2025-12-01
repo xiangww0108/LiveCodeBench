@@ -9,15 +9,16 @@ from transformers import (
 )
 
 # ================= CONFIGURATION =================
-MODEL_ID = "Qwen/Qwen2.5-Coder-3B-Instruct"
-# Output directory for the saved model
-OUTPUT_DIR = "/opt/dlami/nvme/localizer_3B_FullSFT"
-# Your Hugging Face Repo to push to
-HUB_MODEL_ID = "Intellegen4/Qwen2.5-Coder-3B-Localizer-FullSFT"
+# UPDATED: Switched to 1.5B as per your JSON config
+MODEL_ID = "Qwen/Qwen2.5-Coder-1.5B-Instruct"
+
+# UPDATED: Renamed output folder to 1.5B so you don't overwrite the 3B model
+OUTPUT_DIR = "/opt/dlami/nvme/localizer_1.5B_FullSFT"
+HUB_MODEL_ID = "Intellegen4/Qwen2.5-Coder-1.5B-Localizer-FullSFT"
 
 # Hardware: g6e.4xlarge (48GB VRAM) settings
-# 8192 context length fits comfortably in 48GB with a 3B model
-MAX_SEQ_LENGTH = 8192  
+# UPDATED: Reduced from 8192 to 2048 as per JSON
+MAX_SEQ_LENGTH = 2048  
 
 # ================= DATA PROCESSING =================
 def format_localizer_data(example):
@@ -109,16 +110,16 @@ def train():
     print("--- 3. Configuring Training Arguments ---")
     training_args = SFTConfig(
         output_dir=OUTPUT_DIR,
-        num_train_epochs=3,
-        
+        num_train_epochs=5,
         per_device_train_batch_size=2, 
         per_device_eval_batch_size=2,
         gradient_accumulation_steps=8,
         
-        optim="paged_adamw_8bit",            
-        learning_rate=2e-5,             
+        # Optimizer
+        optim="paged_adamw_8bit",
+        learning_rate=1e-5,
         lr_scheduler_type="cosine",
-        warmup_ratio=0.1,
+        warmup_ratio=0.05,
         
         # Hardware optimization
         bf16=True,                      
