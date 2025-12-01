@@ -1,0 +1,536 @@
+ubuntu@ip-172-31-0-22:~/LiveCodeBench/planner_finetuning$ python finetune_planner.py 2>&1 | tee training.log
+`torch_dtype` is deprecated! Use `dtype` instead!
+==================================================
+Planner Fine-tuning Script
+==================================================
+
+Using device: cuda
+GPU: NVIDIA L40S
+Memory: 47.68 GB
+
+Loading tokenizer...
+Loading model...
+Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.59it/s]
+Model loaded: Qwen/Qwen3-4B
+Total parameters: 4,022,468,096
+Trainable parameters: 4,022,468,096
+Trainable %: 100.00%
+
+Preparing datasets...
+Loading training data from HuggingFace...
+Loaded 608 training examples
+Tokenizing training data...
+Map: 100%|██████████| 608/608 [00:00<00:00, 1993.57 examples/s]
+The model is already on multiple devices. Skipping the move to device specified in `args`.
+
+==================================================
+Starting training...
+==================================================
+
+  1%|          | 1/114 [00:03<06:05,  3.24s/it]Traceback (most recent call last):
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/finetune_planner.py", line 387, in <module>
+    main()
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/finetune_planner.py", line 347, in main
+    trainer.train()
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/trainer.py", line 2325,
+ in train
+    return inner_training_loop(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/trainer.py", line 2674,
+ in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/trainer.py", line 4020,
+ in training_step
+    loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/trainer.py", line 4110,
+ in compute_loss
+    outputs = model(**inputs)
+              ^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+75, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+86, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/accelerate/utils/operations.py", lin
+e 819, in forward
+    return model_forward(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/accelerate/utils/operations.py", lin
+e 807, in __call__
+    return convert_to_fp32(self.model_forward(*args, **kwargs))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/amp/autocast_mode.py", line 44
+, in decorate_autocast
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/utils/generic.py", line
+ 918, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_q
+wen3.py", line 480, in forward
+    outputs: BaseModelOutputWithPast = self.model(
+                                       ^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+75, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+86, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/utils/generic.py", line
+ 1072, in wrapper
+    outputs = func(self, *args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_q
+wen3.py", line 410, in forward
+    hidden_states = decoder_layer(
+                    ^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/modeling_layers.py", li
+ne 94, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+75, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+86, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/utils/deprecation.py",
+line 172, in wrapped_func
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_q
+wen3.py", line 274, in forward
+    hidden_states = self.post_attention_layernorm(hidden_states)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+75, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+86, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_q
+wen3.py", line 62, in forward
+    variance = hidden_states.pow(2).mean(-1, keepdim=True)
+               ^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 32.00 MiB. GPU 0 has a total capacity of 44.40 GiB of which 8.
+31 MiB is free. Including non-PyTorch memory, this process has 44.39 GiB memory in use. Of the allocated memory 42.39 GiB is
+ allocated by PyTorch, and 1.50 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try
+setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (
+https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+  1%|          | 1/114 [00:04<07:38,  4.06s/it]
+ubuntu@ip-172-31-0-22:~/LiveCodeBench/planner_finetuning$ python finetune_planner.py 2>&1 | tee training.log
+`torch_dtype` is deprecated! Use `dtype` instead!
+==================================================
+Planner Fine-tuning Script
+==================================================
+
+Using device: cuda
+GPU: NVIDIA L40S
+Memory: 47.68 GB
+
+Loading tokenizer...
+Loading model...
+Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.61it/s]
+Model loaded: Qwen/Qwen3-4B
+Total parameters: 4,022,468,096
+Trainable parameters: 4,022,468,096
+Trainable %: 100.00%
+
+Preparing datasets...
+Loading training data from HuggingFace...
+Loaded 608 training examples
+Tokenizing training data...
+Map: 100%|██████████| 608/608 [00:00<00:00, 2035.71 examples/s]
+The model is already on multiple devices. Skipping the move to device specified in `args`.
+
+==================================================
+Starting training...
+==================================================
+
+ 80%|███████▉  | 91/114 [04:45<01:10,  3.08s/it]{'loss': 1.008, 'grad_norm': 13.25, 'learning_rate': 3.6000000000000003e-06,
+ 'epoch': 0.26}
+{'loss': 0.8245, 'grad_norm': 7.75, 'learning_rate': 7.600000000000001e-06, 'epoch': 0.53}
+{'loss': 0.5897, 'grad_norm': 3.828125, 'learning_rate': 1.16e-05, 'epoch': 0.79}
+{'loss': 0.5353, 'grad_norm': 3.0, 'learning_rate': 1.5600000000000003e-05, 'epoch': 1.05}
+{'loss': 0.4325, 'grad_norm': 4.3125, 'learning_rate': 1.9600000000000002e-05, 'epoch': 1.32}
+{'loss': 0.4221, 'grad_norm': 3.3125, 'learning_rate': 1.9039892931234434e-05, 'epoch': 1.58}
+{'loss': 0.3994, 'grad_norm': 3.640625, 'learning_rate': 1.5956993044924334e-05, 'epoch': 1.84}
+{'loss': 0.3489, 'grad_norm': 2.890625, 'learning_rate': 1.1467304744553618e-05, 'epoch': 2.11}
+{'loss': 0.2593, 'grad_norm': 4.03125, 'learning_rate': 6.631101466077801e-06, 'epoch': 2.37}
+Traceback (most recent call last):
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/finetune_planner.py", line 387, in <module>
+    main()
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/finetune_planner.py", line 347, in main
+    trainer.train()
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/trainer.py", line 2325,
+ in train
+    return inner_training_loop(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/trainer.py", line 2674,
+ in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/trainer.py", line 4020,
+ in training_step
+    loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/trainer.py", line 4110,
+ in compute_loss
+    outputs = model(**inputs)
+              ^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+75, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+86, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/accelerate/utils/operations.py", lin
+e 819, in forward
+    return model_forward(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/accelerate/utils/operations.py", lin
+e 807, in __call__
+    return convert_to_fp32(self.model_forward(*args, **kwargs))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/amp/autocast_mode.py", line 44
+, in decorate_autocast
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/utils/generic.py", line
+ 918, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_q
+wen3.py", line 498, in forward
+    loss = self.loss_function(logits=logits, labels=labels, vocab_size=self.config.vocab_size, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/loss/loss_utils.py", li
+ne 67, in ForCausalLMLoss
+    loss = fixed_cross_entropy(logits, shift_labels, num_items_in_batch, ignore_index, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/loss/loss_utils.py", li
+ne 36, in fixed_cross_entropy
+    loss = nn.functional.cross_entropy(source, target, ignore_index=ignore_index, reduction=reduction)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/functional.py", line 3458,
+in cross_entropy
+    return torch._C._nn.cross_entropy_loss(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.05 GiB. GPU 0 has a total capacity of 44.40 GiB of which 258
+.31 MiB is free. Including non-PyTorch memory, this process has 44.14 GiB memory in use. Of the allocated memory 42.41 GiB i
+s allocated by PyTorch, and 1.23 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try
+ setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management
+(https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+ 80%|███████▉  | 91/114 [04:46<01:12,  3.15s/it]
+ubuntu@ip-172-31-0-22:~/LiveCodeBench/planner_finetuning$ pkill -9 python
+ubuntu@ip-172-31-0-22:~/LiveCodeBench/planner_finetuning$ nvidia-smi
+Sat Nov 29 06:43:32 2025
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 570.172.08             Driver Version: 570.172.08     CUDA Version: 12.8     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA L40S                    On  |   00000000:34:00.0 Off |                    0 |
+| N/A   24C    P8             30W /  350W |       0MiB /  46068MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+ubuntu@ip-172-31-0-22:~/LiveCodeBench/planner_finetuning$ python finetune_planner.py 2>&1 | tee training.log
+`torch_dtype` is deprecated! Use `dtype` instead!
+==================================================
+Planner Fine-tuning Script
+==================================================
+
+Using device: cuda
+GPU: NVIDIA L40S
+Memory: 47.68 GB
+
+Loading tokenizer...
+Loading model...
+Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  2.59it/s]
+Model loaded: Qwen/Qwen3-4B
+Total parameters: 4,022,468,096
+Trainable parameters: 4,022,468,096
+Trainable %: 100.00%
+
+Preparing datasets...
+Loading training data from HuggingFace...
+Loaded 608 training examples
+Tokenizing training data...
+Map: 100%|██████████| 608/608 [00:00<00:00, 2029.48 examples/s]
+The model is already on multiple devices. Skipping the move to device specified in `args`.
+
+==================================================
+Starting training...
+==================================================
+
+  0%|          | 0/114 [00:00<?, ?it/s]`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=Fals
+e`.
+100%|██████████| 114/114 [09:52<00:00,  5.19s/it]
+{'loss': 1.008, 'grad_norm': 13.25, 'learning_rate': 3.6000000000000003e-06, 'epoch': 0.26}
+{'loss': 0.8245, 'grad_norm': 7.6875, 'learning_rate': 7.600000000000001e-06, 'epoch': 0.53}
+{'loss': 0.589, 'grad_norm': 3.828125, 'learning_rate': 1.16e-05, 'epoch': 0.79}
+{'loss': 0.5355, 'grad_norm': 3.1875, 'learning_rate': 1.5600000000000003e-05, 'epoch': 1.05}
+{'loss': 0.4331, 'grad_norm': 4.375, 'learning_rate': 1.9600000000000002e-05, 'epoch': 1.32}
+{'loss': 0.4227, 'grad_norm': 3.375, 'learning_rate': 1.9039892931234434e-05, 'epoch': 1.58}
+{'loss': 0.3995, 'grad_norm': 3.65625, 'learning_rate': 1.5956993044924334e-05, 'epoch': 1.84}
+{'loss': 0.3496, 'grad_norm': 2.875, 'learning_rate': 1.1467304744553618e-05, 'epoch': 2.11}
+{'loss': 0.2599, 'grad_norm': 4.03125, 'learning_rate': 6.631101466077801e-06, 'epoch': 2.37}
+{'loss': 0.255, 'grad_norm': 4.0625, 'learning_rate': 2.5904887464504115e-06, 'epoch': 2.63}
+{'loss': 0.2412, 'grad_norm': 3.421875, 'learning_rate': 2.996874680545603e-07, 'epoch': 2.89}
+{'train_runtime': 592.1682, 'train_samples_per_second': 3.08, 'train_steps_per_second': 0.193, 'train_loss': 0.4750027583356
+489, 'epoch': 3.0}
+
+Saving model...
+
+Loading test data for evaluation...
+Loading test data from HuggingFace...
+Generating train split: 100 examples [00:00, 8493.42 examples/s]
+Loaded 100 test examples
+
+==================================================
+Starting evaluation...
+==================================================
+
+Downloading builder script: 7.95kB [00:00, 35.4MB/s]
+Downloading builder script: 6.14kB [00:00, 16.2MB/s]
+Downloading builder script: 5.94kB [00:00, 15.9MB/s]
+Downloading extra modules: 4.07kB [00:00, 8.17MB/s]
+Downloading extra modules: 3.34kB [00:00, 25.0MB/s]
+Generating predictions: 100%|██████████| 100/100 [31:01<00:00, 18.62s/it]
+
+Computing BERTScore...
+Traceback (most recent call last):
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/finetune_planner.py", line 389, in <module>
+    main()
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/finetune_planner.py", line 360, in main
+    results = evaluate_planner(model, tokenizer, test_data, device)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/finetune_planner.py", line 201, in evaluate_planner
+    bert_results = bertscore.compute(
+                   ^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/evaluate/module.py", line 467, in co
+mpute
+    output = self._compute(**inputs, **compute_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/.cache/huggingface/modules/evaluate_modules/metrics/evaluate-metric--bertscore/cf4907b18f8f741f202232c0
+f8009a3bd49ff98802c245abcb6ea51a37a8c05b/bertscore.py", line 203, in _compute
+    (P, R, F) = self.cached_bertscorer.score(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/bert_score/scorer.py", line 220, in
+score
+    all_preds = bert_cos_score_idf(
+                ^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/bert_score/utils.py", line 616, in b
+ert_cos_score_idf
+    embs, masks, padded_idf = get_bert_embedding(
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/bert_score/utils.py", line 455, in g
+et_bert_embedding
+    batch_embedding = bert_encode(
+                      ^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/bert_score/utils.py", line 351, in b
+ert_encode
+    out = model(x, attention_mask=attention_mask, output_hidden_states=all_layers)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+75, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+86, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/models/deberta/modeling
+_deberta.py", line 707, in forward
+    encoder_outputs = self.encoder(
+                      ^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+75, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+86, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/models/deberta/modeling
+_deberta.py", line 583, in forward
+    hidden_states, att_m = layer_module(
+                           ^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/modeling_layers.py", li
+ne 94, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+75, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+86, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/models/deberta/modeling
+_deberta.py", line 511, in forward
+    attention_output, att_matrix = self.attention(
+                                   ^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+75, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+86, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/models/deberta/modeling
+_deberta.py", line 446, in forward
+    self_output, att_matrix = self.self(
+                              ^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+75, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 17
+86, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/models/deberta/modeling
+_deberta.py", line 266, in forward
+    rel_att = self.disentangled_att_bias(query_layer, key_layer, relative_pos, rel_embeddings, scale_factor)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/LiveCodeBench/planner_finetuning/venv/lib/python3.12/site-packages/transformers/models/deberta/modeling
+_deberta.py", line 338, in disentangled_att_bias
+    p2c_att = torch.matmul(key_layer, pos_query_layer.transpose(-1, -2).to(dtype=key_layer.dtype))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 4.06 GiB. GPU 0 has a total capacity of 44.40 GiB of which 3.0
+0 GiB is free. Including non-PyTorch memory, this process has 41.40 GiB memory in use. Of the allocated memory 39.94 GiB is
+allocated by PyTorch, and 975.65 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try
+ setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management
+(https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+ubuntu@ip-172-31-0-22:~/LiveCodeBench/planner_finetuning$ python eval_only.py
+==================================================
+Planner Evaluation Script
+==================================================
+
+Using device: cuda
+
+Loading fine-tuned model...
+The tokenizer you are loading from './planner-finetuned' with an incorrect regex pattern: https://huggingface.co/mistralai/M
+istral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You sh
+ould set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.76it/s]
+Model loaded!
+
+Loading test data from HuggingFace...
+Loaded 100 test examples
+
+==================================================
+Generating predictions...
+==================================================
+
+Generating: 100%|█████████████████████████████████████████████████████████████████████████| 100/100 [30:37<00:00, 18.37s/it]
+
+Generation complete!
+
+Freeing GPU memory...
+
+==================================================
+Computing Metrics...
+==================================================
+
+Computing BERTScore (using base model)...
+Downloading builder script: 7.95kB [00:00, 17.1MB/s]
+tokenizer_config.json: 100%|██████████████████████████████████████████████████████████████| 52.0/52.0 [00:00<00:00, 776kB/s]
+config.json: 100%|█████████████████████████████████████████████████████████████████████████| 728/728 [00:00<00:00, 12.2MB/s]
+vocab.json: 899kB [00:00, 15.6MB/s]
+merges.txt: 456kB [00:00, 12.6MB/s]
+pytorch_model.bin: 100%|██████████████████████████████████████████████████████████████████| 557M/557M [00:01<00:00, 482MB/s]
+Computing ROUGE...
+Downloading builder script: 6.14kB [00:00, 28.0MB/s]
+Computing BLEU...
+Downloading builder script: 5.94kB [00:00, 13.8MB/s]
+Downloading extra modules: 3.34kB [00:00, 13.8MB/s]
+
+==================================================
+EVALUATION RESULTS
+==================================================
+
+BERTScore:
+  Precision: 0.3977
+  Recall:    0.5982
+  F1:        0.4763
+
+ROUGE:
+  ROUGE-1: 0.0787
+  ROUGE-2: 0.0374
+  ROUGE-L: 0.0642
+
+BLEU: 0.0131
+==================================================
+
+Results saved to evaluation_results_final.json
+Predictions saved to predictions_final.json
+
+==================================================
+Sample Predictions (first 3)
+==================================================
+
+--- Example 1 ---
+Prediction: 1. Change the loop ranges for i, j, k to iterate over all possible numbers of packs such that the total eggs can
+ reach N.
+2. For example, i should go up to N//6 + 1, j up to N//8 + 1, k up to N//12 + 1, but since packs can be combined, it's bette
+r to iterate up to a higher limit like 1000 to cover ...
+
+Reference: Loop ranges for i, j, k are incorrect; they should cover all possible pack combinations to buy at least N eggs, b
+ut current ranges are too small.
+--------------------------------------------------
+
+--- Example 2 ---
+Prediction: 1. Replace the second while loop with logic that greedily adds energy and subtracts points when possible to maxi
+mize points.
+2. While `i < n` and `points > 0`, add `enemyEnergies[i]` to `currentEnergy` and decrement `points`.
+3. Increment `i` only after adding energy and subtracting points.
+4. Remov...
+
+Reference: Incorrect logic in second while loop; it should try to convert points back to energy optimally to maximize points
+, but current approach is flawed.
+--------------------------------------------------
+
+--- Example 3 ---
+Prediction: 1. Change the graph construction to use 0-based indexing by subtracting 1 from nodes u and v.
+2. Correct the edge weight calculation in Dijkstra's algorithm to use b / c as float division.
+
+Suggested patch:
+    for _ in range(M):
+        u, v, b, c = map(int, sys.stdin.readline().split())
+    ...
+
+Reference: Incorrect edge weight calculation in Dijkstra's algorithm; should use b/c as float division but indexing and grap
+h construction likely assume 1-based nodes.
+--------------------------------------------------
+
+✓ Evaluation complete!
+ubuntu@ip-172-31-0-22:~/LiveCodeBench/planner_finetuning$
