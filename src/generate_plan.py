@@ -14,8 +14,8 @@ from typing import Any, Dict, List
 
 from openai import OpenAI   # pip install openai
 
-TRAIN_PATH = Path("output/Qwen3-TrainTest-data/train-pre.json")
-OUT_PATH   = Path("output/Qwen3-TrainTest-data/train-post.json")
+TRAIN_PATH = Path("data/Qwen3-TrainTest-data/test-pre.json")
+OUT_PATH   = Path("data/Qwen3-TrainTest-data/test-pre-with-plan.json")
 
 MODEL_NAME = "gpt-4.1-mini"
 

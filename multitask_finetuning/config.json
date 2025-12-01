@@ -1,12 +1,12 @@
 {
     "model_name": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
 
-    "output_dir": "./multitask-qwen25-1.5b",
+    "output_dir": "data/output",
 
     "max_seq_len": 2048,
 
-    "batch_size": 8,
-    "grad_accum": 4,
+    "batch_size": 2,
+    "grad_accum": 8,
     "epochs": 5,
     "lr": 1e-5,
     "warmup_ratio": 0.05,

@@ -3,61 +3,68 @@ import json
 
 def build_prompt(sample):
     task = sample["task"]
-
-    # -------------- Common fields --------------
     problem = sample.get("question_content", "")
+    code = sample["code_list"][0]
     metadata = sample.get("metadata", [])
-    metadata_str = metadata[0] if len(metadata) > 0 else ""
-    code = sample["code_list"][0] if isinstance(sample.get("code_list"), list) else sample.get("code_list", "")
+    metadata_str = metadata[0] if metadata else ""
     numbered_code = "\n".join(f"{i+1}: {line}" for i, line in enumerate(code.splitlines()))
 
-    # -------------- LOCALIZER --------------
+    # ---------- LOCALIZER ----------
     if task == "localizer":
-        error = metadata_str  # failing test
-        bug_span = sample["bug_span"]
 
-        return {
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "You are a code debugger. Locate the bug. Output ONLY a JSON list of line ranges like [[start, end]]."
-                },
-                {
-                    "role": "user",
-                    "content": (
-                        f"PROBLEM:\n{problem}\n\n"
-                        f"ERROR:\n{error}\n\n"
-                        f"CODE:\n{numbered_code}"
-                    )
-                },
-                {
-                    "role": "assistant",
-                    "content": json.dumps(bug_span)
-                }
-            ]
-        }
+        # For manually curated dataset
+        bug_span = sample.get("label_bug_span")
+        bug_summary = sample.get("label_bug_summary")
 
-    # -------------- PLANNER --------------
+        prompt = f"""### Task: localizer
+    ### Problem:
+    {problem}
+
+    ### Code:
+    {numbered_code}
+
+    ### Error Trace / Test Failure:
+    {metadata_str}
+
+    ### What to do:
+    Identify the buggy line range(s) AND write a brief summary of the bug.
+    Output a JSON dict with fields "bug_span" and "bug_summary".
+
+    ### Answer:"""
+
+        target = json.dumps({
+            "bug_span": bug_span,
+            "bug_summary": bug_summary
+        })
+
+        return prompt, target
+
+    # ---------- PLANNER ----------
     elif task == "planner":
-        prompt = f"""You are a precise and concise bug fixer (planner only).
+        bug_span = sample.get("bug_span", [])
+        bug_summary = sample.get("bug_summary", "")
+        planner_text = sample.get("label_plan", "")
 
-Given:
-- Problem: {problem[:500]}...
-- Buggy code:
-{code}
+        prompt = f"""### Task: planner
+    ### Problem:
+    {problem[:600]}
 
-- Metadata: {metadata_str}
-- Bug spans: {sample['bug_span']}
-- Bug summary: {sample['bug_summary']}
+    ### Code:
+    {code}
 
-Your task: Produce a short sequence of steps (2-6) describing how to fix the bug. Include a suggested corrected code snippet.
+    ### Bug Span:
+    {bug_span}
 
-Plan:"""
+    ### Bug Summary:
+    {bug_summary}
 
-        return {
-            "prompt": prompt,
-            "target": sample["planner_text"]
-        }
+    ### What to do:
+    Produce 2-6 steps explaining how to fix the bug and provide a corrected snippet.
+
+    ### Answer:"""
+
+        target = planner_text
+        return prompt, target
 
     else:
         raise ValueError(f"Unknown task: {task}")

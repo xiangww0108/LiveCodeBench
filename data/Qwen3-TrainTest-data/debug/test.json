@@ -1,0 +1,55 @@
+[{
+    "task": "localizer",
+    "question_title": "assign-elements-to-groups-with-constraints",
+    "question_content": "You are given an integer array groups, where groups[i] represents the size of the i^th group. You are also given an integer array elements.\nYour task is to assign one element to each group based on the following rules:\n\nAn element at index j can be assigned to a group i if groups[i] is divisible by elements[j].\nIf there are multiple elements that can be assigned, assign the element with the smallest index j.\nIf no element satisfies the condition for a group, assign -1 to that group.\n\nReturn an integer array assigned, where assigned[i] is the index of the element chosen for group i, or -1 if no suitable element exists.\nNote: An element may be assigned to more than one group.\n \nExample 1:\n\nInput: groups = [8,4,3,2,4], elements = [4,2]\nOutput: [0,0,-1,1,0]\nExplanation:\n\nelements[0] = 4 is assigned to groups 0, 1, and 4.\nelements[1] = 2 is assigned to group 3.\nGroup 2 cannot be assigned any element.\n\n\nExample 2:\n\nInput: groups = [2,3,5,7], elements = [5,3,3]\nOutput: [-1,1,0,-1]\nExplanation:\n\nelements[1] = 3 is assigned to group 1.\nelements[0] = 5 is assigned to group 2.\nGroups 0 and 3 cannot be assigned any element.\n\n\nExample 3:\n\nInput: groups = [10,21,30,41], elements = [2,1]\nOutput: [0,1,0,1]\nExplanation:\nelements[0] = 2 is assigned to the groups with even values, and elements[1] = 1 is assigned to the groups with odd values.\n\n \nConstraints:\n\n1 <= groups.length <= 10^5\n1 <= elements.length <= 10^5\n1 <= groups[i] <= 10^5\n1 <= elements[i] <= 10^5",
+    "code_list": [
+      "class Solution:\n    def assignElements(self, groups: List[int], elements: List[int]) -> List[int]:\n        assigned = [-1] * len(groups)\n        element_indices = {e: i for i, e in enumerate(elements)}\n        \n        for i, group_size in enumerate(groups):\n            for element, index in sorted(element_indices.items()):\n                if group_size % element == 0 and assigned[i] == -1:\n                    assigned[i] = index\n                    break\n        \n        return assigned"
+    ],
+    "metadata": [
+      "{\"output\": \"[1, 1, -1, 1, 1]\", \"inputs\": \"[[8, 4, 3, 2, 4], [4, 2]]\", \"expected\": \"[0, 0, -1, 1, 0]\", \"error_code\": -2, \"error_message\": \"Wrong Answer\"}"
+    ],
+    "label_bug_span": [
+      [
+        7,
+        9
+      ]
+    ],
+    "label_bug_summary": "Incorrect logic in assigning elements to groups; does not handle multiple assignments or check all conditions properly."
+  }, {
+    "task": "localizer",
+    "question_title": "zigzag-grid-traversal-with-skip",
+    "question_content": "You are given an m x n 2D array grid of positive integers.\nYour task is to traverse grid in a zigzag pattern while skipping every alternate cell.\nZigzag pattern traversal is defined as following the below actions:\n\nStart at the top-left cell (0, 0).\nMove right within a row until the end of the row is reached.\nDrop down to the next row, then traverse left until the beginning of the row is reached.\nContinue alternating between right and left traversal until every row has been traversed.\n\nNote that you must skip every alternate cell during the traversal.\nReturn an array of integers result containing, in order, the value of the cells visited during the zigzag traversal with skips.\n \nExample 1:\n\nInput: grid = [[1,2],[3,4]]\nOutput: [1,4]\nExplanation:\n\n\nExample 2:\n\nInput: grid = [[2,1],[2,1],[2,1]]\nOutput: [2,1,2]\nExplanation:\n\n\nExample 3:\n\nInput: grid = [[1,2,3],[4,5,6],[7,8,9]]\nOutput: [1,3,5,7,9]\nExplanation:\n\n\n \nConstraints:\n\n2 <= n == grid.length <= 50\n2 <= m == grid[i].length <= 50\n1 <= grid[i][j] <= 2500",
+    "code_list": [
+      "class Solution:\n    def zigzagTraversal(self, grid: List[List[int]]) -> List[int]:\n        result = []\n        rows, cols = len(grid), len(grid[0])\n        row, col = 0, 0\n        direction = 1  # 1 for right, -1 for left\n\n        for _ in range(rows * cols):\n            result.append(grid[row][col])\n            if direction == 1:\n                if col == cols - 1:\n                    row += 1\n                    direction = -1\n                else:\n                    col += 1\n            else:\n                if row == rows - 1:\n                    col += 1\n                    direction = 1\n                else:\n                    row += 1\n\n        return result[::2]  # Skip every alternate cell"
+    ],
+    "metadata": [
+      "{\"error\": \"IndexError('list index out of range')\", \"error_code\": -4, \"error_message\": \"Runtime Error\", \"inputs\": \"[[[1, 2], [3, 4]]]\", \"expected\": \"[1, 4]\"}"
+    ],
+    "label_bug_span": [
+      [
+        17,
+        21
+      ]
+    ],
+    "label_bug_summary": "Incorrect boundary check and movement logic when direction is -1 causing out-of-bounds access."
+  },
+  {
+    "task": "planner",
+    "question_title": "Tile Distance 3",
+    "question_content": "Tiles are laid out covering the two-dimensional coordinate plane.\nEach tile is a rectangle, and for each integer triple (i, j, k) satisfying 0 \\leq k < K, a corresponding tile is placed according to the following rules:\n\n- When i and j have the same parity (both even or both odd), the tile corresponding to (i, j, k) covers the area where iK \\leq x \\leq (i + 1)K and jK + k \\leq y \\leq jK + k + 1.\n- When i and j have different parity, the tile corresponding to (i, j, k) covers the area where iK + k \\leq x \\leq iK + k + 1 and jK \\leq y \\leq (j + 1)K.\n\nTwo tiles are adjacent when their edges have a common segment of positive length.\nStarting from the tile containing the point (S_x + 0.5, S_y + 0.5), find the minimum number of times you need to move to an adjacent tile to reach the tile containing the point (T_x + 0.5, T_y + 0.5).\nThere are T test cases; solve each of them.\n\nInput\n\nThe input is given from Standard Input in the following format:\nT\r\n\\text{case}_1\r\n\\vdots\r\n\\text{case}_T\r\n\nEach case is given in the following format:\nK S_x S_y T_x T_y\n\nOutput\n\nPrint T lines. The i-th line should contain the answer for the i-th test case.\n\nConstraints\n\n\n- 1 \\leq T \\leq 10^4\n- 2 \\leq K \\leq 10^{16}\n- -10^{16} \\leq S_x, S_y, T_x, T_y \\leq 10^{16}\n- All input values are integers.\n\nSample Input 1\n\n3\r\n3 -2 1 4 -1\r\n4 8 8 0 2\r\n5 -1000000000000 -1000000000000 1000000000000 1000000000000\n\nSample Output 1\n\n4\r\n4\r\n800000000000\r\n\nLet us explain the first test case.\nLet (i, j, k) denote the tile corresponding to integer triple (i, j, k).\n(-1.5, 1.5) is contained in tile (-1, 0, 1), and (4.5, -0.5) is contained in tile (1, -1, 2).\nFor example, by moving from tile (-1, 0, 1) to (-1, 0, 2) to (0, 0, 2) to (1, 0, 0) to (1, -1, 2), you can reach tile (1, -1, 2) in four moves to an adjacent tile.",
+    "code_list": [
+      "# YOUR CODE HERE\nimport sys\n\ndef calculate_moves(K, S_x, S_y, T_x, T_y):\n    # Calculate the initial and target tile indices\n    S_i = (S_x // K) % 2\n    S_j = (S_y // K) % 2\n    S_k = (S_y % K) % K\n\n    T_i = (T_x // K) % 2\n    T_j = (T_y // K) % 2\n    T_k = (T_y % K) % K\n\n    # Calculate the number of moves needed\n    moves = abs(S_i - T_i) + abs(S_j - T_j) + abs(S_k - T_k)\n\n    return moves\n\ndef main():\n    input = sys.stdin.read\n    data = input().split()\n    \n    T = int(data[0])\n    index = 1\n    results = []\n    \n    for _ in range(T):\n        K = int(data[index])\n        S_x = int(data[index + 1])\n        S_y = int(data[index + 2])\n        T_x = int(data[index + 3])\n        T_y = int(data[index + 4])\n        index += 5\n        \n        moves = calculate_moves(K, S_x, S_y, T_x, T_y)\n        results.append(moves)\n    \n    for result in results:\n        print(result)\n\nif __name__ == \"__main__\":\n    main()"
+    ],
+    "metadata": [
+      "{\"output\": \"2\\n2\\n0\\n\", \"inputs\": \"3\\n3 -2 1 4 -1\\n4 8 8 0 2\\n5 -1000000000000 -1000000000000 1000000000000 1000000000000\", \"expected\": \"4\\n4\\n800000000000\", \"error_code\": -2, \"error_message\": \"Wrong answer at output_line_idx=0: 2 != 4\"}"
+    ],
+    "bug_span": [
+      [
+        6,
+        8
+      ]
+    ],
+    "bug_summary": "Incorrect calculation of tile indices S_i, S_j, S_k; modulo operations and indexing logic are wrong for negative coordinates and tile indexing.",
+    "label_plan": "1. Correct the calculation of tile indices to properly handle negative coordinates and tile indexing by using floor division and modulo K for the offsets.\n2. Replace lines 6-8 with the following corrected code snippet:\n\nSuggested patch:\n    S_i = (S_x // K)\n    S_j = (S_y // K)\n    S_k = S_x % K"
+  }
+]

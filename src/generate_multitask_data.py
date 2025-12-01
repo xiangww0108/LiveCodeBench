@@ -1,8 +1,8 @@
 import json
 
-LOCAL_PATH = "output/Qwen3-TrainTest-data/modular-step-by-step/train-localizer.json"
-PLANNER_PATH = "output/Qwen3-TrainTest-data/modular-step-by-step/train-planner.json"
-OUT_PATH = "output/Qwen3-TrainTest-data/multitask-step-by-step/train-multitask.json"
+LOCAL_PATH = "data/Qwen3-TrainTest-data/test-localizer.json"
+PLANNER_PATH = "data/Qwen3-TrainTest-data/test-planner.json"
+OUT_PATH = "data/Qwen3-TrainTest-data/test-multitask.json"
 
 local_data = json.load(open(LOCAL_PATH))
 planner_data = json.load(open(PLANNER_PATH))

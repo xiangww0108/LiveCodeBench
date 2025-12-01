@@ -1,0 +1,14 @@
+{'train_runtime': 747.451, 'train_samples_per_second': 8.134, 'train_steps_per_second': 0.508, 'train_loss': 0.5763386086413734, 'epoch': 5.0}
+
+===== Localizer JSON Evaluation =====
+Matched Samples: 100
+Mean IoU:    0.1140
+Mean Recall: 0.1179
+
+{
+  "total_examples": 100,
+  "planner_total": 100,
+  "planner_bert_avg": 0.2556071586534381,
+  "planner_rougeL_avg": 0.2740742962946006,
+  "planner_bleu_avg": 0.0552643087714576
+}

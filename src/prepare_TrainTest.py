@@ -2,18 +2,22 @@
 import json
 from pathlib import Path
 
-TRAIN_PATH = Path("output/Qwen3-TrainTest-data/train-pre-with-plan.json")
-# TEST_PATH  = Path("output/Qwen3-TrainTest-data/test-pre.json")
-TEST_PATH=Path("none.json")
+#TRAIN_PATH = Path("data/Qwen3-TrainTest-data/train-pre-with-plan.json")
+TEST_PATH  = Path("data/Qwen3-TrainTest-data/test-pre-with-plan.json")
+TRAIN_PATH = Path("none")
 
-OUT_TRAIN = Path("output/Qwen3-TrainTest-data/modular-step-by-step/train-planner.json")
-# OUT_TEST  = Path("output/Qwen3-TrainTest-data/test-final.json")
-OUT_TEST=Path("none.json")
+#OUT_TRAIN = Path("data/Qwen3-TrainTest-data/modular-step-by-step/train-planner.json")
+OUT_TEST  = Path("data/Qwen3-TrainTest-data/test-planner.json")
+OUT_TRAIN = Path("none")
 
 TEST_WHITELIST = {
     "question_title",
     "question_content",
+    "metadata",
     "code_list",
+    "bug_span",
+    "bug_summary",
+    "planner_text",
 }
 
 #localizer
@@ -26,16 +30,16 @@ TEST_WHITELIST = {
 #     "bug_summary"
 # }
 
-#planner
-TRAIN_WHITELIST = {
-    "question_title",
-    "question_content",
-    "metadata",
-    "code_list",
-    "bug_span",
-    "bug_summary",
-    "planner_text"
-}
+# #planner
+# TRAIN_WHITELIST = {
+#     "question_title",
+#     "question_content",
+#     "metadata",
+#     "code_list",
+#     "bug_span",
+#     "bug_summary",
+#     "planner_text"
+# }
 
 def load_jsonl(path):
     data = []

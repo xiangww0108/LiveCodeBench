@@ -1,0 +1,40 @@
+[{
+    "question_title": "assign-elements-to-groups-with-constraints",
+    "localizer_output": "{\"bug_span\": [[6, 6]], \"bug_summary\": \"The loop inside the outer loop incorrectly assigns the first found index instead of the smallest index.\"}",
+    "bug_span": [
+      [
+        6,
+        6
+      ]
+    ],
+    "bug_summary": "The loop inside the outer loop incorrectly assigns the first found index instead of the smallest index.",
+    "planner_output": "1. Replace the inner loop with a sorted list of tuples (element, index) and sort by element.\n2. Assign the smallest index when finding a valid assignment.\n3. Update the code as follows:\n\nSuggested patch:\n```python\nfor i, group_size in enumerate(groups):\n    for element, index in sorted(element_indices.items(), key=lambda x: x[0]):\n        if group_size % element == 0 and assigned[i] == -1:\n            assigned[i] = index\n            break\n```",
+    "fixed_code": "python\nfor i, group_size in enumerate(groups):\n    for element, index in sorted(element_indices.items(), key=lambda x: x[0]):\n        if group_size % element == 0 and assigned[i] == -1:\n            assigned[i] = index\n            break\n"
+  },
+  {
+    "question_title": "zigzag-grid-traversal-with-skip",
+    "localizer_output": "{\"bug_span\": [[1, 1]], \"bug_summary\": \"The loop condition should be based on the total number of elements instead of multiplying rows and cols.\"}",
+    "bug_span": [
+      [
+        1,
+        1
+      ]
+    ],
+    "bug_summary": "The loop condition should be based on the total number of elements instead of multiplying rows and cols.",
+    "planner_output": "1. Change the loop condition from `for _ in range(rows * cols):` to `while len(result) < rows * cols:`.\n2. Replace the loop body with `result.append(grid[row][col])` and update `row`, `col`, and `direction`.\n\nSuggested patch:\n```python\nwhile len(result) < rows * cols:\n    result.append(grid[row][col])\n    if direction == 1:\n        if col == cols - 1:\n            row += 1\n            direction = -1\n        else:\n            col += 1\n    else:\n        if row == rows - 1:\n            col += 1\n            direction = 1\n        else:\n            row += 1\n``` ### Explanation of Changes:\n- The loop now runs until all elements have been added to `result`.\n- The condition checks if the length of `result` matches the total number of elements (`rows * cols`) before adding another element.\n- This ensures that each element is added exactly once without skipping any cells. ###",
+    "fixed_code": "python\nwhile len(result) < rows * cols:\n    result.append(grid[row][col])\n    if direction == 1:\n        if col == cols - 1:\n            row += 1\n            direction = -1\n        else:\n            col += 1\n    else:\n        if row == rows - 1:\n            col += 1\n            direction = 1\n        else:\n            row += 1\n"
+  },
+  {
+    "question_title": "Tile Distance 3",
+    "localizer_output": "{\"bug_span\": [[17, 17]], \"bug_summary\": \"Incorrect calculation of moves based on parity and coordinates; does not correctly determine the minimum number of moves to adjacent tiles.\"}",
+    "bug_span": [
+      [
+        17,
+        17
+      ]
+    ],
+    "bug_summary": "Incorrect calculation of moves based on parity and coordinates; does not correctly determine the minimum number of moves to adjacent tiles.",
+    "planner_output": "1. In `calculate_moves`, replace the parity checks with direct comparison of coordinates modulo K.\n2. Replace the parity-based moves calculation with a simple distance calculation between (S_x, S_y) and (T_x, T_y).\n\nSuggested patch:\n```python\nmoves = abs(S_x - T_x) + abs(S_y - T_y)\n```",
+    "fixed_code": "python\nmoves = abs(S_x - T_x) + abs(S_y - T_y)\n"
+  }
+]
