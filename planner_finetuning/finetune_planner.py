@@ -19,16 +19,17 @@ import numpy as np
 from huggingface_hub import login
 
 # Configuration
-MODEL_NAME = "Qwen/Qwen3-4B"  # Qwen3-4B base model
-OUTPUT_DIR = "./planner-finetuned"
-HF_REPO = "Intellegen4/planner-qwen3-4b"  # Your repo for uploading
+MODEL_NAME = "Qwen/Qwen2.5-Coder-1.5B-Instruct"  # Qwen2.5-Coder-1.5B-Instruct model
+OUTPUT_DIR = "./planner-finetuned-1.5b"  # New output directory
+HF_REPO = "Intellegen4/planner-qwen2.5-coder-1.5b"  # New repo for uploading
 
 # Training hyperparameters
-BATCH_SIZE = 1  # Reduced for full fine-tuning
-GRADIENT_ACCUM_STEPS = 16  # Increased to maintain effective batch size
-LEARNING_RATE = 2e-5  # Lower learning rate for full fine-tuning
-NUM_EPOCHS = 3
+BATCH_SIZE = 2
+GRADIENT_ACCUM_STEPS = 8
+LEARNING_RATE = 1e-5
+NUM_EPOCHS = 5
 MAX_LENGTH = 2048
+WARMUP_RATIO = 0.05
 
 
 def format_planner_input(example):
@@ -321,7 +322,7 @@ def main():
         save_total_limit=2,
         bf16=device == "cuda",
         report_to="none",
-        warmup_steps=50,
+        warmup_ratio=WARMUP_RATIO,
         lr_scheduler_type="cosine",
         optim="adamw_torch",
         gradient_checkpointing=True,
