@@ -19,13 +19,13 @@ import numpy as np
 from huggingface_hub import login
 
 # Configuration
-MODEL_NAME = "Qwen/Qwen2.5-Coder-1.5B-Instruct"  # Qwen2.5-Coder-1.5B-Instruct model
-OUTPUT_DIR = "./planner-finetuned-1.5b"  # New output directory
-HF_REPO = "Intellegen4/planner-qwen2.5-coder-1.5b"  # New repo for uploading
+MODEL_NAME = "Qwen/Qwen2.5-Coder-3B-Instruct"  # Qwen2.5-Coder-3B-Instruct model
+OUTPUT_DIR = "./planner-finetuned-3b"  # New output directory
+HF_REPO = "Intellegen4/modular-planner-qwen2.5-coder-3b"  # New repo for uploading
 
 # Training hyperparameters
-BATCH_SIZE = 2
-GRADIENT_ACCUM_STEPS = 8
+BATCH_SIZE = 1
+GRADIENT_ACCUM_STEPS = 16
 LEARNING_RATE = 1e-5
 NUM_EPOCHS = 5
 MAX_LENGTH = 2048

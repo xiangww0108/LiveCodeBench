@@ -41,9 +41,9 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description="Upload model to HuggingFace")
-    parser.add_argument("--model_dir", type=str, default="./planner-finetuned",
+    parser.add_argument("--model_dir", type=str, default="./planner-finetuned-3b",
                         help="Local directory containing the model")
-    parser.add_argument("--repo_id", type=str, default="Intellegen4/planner-qwen2.5-4b",
+    parser.add_argument("--repo_id", type=str, default="Intellegen4/modular-planner-qwen2.5-coder-3b",
                         help="HuggingFace repository ID")
     parser.add_argument("--token", type=str, required=True,
                         help="HuggingFace API token")
