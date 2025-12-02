@@ -2,7 +2,7 @@
 import json
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
-
+import re
 
 # ---------------------------
 # Load JSON
@@ -13,17 +13,16 @@ def load_json(path):
 
 
 # ----------- JSON extractor -------------
+
 def extract_json(raw):
-    if not isinstance(raw, str):
-        return None
-    start = raw.find("{")
-    end = raw.rfind("}")
-    if start == -1 or end == -1:
-        return None
     try:
-        return json.loads(raw[start:end + 1])
+        match = re.search(r"\{[\s\S]*\}", raw)
+        if not match:
+            return None
+        return json.loads(match.group(0))
     except:
         return None
+
 
 
 # -----------------------------------------------------
@@ -76,26 +75,29 @@ def make_localizer_messages(example):
 # -----------------------------------------------------
 #  Chat-style generation (for localizer)
 # -----------------------------------------------------
-def generate_chat(model, tokenizer, messages, max_new=256):
-    # apply_chat_template 返回的是 input_ids Tensor
-    input_ids = tokenizer.apply_chat_template(
+def generate_chat(model, tokenizer, messages):
+    chat_text = tokenizer.apply_chat_template(
         messages,
+        tokenize=False,
+        add_generation_prompt=True
+    )
+    
+    inputs = tokenizer(
+        chat_text,
         return_tensors="pt",
         truncation=True,
         max_length=2048,
     ).to(model.device)
 
-    # 生成
     output_ids = model.generate(
-        input_ids=input_ids,
-        max_new_tokens=max_new,
-        temperature=0.0,
+        **inputs,
+        max_new_tokens=50,
+        temperature=0.1,
         do_sample=False,
         pad_token_id=tokenizer.eos_token_id,
     )
 
-    # 只取新生成的 token 部分
-    gen_ids = output_ids[0, input_ids.shape[1] :]
+    gen_ids = output_ids[0, inputs["input_ids"].shape[1]:]
     text = tokenizer.decode(gen_ids, skip_special_tokens=True)
     return text.strip()
 
@@ -119,11 +121,9 @@ def make_planner_prompt(problem, code, bug_span, bug_summary):
 
 ### What to do:
 Produce 2-6 clear steps explaining how to fix the bug and then provide a corrected code snippet inside a Markdown code block.
-Return plain text.
 
 ### Answer:
 """
-
 
 def generate(model, tokenizer, prompt, max_new=800):
     inputs = tokenizer(
@@ -140,28 +140,34 @@ def generate(model, tokenizer, prompt, max_new=800):
         do_sample=False,
         pad_token_id=tokenizer.eos_token_id,
     )
+
     full_text = tokenizer.decode(output[0], skip_special_tokens=True)
-    # 去掉前缀 prompt，只保留模型新增内容
-    gen_text = full_text[len(prompt) :].strip()
+    gen_text = full_text[len(prompt):].strip()
     return gen_text
 
 
 def extract_fixed_code(plan_output):
-    """
-    Planner 输出里如果有 ```code``` 块，抽取第一段 code。
-    """
-    if "```" in plan_output:
-        parts = plan_output.split("```")
-        if len(parts) >= 3:
-            return parts[1]
-    return None
+    # 1. Try code block first
+    match = re.search(r"```(?:python)?\s*([\s\S]*?)```", plan_output)
+    if match:
+        return match.group(1).strip()
 
+    # 2. Fallback: grab last indented code region
+    lines = plan_output.split("\n")
+    code_lines = []
+    for line in lines:
+        if line.startswith("    ") or line.startswith("\t") or "def " in line or line.strip().startswith("for ") or line.strip().startswith("while "):
+            code_lines.append(line)
+    if code_lines:
+        return "\n".join(code_lines).strip()
+
+    return None
 
 # -----------------------------------------------------
 #  MAIN PIPELINE
 # -----------------------------------------------------
 def main():
-    model_path = "data/output/checkpoint-200"
+    model_path = "data/output_new/checkpoint-200"
     test_file = "data/Qwen3-TrainTest-data/test-pre.json"
     output_file = (
         "data/Qwen3-TrainTest-data/multitask-step-by-step/finetuning_results.json"
@@ -195,7 +201,11 @@ def main():
 
         # -------- LOCALIZER ----------
         messages = make_localizer_messages(example)
+        # messages.append({"role": "assistant", "content": ""})
         loc_output = generate_chat(model, tokenizer, messages)
+        print("\n=== RAW LOCALIZER OUTPUT ===")
+        print(loc_output)
+
 
         loc_json = extract_json(loc_output)
         if loc_json is not None:
@@ -207,8 +217,13 @@ def main():
 
         # -------- PLANNER -----------
         plan_prompt = make_planner_prompt(problem, code, bug_span, bug_summary)
-        plan_output = generate(model, tokenizer, plan_prompt, max_new=800)
+        plan_output = generate(model, tokenizer, plan_prompt)
+        print("\n=== RAW PLANNER OUTPUT ===")
+        print(plan_output)
         fixed_code = extract_fixed_code(plan_output)
+        print("\n=== EXTRACTED FIXED CODE ===")
+        print(fixed_code)
+
 
         results.append(
             {
@@ -220,7 +235,6 @@ def main():
             }
         )
 
-    # 保存结果给 eval 脚本用
     with open(output_file, "w") as f:
         json.dump(results, f, indent=2)
 

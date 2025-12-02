@@ -1,7 +1,7 @@
 {
     "model_name": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
 
-    "output_dir": "data/output",
+    "output_dir": "data/output_new",
 
     "max_seq_len": 2048,
 

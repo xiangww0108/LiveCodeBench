@@ -47,7 +47,7 @@ def safe_bleu(pred, gold):
 #                    MAIN EVALUATION
 # ============================================================
 def main():
-    pred_file = "data/Qwen3-TrainTest-data/multitask-step-by-step/finetuning_results.json"
+    pred_file = "data/Qwen3-TrainTest-data/multitask-step-by-step/finetuning_result_new.json"
     gold_file = "data/Qwen3-TrainTest-data/multitask-step-by-step/test-planner.json"
     
     pred_data = load_json(pred_file)

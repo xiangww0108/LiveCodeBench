@@ -103,7 +103,7 @@ def evaluate(golden_file, pred_file):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--golden", type=str, default="data/Qwen3-TrainTest-data/multitask-step-by-step/test-localizer.json")
-    parser.add_argument("--pred", type=str, default="data/Qwen3-TrainTest-data/multitask-step-by-step/finetuning_results.json")
+    parser.add_argument("--pred", type=str, default="data/Qwen3-TrainTest-data/multitask-step-by-step/finetuning_result_new.json")
     args = parser.parse_args()
 
     evaluate(args.golden, args.pred)
