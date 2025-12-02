@@ -62,11 +62,11 @@ def main():
     model.eval()
     print("Model loaded!\n")
     
-    # Load test data
+    # Load test data (use test-pre-with-plan.json which has planner_text ground truth)
     print("Loading test data from HuggingFace...")
     dataset = load_dataset(
         "Intellegen4/Qwen3-TrainTest-data",
-        data_files="test-pre.json",
+        data_files="test-pre-with-plan.json",
         split="train"
     )
     test_data = dataset.to_list()
@@ -105,7 +105,7 @@ def main():
             prediction = generated_text[len(input_text):].strip()
             
             predictions.append(prediction)
-            references.append(example['bug_summary'])
+            references.append(example['planner_text'])  # Use planner_text as ground truth!
     
     print("\nGeneration complete!")
     

@@ -1,6 +1,6 @@
 """
 Prepare test data for planner inference
-Extracts only essential fields from test-pre.json
+Extracts only essential fields from test-pre-with-plan.json
 """
 
 import json
@@ -17,6 +17,7 @@ def prepare_test_data(input_file, output_file):
     - metadata: Error information
     - bug_span: From localizer (buggy line ranges)
     - bug_summary: From localizer (bug description)
+    - planner_text: Ground truth planner output (for evaluation)
     
     Optional (for analysis):
     - question_title: For identification
@@ -36,7 +37,8 @@ def prepare_test_data(input_file, output_file):
             'code_list': example['code_list'],
             'metadata': example['metadata'],
             'bug_span': example['bug_span'],
-            'bug_summary': example['bug_summary']
+            'bug_summary': example['bug_summary'],
+            'planner_text': example['planner_text']  # Ground truth for evaluation
         }
         prepared_data.append(prepared_example)
     
@@ -52,8 +54,8 @@ def prepare_test_data(input_file, output_file):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Prepare test data for planner")
-    parser.add_argument("--input", type=str, default="test-pre.json",
-                        help="Input test-pre.json file")
+    parser.add_argument("--input", type=str, default="test-pre-with-plan.json",
+                        help="Input test-pre-with-plan.json file (contains planner_text ground truth)")
     parser.add_argument("--output", type=str, default="test-planner.json",
                         help="Output file with essential fields only")
     

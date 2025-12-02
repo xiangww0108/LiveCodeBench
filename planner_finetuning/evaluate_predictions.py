@@ -18,11 +18,11 @@ def load_predictions(predictions_file):
     # Handle different formats
     if isinstance(data, dict) and 'predictions' in data:
         predictions = data['predictions']
-        references = data.get('references', data.get('bug_summary', []))
+        references = data.get('references', data.get('planner_text', []))
     elif isinstance(data, list):
-        # Assume it's list of dicts with 'generated_plan' and 'bug_summary'
+        # Assume it's list of dicts with 'generated_plan' and 'planner_text'
         predictions = [item.get('generated_plan', '') for item in data]
-        references = [item.get('bug_summary', '') for item in data]
+        references = [item.get('planner_text', '') for item in data]
     else:
         raise ValueError("Unexpected format for predictions file")
     
@@ -35,7 +35,7 @@ def evaluate_predictions(predictions, references):
     
     Args:
         predictions: List of generated plans
-        references: List of reference texts (bug summaries or ground truth plans)
+        references: List of reference texts (ground truth planner_text)
     """
     print(f"\nEvaluating {len(predictions)} predictions...")
     print("="*70)

@@ -1,0 +1,14 @@
+{
+  "bertscore": {
+    "precision": 0.6815089559555054,
+    "recall": 0.72851154088974,
+    "f1": 0.7029974073171615
+  },
+  "rouge": {
+    "rouge1": 0.41120736877619396,
+    "rouge2": 0.19777785387237043,
+    "rougeL": 0.2811624689143084
+  },
+  "bleu": 0.1653503320617802,
+  "note": "Evaluated using planner_text as ground truth from test-pre-with-plan.json"
+}

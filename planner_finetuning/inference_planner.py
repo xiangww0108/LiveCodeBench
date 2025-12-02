@@ -103,7 +103,7 @@ def run_inference(model_path, test_file, output_file, device="cuda"):
     
     Args:
         model_path: Path to fine-tuned model
-        test_file: Path to test-pre.json
+        test_file: Path to test-pre-with-plan.json
         output_file: Path to save predictions
         device: Device to use
     """
@@ -132,6 +132,7 @@ def run_inference(model_path, test_file, output_file, device="cuda"):
             'question_title': example.get('question_title', ''),
             'bug_summary': example['bug_summary'],
             'bug_span': example['bug_span'],
+            'planner_text': example.get('planner_text', ''),  # Ground truth
             'generated_plan': plan,
             'input_prompt': input_text  # For debugging
         })
@@ -207,8 +208,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Planner inference")
     parser.add_argument("--model_path", type=str, default="./planner-finetuned",
                         help="Path to fine-tuned model (local or HF repo)")
-    parser.add_argument("--test_file", type=str, default="/mnt/user-data/uploads/test-pre.json",
-                        help="Path to test-pre.json")
+    parser.add_argument("--test_file", type=str, default="test-pre-with-plan.json",
+                        help="Path to test-pre-with-plan.json (contains planner_text ground truth)")
     parser.add_argument("--output_file", type=str, default="planner_predictions.json",
                         help="Output file for predictions")
     parser.add_argument("--interactive", action="store_true",
