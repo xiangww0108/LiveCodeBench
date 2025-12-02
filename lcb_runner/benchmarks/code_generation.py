@@ -122,8 +122,15 @@ class CodeGenerationProblem:
 
 
 def load_code_generation_dataset(release_version="release_v1", start_date=None, end_date=None) -> list[CodeGenerationProblem]:
+    # This syntax works with datasets==2.21.0
+    dataset = load_dataset(
+        "livecodebench/code_generation_lite", 
+        split="test", 
+        version_tag=release_version, 
+        trust_remote_code=True
+    )
     # dataset = load_dataset("livecodebench/code_generation_lite", split="test", version_tag=release_version, trust_remote_code=True)
-    dataset = load_dataset("livecodebench/code_generation_lite", release_version, split="test")
+    # dataset = load_dataset("livecodebench/code_generation_lite", release_version, split="test")
     dataset = [CodeGenerationProblem(**p) for p in dataset]  # type: ignore
     if start_date is not None:
         p_start_date = datetime.strptime(start_date, "%Y-%m-%d")
@@ -138,7 +145,7 @@ def load_code_generation_dataset(release_version="release_v1", start_date=None, 
 
 
 def load_code_generation_dataset_not_fast(release_version="release_v1") -> list[CodeGenerationProblem]:
-    dataset = load_dataset("livecodebench/code_generation", split="test")
+    dataset = load_dataset("livecodebench/code_generation", release_version, split="test")
     dataset = [CodeGenerationProblem(**p) for p in dataset]  # type: ignore
     print(f"Loaded {len(dataset)} problems")
     return dataset

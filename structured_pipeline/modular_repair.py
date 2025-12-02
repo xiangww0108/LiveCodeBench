@@ -5,23 +5,26 @@ import re
 import argparse
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from datasets import load_dataset
 
 # ================= CONFIGURATION =================
+# Models
 LOCALIZER_ID = "Intellegen4/Qwen2.5-Coder-1.5B-Localizer-FullSFT"
 PLANNER_ID = "Intellegen4/modular-planner-qwen2.5-coder-1.5b"
 FIXER_ID = "Qwen/Qwen2.5-Coder-7B-Instruct" 
+
+# Device configuration
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 def add_line_numbers(code):
     """Adds line numbers to the code for the Localizer."""
+    if not code:
+        return ""
     lines = code.split('\n')
     return "\n".join([f"{i+1} | {line}" for i, line in enumerate(lines)])
 
 def parse_span(text):
     """
     Robustly extracts the FIRST JSON list of lists from text (e.g., [[1, 3]]).
-    Adapted from structured_pipeline/localizer/evaluate.py
     """
     try:
         match = re.search(r"\[\[.*?\]\]", text)
@@ -30,25 +33,6 @@ def parse_span(text):
     except:
         pass
     return [[1, 1]] # Default fallback
-
-def safe_load_problems():
-    print("Loading problems from Hugging Face (Parquet mode)...")
-    try:
-        # Try loading the main dataset which is usually parquet-based now
-        dataset = load_dataset("livecodebench/code_generation_lite", split="test", trust_remote_code=True)
-    except Exception as e:
-        print(f"Standard load failed ({e}). Attempting direct Parquet load...")
-        # Fallback: Load the full version which might be updated
-        dataset = load_dataset("livecodebench/code_generation", split="test")
-        
-    # Convert to a dictionary map directly
-    problem_map = {}
-    for item in dataset:
-        # Adjust keys based on actual dataset structure
-        q_id = item.get("question_id")
-        if q_id:
-            problem_map[q_id] = item
-    return problem_map
 
 class ModularPipeline:
     def __init__(self):
@@ -84,8 +68,8 @@ class ModularPipeline:
 
     def run_localizer(self, problem_text, code, error):
         """
-        Locates the bug in the code.
-        Prompt format adapted from structured_pipeline/localizer/evaluate.py
+        Stage 1: Localizer
+        Identifies the lines of code responsible for the error.
         """
         numbered_code = add_line_numbers(code)
         messages = [
@@ -109,14 +93,13 @@ class ModularPipeline:
 
     def run_planner(self, problem_text, code, error, bug_span):
         """
-        Generates a repair plan.
-        Prompt format adapted from structured_pipeline/planner/inference_planner.py
+        Stage 2: Planner
+        Generates a step-by-step plan to fix the bug using the localized span and error info.
         """
-        # Truncate question if too long (as done in the source script)
-        if len(problem_text) > 1000:
-            problem_text = problem_text[:1000] + "..."
+        # Truncate question if too long to fit in context
+        if len(problem_text) > 1500:
+            problem_text = problem_text[:1500] + "..."
 
-        # We treat the error message as metadata/bug summary for the planner
         prompt = f"""You are a precise and concise bug fixer (planner only).
 
 Given:
@@ -128,7 +111,7 @@ Given:
 - Bug spans: {bug_span}
 - Bug summary: {error}
 
-Your task: Produce a short sequence of steps (2-6) describing how to fix the bug. Include a suggested corrected code snippet.
+Your task: Produce a short sequence of steps describing how to fix the bug.
 
 Plan:"""
         
@@ -155,23 +138,24 @@ Plan:"""
 
     def run_fixer(self, problem_text, code, error, plan):
         """
-        Generates the fixed code based on the plan.
+        Stage 3: Fixer
+        Uses the Plan as 'Teacher Instructions' to rewrite the code.
         """
         messages = [
-            {"role": "system", "content": "You are a competitive programmer. Fix the buggy code based on the provided plan. Return ONLY the corrected code block."},
-            {"role": "user", "content": f"""PROBLEM:
+            {"role": "system", "content": "You are an expert programmer. Your task is to fix the buggy code provided below, following the specific instructions given by the teacher."},
+            {"role": "user", "content": f"""PROBLEM DESCRIPTION:
 {problem_text}
 
 BUGGY CODE:
 {code}
 
-ERROR:
+ERROR MESSAGE:
 {error}
 
-REPAIR PLAN:
+TEACHER INSTRUCTIONS (PLAN):
 {plan}
 
-Please output the fixed Python code:"""}
+Based on the instructions above, please output the complete, corrected Python code. Wrap the code in ```python ... ``` blocks."""}
         ]
         
         text = self.fixer_tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
@@ -187,7 +171,7 @@ Please output the fixed Python code:"""}
             
         response = self.fixer_tokenizer.decode(outputs[0][inputs.input_ids.shape[1]:], skip_special_tokens=True)
         
-        # Clean up code block markdown
+        # Extract code block
         code_match = re.search(r"```python\n(.*?)```", response, re.DOTALL)
         if code_match:
             return code_match.group(1)
@@ -197,100 +181,143 @@ Please output the fixed Python code:"""}
             
         return response
 
+def parse_metadata_error(metadata_field):
+    """
+    Parses the error message from the metadata list.
+    Handles: ['{"error_message": "..."}']
+    """
+    default_error = "Wrong Answer on hidden test cases."
+    
+    if not metadata_field:
+        return default_error
+        
+    try:
+        # If it's a list, look at the first item
+        if isinstance(metadata_field, list) and len(metadata_field) > 0:
+            item = metadata_field[0]
+            # If the item is a string (JSON dump), parse it
+            if isinstance(item, str):
+                try:
+                    data = json.loads(item)
+                    return data.get("error_message", default_error)
+                except:
+                    return item # Return raw string if not JSON
+            # If the item is already a dict
+            elif isinstance(item, dict):
+                return item.get("error_message", default_error)
+                
+    except Exception as e:
+        pass
+        
+    return default_error
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file", type=str, required=True, help="Path to baseline output json")
-    parser.add_argument("--output_file", type=str, default="modular_repair_output.json")
-    parser.add_argument("--eval_file", type=str, default=None)
+    parser.add_argument("--input_file", type=str, required=True, help="Path to evaluation results json")
+    parser.add_argument("--output_file", type=str, default="repaired_results.json")
     args = parser.parse_args()
 
-    # 1. Load Problems using the SAFE loader
-    problem_map = safe_load_problems()
-    print(f"Loaded {len(problem_map)} problems.")
-
-    # 2. Load Data
-    print(f"Loading input: {args.input_file}")
+    # 1. Load Input Data
+    print(f"Loading results from: {args.input_file}")
     with open(args.input_file, "r") as f:
-        baseline_results = json.load(f)
+        results = json.load(f)
 
-    # 3. Init Pipeline
+    # 2. Init Pipeline
     pipeline = ModularPipeline()
-    repaired_results = []
-
-    print(f"Processing {len(baseline_results)} samples...")
     
-    for i, entry in tqdm(enumerate(baseline_results), total=len(baseline_results)):
-        q_id = entry["question_id"]
+    repaired_count = 0
+    skipped_count = 0
+    
+    print(f"Processing {len(results)} samples...")
+    
+    for i, entry in tqdm(enumerate(results), total=len(results)):
         
-        # Check if question exists in our map
-        if q_id not in problem_map:
+        # --- Check if repair is needed ---
+        # If pass@1 is 1.0, the code is already correct.
+        if entry.get("pass@1") == 1.0:
+            skipped_count += 1
             continue
-            
-        # Get content from the loaded map
-        # Note: Accessing fields might differ if not using the custom class wrapper
-        prob_item = problem_map[q_id]
-        question_text = prob_item.get("question_content") or prob_item.get("description")
+
+        q_id = entry.get("question_id", f"unknown_{i}")
         
-        # Get the code (assuming pass@1, taking the first sample)
-        if isinstance(entry["code_list"], list):
-            code = entry["code_list"][0]
+        # Extract Problem Content (Prioritize existing field)
+        question_text = entry.get("question_content", "")
+        if not question_text:
+            # Fallback to question_title if content is missing (unlikely based on your sample)
+            question_text = entry.get("question_title", "")
+
+        # Extract Code
+        code_list = entry.get("code_list", [])
+        if isinstance(code_list, list) and len(code_list) > 0:
+            code = code_list[0]
+        elif isinstance(code_list, str):
+            code = code_list
         else:
-            code = entry["code_list"]
+            code = ""
 
-        # Retrieve Error Message
-        # If metadata exists and has error_message, use it. Otherwise generic.
-        error_msg = "Wrong Answer or Runtime Error on hidden test cases."
-        if "metadata" in entry and entry["metadata"]:
-             meta = entry["metadata"]
-             if isinstance(meta, dict) and "error_message" in meta:
-                 error_msg = meta["error_message"]
-             elif isinstance(meta, list) and len(meta) > 0 and isinstance(meta[0], dict):
-                 error_msg = meta[0].get("error_message", error_msg)
+        # Skip empty code (cannot repair nothing)
+        if not code or not code.strip():
+            # print(f"Skipping {q_id}: Empty code.")
+            continue
 
-        # --- STEP 1: LOCALIZE ---
+        # Extract Error
+        error_msg = parse_metadata_error(entry.get("metadata"))
+
+        # --- EXECUTE PIPELINE ---
+        
+        # 1. Localize
         try:
             span = pipeline.run_localizer(question_text, code, error_msg)
-            # Convert list to string format for the planner if needed, or keep as list
             span_str = str(span)
         except Exception as e:
-            print(f"[Error] Localizer failed for {q_id}: {e}")
-            span_str = "[[1, 10]]"
+            print(f"[{q_id}] Localizer error: {e}")
+            span_str = "[[1, 100]]" # Fallback
 
-        # --- STEP 2: PLAN ---
+        # 2. Plan (Teacher Instruction)
         try:
             plan = pipeline.run_planner(question_text, code, error_msg, span_str)
         except Exception as e:
-            print(f"[Error] Planner failed for {q_id}: {e}")
-            plan = "Fix the logic error based on the problem description."
+            print(f"[{q_id}] Planner error: {e}")
+            plan = "Debug the code based on the error message."
 
-        # --- STEP 3: FIX ---
+        # 3. Fix (Rewrite)
         try:
             fixed_code = pipeline.run_fixer(question_text, code, error_msg, plan)
             
-            # Update entry
-            # We keep the original structure but update code_list with the fixed version
-            new_entry = entry.copy()
-            new_entry["code_list"] = [fixed_code]
-            new_entry["repair_info"] = {
+            # Update the entry with the new code
+            # Note: We replace code_list with the new fixed code for the next eval round
+            entry["code_list"] = [fixed_code]
+            
+            # Store repair info for analysis
+            entry["repair_info"] = {
                 "original_error": error_msg,
                 "bug_span": span_str,
-                "repair_plan": plan
+                "teacher_plan": plan
             }
-            repaired_results.append(new_entry)
+            
+            # Reset metrics since we changed the code
+            entry["pass@1"] = 0.0 # Will be re-evaluated later
+            entry["graded_list"] = [] 
+            entry["metadata"] = [] # Clear old error metadata
+            
+            repaired_count += 1
             
         except Exception as e:
-            print(f"[Error] Fixer failed for {q_id}: {e}")
-            repaired_results.append(entry) # Keep original if fix fails
+            print(f"[{q_id}] Fixer error: {e}")
 
-        # Periodic save
+        # Periodic Save
         if (i + 1) % 10 == 0:
             with open(args.output_file, "w") as f:
-                json.dump(repaired_results, f, indent=2)
+                json.dump(results, f, indent=2)
 
     # Final Save
     with open(args.output_file, "w") as f:
-        json.dump(repaired_results, f, indent=2)
-    print(f"Repair complete. Saved to {args.output_file}")
+        json.dump(results, f, indent=2)
+        
+    print(f"Repair process complete.")
+    print(f"Repaired: {repaired_count}")
+    print(f"Skipped (Already Correct): {skipped_count}")
+    print(f"Saved to {args.output_file}")
 
 if __name__ == "__main__":
     main()
