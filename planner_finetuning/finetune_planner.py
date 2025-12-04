@@ -19,9 +19,9 @@ import numpy as np
 from huggingface_hub import login
 
 # Configuration
-MODEL_NAME = "Qwen/Qwen2.5-Coder-3B-Instruct"  # Qwen2.5-Coder-3B-Instruct model
-OUTPUT_DIR = "./planner-finetuned-3b"  # New output directory
-HF_REPO = "Intellegen4/modular-planner-qwen2.5-coder-3b"  # New repo for uploading
+MODEL_NAME = "Qwen/Qwen2.5-Coder-1.5B-Instruct"  # Qwen2.5-Coder-1.5B-Instruct model
+OUTPUT_DIR = "./planner-finetuned-1.5b-temp0-max800"  # New output directory
+HF_REPO = "Intellegen4/modular-planner-qwen2.5-coder-1.5b-temp0-max800"  # New repo for uploading
 
 # Training hyperparameters
 BATCH_SIZE = 1
@@ -178,10 +178,9 @@ def evaluate_planner(model, tokenizer, test_data, device):
             # Generate
             outputs = model.generate(
                 **inputs,
-                max_new_tokens=512,
-                temperature=0.7,
-                do_sample=True,
-                top_p=0.9,
+                max_new_tokens=800,
+                temperature=0.0,
+                do_sample=False,
                 pad_token_id=tokenizer.pad_token_id,
                 eos_token_id=tokenizer.eos_token_id
             )
