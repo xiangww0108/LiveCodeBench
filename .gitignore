@@ -1,3 +1,5 @@
+finetune_e2e_new/model
+
 logs/
 cache/
 output/

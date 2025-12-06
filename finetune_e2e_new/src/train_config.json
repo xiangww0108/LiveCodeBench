@@ -1,0 +1,13 @@
+{
+  "model_name": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+  "output_dir": "../model",
+  "max_length": 4096,
+  "batch_size": 1,
+  "grad_accum": 32,
+  "epochs": 3,
+  "lr": 1e-5,
+  "warmup_ratio": 0.05,
+  "label_smoothing": 0.0,
+  "weight_decay": 0.05,
+  "trust_remote_code": true
+}

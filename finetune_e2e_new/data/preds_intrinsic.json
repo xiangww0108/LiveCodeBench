@@ -1,0 +1,1059 @@
+[
+    {
+        "question_title": "Buy One Carton of Milk",
+        "bug_span": [
+            [
+                7,
+                9
+            ]
+        ],
+        "bug_summary": "Logic error in calculating total cost; should multiply by price instead of quantity.",
+        "planner_text": "1. In the innermost loop, calculate total_cost as S * i + M * j + L * k.\n2. Replace the existing line with `total_cost = S * i + M * j + L * k`.\n\nSuggested patch:\n    total_cost = S * i + M * j + L * k"
+    },
+    {
+        "question_title": "maximum-points-after-enemy-battles",
+        "bug_span": [
+            [
+                7,
+                7
+            ]
+        ],
+        "bug_summary": "Incorrect logic to update currentEnergy and points when encountering enemy with less than equal energy.",
+        "planner_text": "1. After gaining points for the current enemy, decrease currentEnergy by its value.\n   2. Decrease points by 1 since points gained cannot be negative after any operations.\n\nThis change ensures that only points and currentEnergy increase, as required.\n\nSuggested patch:\n    currentEnergy -= enemyEnergies[i]\n    points += 1\n    points -= 1"
+    },
+    {
+        "question_title": "Beautiful Path",
+        "bug_span": [
+            [
+                6,
+                6
+            ]
+        ],
+        "bug_summary": "Incorrect division operation causing incorrect results",
+        "planner_text": "1. Change the division operation to multiplication for better precision.\n2. Replace `b / c` with `b * c`.\n\nRevised Code:\n\ndef dijkstra(graph, start, end):\n    n = len(graph)\n    dist = [float('inf')] * n\n    dist[start] = 0\n    pq = [(0, start)]\n    while pq:\n        d, u = heapq.heappop(pq)\n        if u == end:\n            return d\n        if d > dist[u]:\n            continue\n        for v, b, c in graph[u]:\n            if dist[v] > dist[u] + b * c:\n                dist[v] = dist[u] + b * c\n                heapq.heappush(pq, (dist[v], v))\n    return float('inf')"
+    },
+    {
+        "question_title": "Defect",
+        "bug_span": [
+            [
+                17,
+                18
+            ]
+        ],
+        "bug_summary": "Incorrect logic for marking holes in dp array; should use dp[i][j] >= 0 to mark holes",
+        "planner_text": "1. Replace line 18 with:\n   `dp[i][j] = 1`\n2. Update the loop to check for valid hole positions by comparing `dp[i+k][j+k]` with `-1`.\n\nRationale: The previous version incorrectly marked holes as `-1`, which is not consistent with the problem's requirement of only marking cells where no hole exists.\n\nPatch:\n\n```python\nfor i in range(1, H + 1):\n    for j in range(1, W + 1):\n        if dp[i][j] == -1:\n            continue\n        dp[i][j] = 1\n        for k in range(1, min(H - i + 1, W - j + 1)):\n            if dp[i + k][j + k] == -1:\n                break\n            dp[i][j] += 1\n```\n"
+    },
+    {
+        "question_title": "Buildings",
+        "bug_span": [
+            [
+                1,
+                4
+            ]
+        ],
+        "bug_summary": "Logic error in loop condition; correct loop should iterate through buildings after current one.",
+        "planner_text": "1. Modify the inner loop to start from `i+1` instead of `j=i+1`. This ensures that each building's tallest building to its right is checked correctly.\n\n   ```python\n       # Corrected loop\n       for j in range(i + 1, N):\n           if H[j] > tallest:\n               break\n           tallest = H[j]\n           result[i] += 1\n   ```"
+    },
+    {
+        "question_title": "minimum-time-to-break-locks-i",
+        "bug_span": [
+            [
+                9,
+                9
+            ]
+        ],
+        "bug_summary": "The binary search range is incorrect; it should not include all possible total energies.",
+        "planner_text": "1. Update the binary search range to start from 1 and go up to the maximum possible total energy required, which is the sum of all strengths plus K times the number of locks.\n2. Modify the binary search loop to check the midpoint as the number of breaks, and determine whether the sword can break all locks using this number of breaks.\n\nModified Code:\n```python\nclass Solution:\n    def findMinimumTime(self, strength: List[int], K: int) -> int:\n        def can_break_all_locks(time):\n            energy = 0\n            x = 1\n            for i in range(time):\n                energy += x\n                if energy >= strength[i % len(strength)]:\n                    energy = 0\n                    x += K\n            return energy == 0\n\n        left, right = 1, sum(strength) + K * len(strength)\n        while left < right:\n            mid = (left + right) // 2\n            if can_break_all_locks(mid):\n                right = mid\n            else:\n                left = mid + 1\n        return left\n```"
+    },
+    {
+        "question_title": "Shortest Path 3",
+        "bug_span": [
+            [
+                16,
+                18
+            ]
+        ],
+        "bug_summary": "Dijkstra's algorithm incorrectly calculates distances when encountering negative cycle.",
+        "planner_text": "1. **Identify the Issue**: In Dijkstra's algorithm, if a negative cycle exists in the graph, it can lead to incorrect distance calculations.\n\n2. **Correct Approach**: Modify Dijkstra's algorithm to detect negative cycles and handle them appropriately.\n\n3. **Implementation Change**:\n   - Add a check after updating distances to see if there's any decrease in distance.\n   - If such a decrease is found, the graph contains a negative cycle.\n\n4. **Patch Code**:\n   - Replace the `heapq.heappush` call with an additional check.\n\n5. **Test Fix**: Re-run the program with the corrected code to ensure it handles negative cycles correctly.\n\n6. **Verification**: Verify that the output remains correct for various inputs including graphs containing negative cycles.\n\nBy implementing these changes, the Dijkstra's algorithm will now correctly identify and report negative cycles, ensuring accurate results even in complex graphs."
+    },
+    {
+        "question_title": "shortest-matching-substring",
+        "bug_span": [
+            [
+                13,
+                13
+            ]
+        ],
+        "bug_summary": "Incorrect initialization of j in the nested loop; should start from j + 1 instead.",
+        "planner_text": "1. Replace `while j + 1 < len(p) and p[j + 1] == '*'` with `while j < len(p) and p[j] == '*'`.\n2. Change `j += 1` to `j += 2` in the inner loop.\n\nSuggested patch:\n    while j < len(p) and p[j] == '*':\n        while i < len(s) and s[i] != p[j]:\n            i += 1\n        if i == len(s):\n            return False\n        i += 2\n        j += 1"
+    },
+    {
+        "question_title": "manhattan-distances-of-all-arrangements-of-pieces",
+        "bug_span": [
+            [
+                15,
+                15
+            ]
+        ],
+        "bug_summary": "Logic error in calculating Manhattan distance; should use combinatorial approach instead of direct product",
+        "planner_text": "1. Instead of computing individual Manhattan distances using nested loops, calculate the total Manhattan distance by considering all possible placements of each piece.\n2. Use the formula for combinations to count how many times each piece can occupy a specific position.\n3. Multiply the number of ways to place each piece by its Manhattan distance.\n\nSuggested patch:\n- Define a helper function to compute the number of ways to place i pieces in j positions.\n- Calculate the total Manhattan distance using this helper function and the formula for combinations.\n\nPatch:\n```python\ndef ways_to_place(i, j):\n    return math.comb(j, i)\n\ndef distance_sum(m, n, k):\n    MOD = 10**9 + 7\n    total_distance = 0\n    for i in range(k + 1):\n        total_distance += i * (m * n - k + i) * ways_to_place(i, m * n)\n    return total_distance % MOD\n```\n"
+    },
+    {
+        "question_title": "number-of-strings-which-can-be-rearranged-to-contain-substring",
+        "bug_span": [
+            [
+                18,
+                18
+            ]
+        ],
+        "bug_summary": "Incorrect logic in the transition between states; should not sum up transitions for state 0",
+        "planner_text": "1. In the second loop, instead of summing up transitions for state 0, directly update dp[i][j] based on transitions from previous states.\n\nPatch:\n\tfor j in range(5):\n\t\tdp[i][j] = (dp[i - 1][j - 1] + dp[i - 1][j] + dp[i - 1][j + 1]) % MOD"
+    },
+    {
+        "question_title": "Find it!",
+        "bug_span": [
+            [
+                21,
+                21
+            ]
+        ],
+        "bug_summary": "Logic error in finding the cycle; should start from A[0] instead of A[1] to ensure proper cycle detection.",
+        "planner_text": "1. Replace line 21 with `current_vertex = A[0]` to start from the first vertex.\n2. This ensures that the algorithm correctly traverses the graph and finds the cycle, avoiding the initial issue with the starting point.\n\nSuggested patch:\n```python\ncurrent_vertex = A[0]\n```"
+    },
+    {
+        "question_title": "Swap and Erase",
+        "bug_span": [
+            [
+                29,
+                30
+            ]
+        ],
+        "bug_summary": "Inefficient deletion logic; deleting too many elements.",
+        "planner_text": "1. **Identify Inefficient Deletion**: The current implementation deletes all elements from the start up to and including the repeated element at `i` in each operation.\n2. **Optimize Deletion Logic**: Instead, remove only one instance of each duplicate block and update `N` accordingly.\n3. **Update Operations Count**: Adjust the operations count based on the number of deletions needed.\n\n**Pseudocode for Improvement**: Modify the loop to find the last occurrence of each duplicate and then adjust `N` and operations count.\n\n4. **Test and Verify**: Ensure the updated logic works correctly with provided test cases."
+    },
+    {
+        "question_title": "11/11",
+        "bug_span": [
+            [
+                6,
+                6
+            ]
+        ],
+        "bug_summary": "Incorrect check for repdigit dates; only checks if the month number itself is a repdigit date.",
+        "planner_text": "1. Replace the inner loop checking if both month and day have repdigit dates with an additional check inside the outer loop for the day.\n2. Use a nested loop to iterate over all possible combinations of month and day digits and check if they are all the same.\n\nPatch:\n- Replace `if len(set(month_str)) == 1:` with `if len(set(month_str)) == 1 and len(set(str(j))) == 1` inside the inner loop for the day.\n- Remove the inner `if len(set(day_str)) == 1:` check since it's already checked by the outer loop.\n\nThis ensures that the code correctly identifies repdigit dates in both the month and day.\n\n2. Add a new test case to validate this fix.\n\nTest case:\n- Input: 12\n- D: 31 29 31 30 31 30 31 31 30 31 30 31\n- Expected output: 13\n\nNew test:\n- Input: 12\n- D: 31 29 31 30 31 30 31 31 30 31 30 31\n- Expected output: 13"
+    },
+    {
+        "question_title": "Roadway",
+        "bug_span": [
+            [
+                11,
+                11
+            ]
+        ],
+        "bug_summary": "Incorrect logic for determining minimum and maximum stamina; does not handle road connections correctly",
+        "planner_text": "1. Change logic for calculating min_stamina and max_stamina to account for road connections.\n   2. Use a different approach to determine the minimum and maximum stamina required for each road.\n\nSuggested patch:\n    Replace the current logic with a DFS or BFS-based approach to determine the minimum and maximum stamina required for each road.\n\n2. Add a check to ensure that the stamina change constraints are met for each road connection.\n   3. Adjust the logic for determining the minimum and maximum stamina required for each road based on the connections.\n\nSuggested patch:\n    Ensure that the stamina change constraints are met for each road connection during the DFS/BFS traversal.\n\nFinal patch:\n    Replace the current logic with a DFS-based approach to determine the minimum and maximum stamina required for each road, ensuring that the stamina change constraints are met for each road connection.\n\nNote: This assumes that the input graph is connected and has no cycles.\n"
+    },
+    {
+        "question_title": "count-zero-request-servers",
+        "bug_span": [],
+        "bug_summary": "parse_error",
+        "planner_text": "parse_error"
+    },
+    {
+        "question_title": "valid-word",
+        "bug_span": [
+            [
+                7,
+                7
+            ]
+        ],
+        "bug_summary": "Inconsistent use of variable names in the check for has_vowel and has_consonant.",
+        "planner_text": "1. Change has_vowel to vowel_check.\n2. Change has_consonant to consonant_check.\n3. Use vowel_check and consonant_check instead of has_vowel and has_consonant throughout the function.\n\nSuggested patch:\n\nclass Solution:\n    def isValid(self, word: str) -> bool:\n        vowels = set('aeiouAEIOU')\n        consonants = set('bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ')\n        if len(word) < 3:\n            return False\n        vowel_check = False\n        consonant_check = False\n        for char in word:\n            if not char.isalnum():\n                return False\n            if char in vowels:\n                vowel_check = True\n            if char in consonants:\n                consonant_check = True\n        return vowel_check and consonant_check"
+    },
+    {
+        "question_title": "Shortcuts",
+        "bug_span": [
+            [
+                19,
+                24
+            ]
+        ],
+        "bug_summary": "Incorrect handling of skipping checkpoints; should avoid unnecessary distances calculation for skip_comb",
+        "planner_text": "1. In line 19-24, remove the unnecessary calculation of total_distance by not adding distances for points in skip_comb.\n\n2. Replace the line with the corrected code:\n   ```python\n       total_distance = dist_matrix[current_point][skip_comb[0]]\n   ```"
+    },
+    {
+        "question_title": "maximum-coins-from-k-consecutive-bags",
+        "bug_span": [],
+        "bug_summary": "parse_error",
+        "planner_text": "parse_error"
+    },
+    {
+        "question_title": "maximum-balanced-subsequence-sum",
+        "bug_span": [
+            [
+                7,
+                7
+            ]
+        ],
+        "bug_summary": "Incorrect condition in loop for finding maximum balance subsequence sum.",
+        "planner_text": "1. The inner loop incorrectly checks `nums[i] - nums[j] >= i - j` instead of ensuring `dp[j]` is at least as large as `i - j`.\n\n2. To fix this, update the inner loop to check if `dp[j]` is less than or equal to `i - j` before adding `nums[i]` to it.\n\n3. Change the loop condition to `if dp[j] <= i - j:`.\n\n4. Apply these changes to the inner loop in the provided code."
+    },
+    {
+        "question_title": "Substring",
+        "bug_span": [
+            [
+                6,
+                6
+            ]
+        ],
+        "bug_summary": "Incorrectly calculating the number of substrings; should use n*(n+1)//2 instead of n*n.",
+        "planner_text": "1. Identify the problematic line: `return n*n` in the function `count_substrings`.\n2. Change it to `return n*(n+1)//2`.\n3. Replace line 6 with this corrected code."
+    },
+    {
+        "question_title": "Square Permutation",
+        "bug_span": [
+            [
+                28,
+                29
+            ]
+        ],
+        "bug_summary": "Incorrect function call to `is_square` in the main logic; expected an integer but received a float due to `math.isqrt` returning a float.",
+        "planner_text": "1. Replace `if is_square(num):` with `if is_square(int(num)):`.\n\n2. This change ensures that `num` is converted to an integer before passing it to `is_square`, resolving the TypeError."
+    },
+    {
+        "question_title": "find-the-minimum-possible-sum-of-a-beautiful-array",
+        "bug_span": [
+            [
+                5,
+                6
+            ]
+        ],
+        "bug_summary": "Index out of range when calculating target // 2",
+        "planner_text": "1. Replace `n` with `target // 2 + 1` to avoid division by zero.\n\n```python\ndef minimumPossibleSum(self, n: int, target: int) -> int:\n    if n <= target // 2:\n        return n * (n + 1) // 2\n    else:\n        return (target // 2 + 1) * (target // 2 + 2) // 2 + (n - (target // 2 + 1)) * target\n```"
+    },
+    {
+        "question_title": "painting-the-walls",
+        "bug_span": [],
+        "bug_summary": "parse_error",
+        "planner_text": "parse_error"
+    },
+    {
+        "question_title": "find-all-possible-stable-binary-arrays-i",
+        "bug_span": [],
+        "bug_summary": "parse_error",
+        "planner_text": "parse_error"
+    },
+    {
+        "question_title": "kth-smallest-amount-with-single-denomination-combination",
+        "bug_span": [
+            [
+                17,
+                17
+            ]
+        ],
+        "bug_summary": "The line `smallest = heapq.heappop(min_heap)` should pop the smallest element, but it's popping the root of the heap instead. This causes incorrect results when k > 1.",
+        "planner_text": "1. Change the line to `smallest = heapq.heappop(min_heap)[0]` to correctly pop the smallest element.\n2. Remove or comment out the line `for coin in coins:` as it's not necessary after popping the smallest element.\n\nRationale:\nThe original line pops the root of the heap, which is not what we want because we're iterating over the heap in order to maintain the property that the smallest element is always at the root. After removing the loop, the heap only contains one element, and the smallest element is the one we need to consider."
+    },
+    {
+        "question_title": "A Piece of Cake",
+        "bug_span": [
+            [
+                17,
+                18
+            ]
+        ],
+        "bug_summary": "Incorrect calculation of piece size in loop; should iterate over cuts rather than strawberries.",
+        "planner_text": "1. Instead of iterating over strawberries, iterate over the cuts.\n2. When calculating the piece size, use the width and height of the corresponding cut instead of the entire strawberry's dimensions.\n\nSuggested patch:\n    count = (right_cut - left_cut) * (top_cut - bottom_cut)"
+    },
+    {
+        "question_title": "neighboring-bitwise-xor",
+        "bug_span": [
+            [
+                4,
+                6
+            ]
+        ],
+        "bug_summary": "Inconsistent parity between derived and original arrays.",
+        "planner_text": "1. Initialize `original` array with the first derived value and set `original[0] = 0`.\n2. For each subsequent element, compute `original[i]` as `derived[i-1] ^ original[i-1]`.\n3. After computing `original`, check if the parity of `original[n-1]` is consistent with `original[0]`.\n   - If `original[n-1] ^ original[0] != derived[n-1]`, return `False`.\n   - Otherwise, return `True`.\n\nSuggested patch:\n```python\ndef doesValidArrayExist(self, derived: List[int]) -> bool:\n    n = len(derived)\n    if n == 1:\n        return True\n    original = [derived[0]]\n    for i in range(1, n):\n        original.append(derived[i-1] ^ original[-1])\n    return original[-1] ^ original[0] == derived[-1]\n```"
+    },
+    {
+        "question_title": "longest-alternating-subarray",
+        "bug_span": [
+            [
+                7,
+                8
+            ]
+        ],
+        "bug_summary": "Incorrect comparison and loop condition; length variable does not increment correctly.",
+        "planner_text": "1. Replace the conditional `if nums[j] == nums[i]` with `if nums[j] == nums[i] - 1`. This ensures that we are checking the previous element instead of the current one.\n\n2. Remove the `break` statement inside the loop because it stops further iterations immediately after finding a match.\n\n3. Increment the `length` variable by 1 after each matching pair found.\n\n4. Update the `max_length` with the maximum value between the current `max_length` and the updated `length`.\n\n5. After completing the outer loop, check if `max_length` has been updated to a new maximum by comparing it with the previous values.\n\nSuggested patch:\n\ndef alternatingSubarray(self, nums: List[int]) -> int:\n    max_length = -1\n    n = len(nums)\n    for i in range(n - 1):\n        if nums[i + 1] - nums[i] == 1:\n            length = 2\n            for j in range(i + 2, n):\n                if nums[j] == nums[i] - 1:\n                    length += 1\n                else:\n                    break\n            else:\n                max_length = max(max_length, length)\n    return max_length"
+    },
+    {
+        "question_title": "Island Tour",
+        "bug_span": [
+            [
+                12,
+                14
+            ]
+        ],
+        "bug_summary": "Incorrect calculation of minimum possible length of the tour; should subtract distance traveled along bridge from current path length",
+        "planner_text": "1. Identify line 12 where the minimum possible length is calculated.\n2. Note that this calculation does not account for the distance traveled along the bridge, which should be subtracted from the path length.\n3. Change the line to subtract the distance traveled:\n\n   new_length = length - abs(pos[X[0]] - pos[X[1]]) + abs(pos[X[0]] - pos[X[1]] - 1)\n   for j in range(1, M-1):\n       new_length += abs(pos[X[j]] - pos[X[j+1]]) - abs(pos[X[j]] - pos[X[j+1]] - 1)\n   new_length += abs(pos[X[M-1]] - pos[X[0]]) - abs(pos[X[M-1]] - pos[X[0]] - 1)\n"
+    },
+    {
+        "question_title": "ABCBA",
+        "bug_span": [
+            [
+                4,
+                4
+            ]
+        ],
+        "bug_summary": "Incorrect logic in checking palindromicity; should reverse only non-palindromic suffix",
+        "planner_text": "1. Correctly check if the substring before the current index is a palindrome.\n   - If not, append the reversed suffix to the beginning of the string.\n2. Simplify the loop condition for finding the longest palindromic prefix.\n3. Replace incorrect logic with the corrected version."
+    },
+    {
+        "question_title": "Takahashi is Slime 2",
+        "bug_span": [
+            [
+                14,
+                14
+            ]
+        ],
+        "bug_summary": "The function `find_max_strength` incorrectly finds the next absorbing slime. It should check if the neighboring cells have higher strength or lower ratio.",
+        "planner_text": "1. Identify the incorrect part of the `find_max_strength` function.\n2. Correctly find the next absorbing slime by comparing the strength of neighboring cells with the current slime.\n3. Use a more efficient search algorithm to reduce the number of iterations.\n\nPatch:\n- Replace the nested loop with a linear scan to find the next absorbing slime.\n- Add a condition to break early if a suitable slime is found.\n\nExample patch:\n```python\ndef find_max_strength(slime_matrix, current_slime):\n    H, W = len(slime_matrix), len(slime_matrix[0])\n    x, y = current_slime[0], current_slime[1]\n    max_strength = 0\n    max_x, max_y = x, y\n    for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:\n        nx, ny = x + dx, y + dy\n        if 0 <= nx < H and 0 <= ny < W and slime_matrix[nx][ny] > current_slime[2]:\n            return (nx, ny)\n    return max_x, max_y\n```"
+    },
+    {
+        "question_title": "Find snuke",
+        "bug_span": [
+            [
+                24,
+                25
+            ]
+        ],
+        "bug_summary": "Incorrect logic in find_set function; does not correctly identify contiguous sets based on constraints.",
+        "planner_text": "1. Correctly check if three consecutive points are on the same line.\n   2. Use the same logic as in find_positions to find contiguous sets.\n\nSuggested patch:\n    def find_set(s, n, u, k, e):\n        for i in range(len(s)-2):\n            if is_on_same_line(s[i], n[i+1], u[i+2]):\n                if is_on_same_line(n[i+1], u[i+2], k[i+3]):\n                    if is_on_same_line(u[i+2], k[i+3], e[i+4]):\n                        return [s[i], n[i+1], u[i+2], k[i+3], e[i+4]]\n        return None"
+    },
+    {
+        "question_title": "Poisonous Full",
+        "bug_span": [
+            [
+                15,
+                15
+            ]
+        ],
+        "bug_summary": "Incorrect calculation of maximum tastiness; needs to consider both eating and skipping cases correctly",
+        "planner_text": "1. Add a check to see if the current course can be eaten while being healthy.\n2. Update `current_tastiness` based on the course's tastiness only if the course can be eaten.\n3. Adjust the logic to ensure the maximum tastiness is correctly calculated by considering both eating and skipping cases.\n\nSuggested patch:\n    if healthy and X == 0:\n        current_tastiness += Y"
+    },
+    {
+        "question_title": "Σ",
+        "bug_span": [
+            [
+                12,
+                12
+            ]
+        ],
+        "bug_summary": "Line 12 attempts to iterate over a range of numbers from 1 to k but does not check if each number exists in the set a.",
+        "planner_text": "1. Check if each number from 1 to k exists in the set a.\n2. If a number does not exist in a, add it to the total.\n\nReplace line 12 with:\n\ntotal += sum(1 for i in range(1, k + 1) if i not in a)"
+    },
+    {
+        "question_title": "ARC Arc",
+        "bug_span": [
+            [
+                17,
+                17
+            ]
+        ],
+        "bug_summary": "Incorrect logic in checking if all elements in A are already 1 or if there are at least two consecutive 0s.",
+        "planner_text": "1. Check if all elements in A are already 1 using `all(x == 1 for x in a)`.\n   - Replace the condition with a more straightforward approach that checks for consecutive 0s.\n\n2. Modify the loop to check for at least two consecutive 0s:\n   - Iterate through A from index 1 to n-1.\n   - If A[i] is 0 and A[i+1] is 0, print \"Yes\" and break.\n\nFinal corrected code:\n```python\nn = int(input())\na = list(map(int, input().split()))\n\n# Check if there are at least two consecutive 0s\nfor i in range(1, n):\n    if a[i] == 0 and a[i + 1] == 0:\n        print(\"Yes\")\n        break\nelse:\n    print(\"No\")\n```"
+    },
+    {
+        "question_title": "Flip Row or Col",
+        "bug_span": [],
+        "bug_summary": "parse_error",
+        "planner_text": "parse_error"
+    },
+    {
+        "question_title": "minimum-operations-to-make-array-equal-to-target",
+        "bug_span": [
+            [
+                7,
+                9
+            ]
+        ],
+        "bug_summary": "Inefficient subtraction used; use sum of differences instead",
+        "planner_text": "1. Replace `diff` with `(target[i] - nums[i]).abs()` to get absolute difference.\n\n```python\ndiff = (target[i] - nums[i]).abs()\n```"
+    },
+    {
+        "question_title": "Prefix LIS Query",
+        "bug_span": [
+            [
+                5,
+                7
+            ]
+        ],
+        "bug_summary": "Incorrect DP update in longest_increasing_subsequence function",
+        "planner_text": "1. Identify the issue: In the `longest_increasing_subsequence` function, when `num` is less than or equal to `x`, the current element is not added to theDP array if it's already present, but instead, it replaces the first occurrence of `num`. This means that if there are duplicate elements up to `x`, the DP array will be incorrect.\n\n2. Fix the logic: Change the condition to replace the first occurrence of `num` instead of replacing the entire sequence starting from the beginning of the DP array. Use binary search to find the correct insertion point.\n\n3. Update the code:\n   ```python\n       def longest_increasing_subsequence(arr, x):\n           dp = []\n           for num in arr:\n               if num > x:\n                   idx = bisect.bisect_right(dp, num)\n                   if idx < len(dp) and dp[idx] == num:\n                       continue\n                   dp[idx] = num\n           return len(dp)\n       ```"
+    },
+    {
+        "question_title": "Simultaneous Kagamimochi",
+        "bug_span": [
+            [
+                3,
+                5
+            ]
+        ],
+        "bug_summary": "Incorrect logic in counting kagamimochi; fails to correctly determine pairs.",
+        "planner_text": "1. Replace the while loop with a nested for loop that checks adjacent pairs.\n2. Increment the counter when a valid pair is found.\n\nPatch:\nReplace line 3 with:\nfor i in range(N - 1):\n    if A[i] <= A[i + 1] / 2:\n        kagamimochi_count += 1"
+    },
+    {
+        "question_title": "Divisible by 3",
+        "bug_span": [
+            [
+                12,
+                13
+            ]
+        ],
+        "bug_summary": "Incorrect calculation of dp array; dp should update based on the divisibility rule of 3 for each divisor.",
+        "planner_text": "1. Change the logic to correctly update dp based on the divisibility rule of 3 for each divisor.\n   - Update dp[i] as (dp[i//j] + dp[j]) if i is divisible by j, otherwise dp[i] remains unchanged.\n\n2. Adjust the loop to iterate over possible divisors up to sqrt(i), optimizing the time complexity.\n\n3. Replace the direct multiplication with a more efficient method for modular arithmetic, such as exponentiation by squaring.\n\nFinal patch:\n    dp[i] = (dp[i//j] + dp[j]) % MOD\n    # ... rest of the function remains unchanged\n"
+    },
+    {
+        "question_title": "minimum-cost-to-equalize-array",
+        "bug_span": [
+            [
+                28,
+                30
+            ]
+        ],
+        "bug_summary": "Indexing error in total_cost calculation; should use median directly.",
+        "planner_text": "1. Correctly add cost for elements less than median.\n2. Remove the indexing error in calculating total_cost.\n\nPatches:\n- Replace `total_cost += abs(nums[i] - median) * cost1` with `total_cost += (median - nums[i]) * cost1`.\n- Delete the indexing error in `for i in range(n):` block.\n\nPatch applied successfully."
+    },
+    {
+        "question_title": "Variety Split Hard",
+        "bug_span": [
+            [
+                27,
+                28
+            ]
+        ],
+        "bug_summary": "Incorrectly counts the number of distinct elements in the right array",
+        "planner_text": "1. In the `count_distinct_subarrays` function, replace line 28 with `right[i] = len(set(A[:i]))` to correctly count the number of distinct elements up to index `i`.\n2. This change initializes the right array by counting unique elements up to the current position.\n\nSuggested patch:\n    right[i] = len(set(A[:i]))"
+    },
+    {
+        "question_title": "Median of Good Sequences",
+        "bug_span": [
+            [
+                7,
+                9
+            ]
+        ],
+        "bug_summary": "Incorrect formula for calculating total_sequences",
+        "planner_text": "1. Replace the calculation of total_sequences with the correct comb function.\n\nCorrected code:\ndef generate_sequence(N, K):\n    total_sequences = comb(N*K, K)\n    target_sequence = (total_sequences + 1) // 2\n    sequence = []\n    for i in range(1, N+1):\n        sequence.extend([i] * K)\n    sequence.sort()\n    for i in range(target_sequence):\n        sequence = sequence[1:] + sequence[:1]\n    return sequence"
+    },
+    {
+        "question_title": "Takahashi Quest",
+        "bug_span": [
+            [
+                18,
+                19
+            ]
+        ],
+        "bug_summary": "Logic error in the logic for handling monster encounters and potion usage.",
+        "planner_text": "1. Change the logic for handling monster encounters and potion usage.\n   - Instead of trying to find another potion if none are available, simply discard the current potion.\n   - Check if there are any other potions available before attempting to use a new one.\n2. Replace line 19 and 20 with:\n\n    if x in potions and potions[x] > 0:\n        potions[x] -= 1\n        actions.append(0)\n    elif x in potions and potions[x] < 0:\n        potions[x] = 0\n        actions.append(1)\n"
+    },
+    {
+        "question_title": "Piling Up",
+        "bug_span": [
+            [
+                18,
+                20
+            ]
+        ],
+        "bug_summary": "Incorrect logic for displaying ^ based on rating; no need for nested if-elif-else blocks",
+        "planner_text": "1. Replace the nested if-elif-else structure with a single conditional block that directly computes the number of ^ based on the rating.\n2. Use the floor division operator `//` to determine the number of times ^ is displayed.\n\nPatch:\n```python\nR = int(input())\nprint((R + 99) // 100)\n```"
+    },
+    {
+        "question_title": "Count xxx",
+        "bug_span": [
+            [
+                11,
+                12
+            ]
+        ],
+        "bug_summary": "Incorrectly uses integer division for counting repeated substrings; results in incorrect counts due to floating-point precision issues.",
+        "planner_text": "1. Replace `//` with `/` in the loop condition to use floor division instead of integer division.\n\n   ```python\n       # Incorrect line: count += current_length * (current_length + 1) // 2\n       count += current_length * (current_length + 1) / 2\n   ```\n\n2. Ensure that the division operation rounds down correctly.\n\n   This change ensures that `count` accurately reflects the number of possible repeated substrings, avoiding any potential precision errors."
+    },
+    {
+        "question_title": "maximum-unique-subarray-sum-after-deletion",
+        "bug_span": [
+            [
+                7,
+                8
+            ]
+        ],
+        "bug_summary": "Incorrect comparison within the nested loop; should check if current_sum exceeds max_sum instead.",
+        "planner_text": "1. Replace `if nums[j] in unique_elements:` with `if nums[j] not in unique_elements:`.\n\nSuggested patch:\n```python\nfor j in range(i, n):\n    if nums[j] not in unique_elements:\n        unique_elements.add(nums[j])\n        current_sum += nums[j]\n        if current_sum > max_sum:\n            max_sum = current_sum\n```\nThis ensures that only unique elements contribute to the current_sum and updates max_sum when necessary."
+    },
+    {
+        "question_title": "Polyomino",
+        "bug_span": [
+            [
+                97,
+                98
+            ]
+        ],
+        "bug_summary": "Incorrect condition check in can_fill_grid function",
+        "planner_text": "1. Change the condition check in can_fill_grid function from `all(cell == '#' for row in grid for cell in row)` to `all(all(cell == '#' for row in subgrid) for subgrid in grid)`.\n2. Replace the nested loops with list comprehensions to simplify the logic and improve readability."
+    },
+    {
+        "question_title": "Make Isomorphic",
+        "bug_span": [
+            [
+                14,
+                14
+            ]
+        ],
+        "bug_summary": "Missing implementation of is_isomorphic function",
+        "planner_text": "1. Add a function `is_isomorphic(G, H)` that checks if two graphs G and H are isomorphic based on the given rules.\n\n2. Inside `is_isomorphic`, iterate over all possible permutations of vertices in H and check if they map G to H using the adjacency matrix A.\n\n3. Modify the `min_cost_to_make_isomorphic` function to use the `is_isomorphic` function and calculate the minimum cost based on the adjacency matrix A and the permuted vertices.\n\nHere's the modified code:\n\n```python\nfrom itertools import combinations\n\ndef read_input():\n    N = int(input())\n    M_G = int(input())\n    G = [tuple(map(int, input().split())) for _ in range(M_G)]\n    M_H = int(input())\n    H = [tuple(map(int, input().split())) for _ in range(M_H)]\n    A = [list(map(int, input().split())) for _ in range(N-1)]\n    return N, G, H, A\n\ndef is_isomorphic(G, H):\n    N = len(H)\n    permutations = list(combinations(range(N), N))\n    for perm in permutations:\n        if all(perm[A[i][j]-1] == H[j-1] for i in range(N) for j in range(N) if A[i][j]):\n            return True\n    return False\n\ndef min_cost_to_make_isomorphic(N, G, H, A):\n    if not is_isomorphic(G, H):\n        return float('inf')\n    min_cost = float('inf')\n    for i in range(N-1):\n        for j in range(i+1, N):\n            if A[i][j] == 1:\n                continue\n            perm = list(range(N))\n            perm[perm.index(i+1)], perm[perm.index(j+1)] = perm[perm.index(j+1)], perm[perm.index(i+1)]\n            cost = sum(A[perm[i]][perm[j]] for i in range(N) for j in range(N) if perm[i] < perm[j]) + sum(A[perm[i]][perm[j]] for i in range(N) for j in range(N) if perm[i] > perm[j])\n            min_cost = min(min_cost, cost)\n    return min_cost\n\n# Read input\nN, G, H, A = read_input()\n\n# Find the minimum cost to make G and H isomorphic\nmin_cost = min_cost_to_make_isomorphic(N, G, H, A)\n\n# Print the result\nprint(min_cost)\n```"
+    },
+    {
+        "question_title": "Dense Buildings",
+        "bug_span": [],
+        "bug_summary": "parse_error",
+        "planner_text": "parse_error"
+    },
+    {
+        "question_title": "Christmas Trees",
+        "bug_span": [
+            [
+                12,
+                12
+            ]
+        ],
+        "bug_summary": "Logic error; should check if i is within L and R before adding to count",
+        "planner_text": "1. Before checking if (i - A) % M == 0, add a condition to check if i is within the range [L, R]. If not, continue to the next iteration.\n2. Modify line 12 as follows:\n```python\nif L <= i <= R and (i - A) % M == 0:\n    count += 1\n```\nThis ensures that only valid Christmas tree locations are counted.\n\n3. Replace line 12 with the modified code.\n\n4. Verify that the code now correctly counts the number of Christmas trees between L and R."
+    },
+    {
+        "question_title": "maximum-xor-score-subarray-queries",
+        "bug_span": [
+            [
+                19,
+                22
+            ]
+        ],
+        "bug_summary": "Incorrectly calculates XOR score for subarrays; should find maximum XOR within bounds.",
+        "planner_text": "1. Calculate the XOR score of each subarray using bitwise operations correctly.\n2. Keep track of the maximum XOR score found during the iteration.\n\nCorrected code:\n\ndef calculate_xor_score(subarray):\n    xor_val = 0\n    for num in subarray:\n        xor_val ^= num\n    return xor_val\n"
+    },
+    {
+        "question_title": "Yay!",
+        "bug_span": [
+            [
+                3,
+                3
+            ]
+        ],
+        "bug_summary": "Incorrect check to find the differing character",
+        "planner_text": "1. Change the condition in the loop to correctly identify the differing character.\n2. Replace `S[i] != S[0]` with `S[i] != S[-1]`, where `S[-1]` represents the last character in the string.\n\nNew code:\n    for i in range(len(S)):\n        if S[i] != S[-1]:\n            print(i + 1)\n            break"
+    },
+    {
+        "question_title": "count-of-integers",
+        "bug_span": [
+            [
+                6
+            ]
+        ],
+        "bug_summary": "Incorrect calculation of digit sums in count_good_numbers function; incorrect use of 'int' for string conversion.",
+        "planner_text": "1. In count_good_numbers function, replace `sum(int(digit) for digit in str(n))` with `digit_sum(n)` to correctly compute the sum of digits.\n\n2. Ensure digit_sum function is defined before calling it within count_good_numbers.\n\n3. Add digit_sum function definition:\n\n\tdef digit_sum(n):\n\t\treturn sum(int(digit) for digit in str(n))"
+    },
+    {
+        "question_title": "Art Gallery on Graph",
+        "bug_span": [
+            [
+                4,
+                6
+            ]
+        ],
+        "bug_summary": "Incorrectly checking if the distance between vertex v and vertex p_i is greater than h_i; instead, it checks if the distance is equal to or less than h_i.",
+        "planner_text": "1. In the BFS loop, change the check from `dist > h` to `dist <= h`. This ensures that only vertices within the allowed distance are considered as guarded.\n\n2. Replace the line:\n   ```python\n   if not visited[v]:\n       visited[v] = True\n       guarded.add(v)\n       for neighbor in adj[v]:\n           queue.append((neighbor, dist + 1))\n   ```\n   with:\n   ```python\n   if dist <= h:\n       if not visited[v]:\n           visited[v] = True\n           guarded.add(v)\n           for neighbor in adj[v]:\n               queue.append((neighbor, dist + 1))\n   `````\n\nThis modification ensures that vertices within the allowed distance from any guard's position are correctly identified as guarded."
+    },
+    {
+        "question_title": "Road Blocked 2",
+        "bug_span": [
+            [
+                7,
+                8
+            ]
+        ],
+        "bug_summary": "Incorrect distance calculation in dijkstra function",
+        "planner_text": "1. Modify dijkstra function to correctly calculate distances considering all edges.\n2. Use Floyd-Warshall algorithm to find all pair shortest paths before applying dijkstra to each road removal case.\n\nSuggested patch:\ndef dijkstra(graph, start, end):\n    dist = [float('inf')] * (len(graph) + 1)\n    dist[start] = 0\n    heap = [(0, start)]\n    while heap:\n        d, u = heapq.heappop(heap)\n        if d > dist[u]:\n            continue\n        for v, w in graph[u]:\n            if dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                heapq.heappush(heap, (dist[v], v))\n\n    return dist[end]\n\n# Before loop\ngraph = [[] for _ in range(N + 1)]\nfor _ in range(M):\n    A, B, C = map(int, sys.stdin.readline().split())\n    graph[A].append((B, C))\n    graph[B].append((A, C))\n\n# After loop\nall_dist = dijkstra(graph, 1, N)\n\n# Replace this with the original loop\nfor _ in range(M):\n    A, B, C = map(int, sys.stdin.readline().split())\n    graph[A].remove((B, C))\n    graph[B].remove((A, C))\n    if dijkstra(graph, 1, N) != all_dist:\n        print(\"Yes\")\n    else:\n        print(\"No\")\n    graph[A].append((B, C))\n    graph[B].append((A, C)}"
+    },
+    {
+        "question_title": "Sort Left and Right",
+        "bug_span": [
+            [
+                8,
+                9
+            ]
+        ],
+        "bug_summary": "Incorrect sorting logic causing incorrect result",
+        "planner_text": "1. Change `P[correct_pos:i+1] = sorted(P[correct_pos:i+1])` to `P[:correct_pos] = P[:correct_pos][::-1]`\n2. Change `P[i+1:correct_pos+1] = sorted(P[i+1:correct_pos+1])` to `P[correct_pos:] = P[correct_pos:][::-1]\n3. Use slicing for reversing instead of sorting for O(n)\n\nNew implementation:\n\ndef min_operations(N, P):\n    operations = 0\n    for i in range(N // 2):\n        if P[i] != i + 1:\n            correct_pos = P.index(i + 1)\n            P[:i] = P[:i][::-1]\n            P[correct_pos:] = P[correct_pos:][::-1]\n            operations += 1\n    return operations"
+    },
+    {
+        "question_title": "Replace",
+        "bug_span": [
+            [
+                17,
+                17
+            ]
+        ],
+        "bug_summary": "Incorrect comparison for checking character frequencies; should compare counts instead",
+        "planner_text": "- In function 'can_transform', change the comparison `if s_freq[char] > t_freq.get(char, 0):' to 'if s_freq[char] < t_freq.get(char, 0):'\n- This will correctly determine if 's' contains more occurrences of a character than 't'."
+    },
+    {
+        "question_title": "Ranking with Ties",
+        "bug_span": [
+            [
+                18,
+                18
+            ]
+        ],
+        "bug_summary": "Incorrect logic in determining ranks; ranks should not be incremented after updating the array",
+        "planner_text": "1. In the loop where you find the maximum score and count occurrences, increment the rank outside the loop.\n2. Change the loop condition to iterate through the original array without modifying it.\n3. After determining the ranks, iterate through the original array again to assign these ranks correctly.\n\nPatch:\n   - Change line 18 from `r += k` to `ranks[i + j] = r`\n   - Change line 22 from `r += k` to `ranks[i + j] = r`\n   - Remove line 24"
+    },
+    {
+        "question_title": "Shout Everyday",
+        "bug_span": [
+            [
+                6,
+                6
+            ]
+        ],
+        "bug_summary": "Incorrect condition check; should compare wake-up and sleep times directly, not based on the sum of wake-up and sleep times.",
+        "planner_text": "1. Change the condition from `(A >= B and A < C)` or `(A < B and A >= C)` to `A >= B and C > A`.\n\n2. Replace line 6 with:\n   ```python\n   if A >= B and C > A:\n       print('Yes')\n   else:\n       print('No')\n   ```"
+    },
+    {
+        "question_title": "Sensor Optimization Dilemma 2",
+        "bug_span": [
+            [
+                14,
+                14
+            ]
+        ],
+        "bug_summary": "Incorrect cost calculation; incorrectly multiplying by the quotient of capacity divided by the resource usage.",
+        "planner_text": "1. Change the cost calculation to correctly account for the number of times each type of machine is used.\n   Replace `total_cost += (capacity // A) * P` with `total_cost += (capacity // A) * P`\n   Replace `total_cost += (capacity // B) * Q` with `total_cost += (capacity // B) * Q`"
+    },
+    {
+        "question_title": "Grid Ice Floor",
+        "bug_span": [
+            [
+                2,
+                2
+            ]
+        ],
+        "bug_summary": "Incorrectly initializes the starting position; should use (2, 2).",
+        "planner_text": "- Update the starting position to (2, 2).\n  - Replace `start = (2, 2)` with `start = (2, 2)`.\n\nSuggested patch:\n```python\ndef bfs(start):\n    queue = [start]\n    visited = set()\n    while queue:\n        x, y = queue.pop(0)\n        if (x, y) in visited:\n            continue\n        visited.add((x, y))\n        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:\n            nx, ny = x + dx, y + dy\n            if 0 <= nx < N and 0 <= ny < M and grid[nx][ny] == '.':\n                queue.append((nx, ny))\n    return len(visited)\n\nstart = (2, 2)\nprint(bfs(start))```"
+    },
+    {
+        "question_title": "11/22 Subsequence",
+        "bug_span": [
+            [
+                8,
+                9
+            ]
+        ],
+        "bug_summary": "Incorrect condition checks for 11/22 substrings; uses string methods for comparison instead of regex.",
+        "planner_text": "1. Replace the check for 11/22 substrings with regex matching to accurately verify the structure of the string.\n\nModified Code:\n```python\nimport re\n\ndef is_11_22_subsequence(s):\n    pattern = r'^1+' + r'/' + r'2*$'\n    return bool(re.match(pattern, s))\n```"
+    },
+    {
+        "question_title": "Bonfire",
+        "bug_span": [
+            [
+                7,
+                8
+            ]
+        ],
+        "bug_summary": "Incorrect handling of smoke movement; incorrect direction dictionary; missing initialization of grid; missing update logic for new smoke generation",
+        "planner_text": "1. Fix the direction dictionary by using a map instead of a string.\n2. Initialize the grid properly before processing steps.\n3. Correctly handle new smoke generation.\n\nSuggested patch:\n    # Initialize the grid\n    grid = {(0, 0): 1}\n    \n    # Directions based on the wind\n    directions = {\n        'N': (-1, 0),\n        'W': (0, -1),\n        'S': (1, 0),\n        'E': (0, 1)\n    }\n    \n    # Process each step\n    for t in range(N):\n        new_grid = {}\n        for (r, c), smoke in grid.items():\n            dr, dc = directions[S[t]]\n            new_r, new_c = r + dr, c + dc\n            if (new_r, new_c) not in new_grid:\n                new_grid[(new_r, new_c)] = 0\n            new_grid[(new_r, new_c)] += smoke\n        \n        # Add new smoke at (0, 0) if no smoke is there\n        if (0, 0) not in new_grid:\n            new_grid[(0, 0)] = 1\n        else:\n            new_grid[(0, 0)] += 1\n        \n        grid = new_grid"
+    },
+    {
+        "question_title": "Loong and Takahashi",
+        "bug_span": [
+            [
+                4,
+                6
+            ]
+        ],
+        "bug_summary": "Incorrect placement of Takahashi and dragon parts",
+        "planner_text": "1. Correct the placement of Takahashi.\n2. Replace the incorrect dragon part placements.\n\nStep 1:\n   In the grid initialization loop, replace the check for non-Takahashi cells with a more specific condition to ensure the dragon part is correctly placed next to its predecessor.\n\nStep 2:\n   Update the grid after assigning the center cell as Takahashi to fix the positioning.\n\nCorrected code snippet:\n\n```python\nN = int(input())\ncenter = (N + 1) // 2\n\ngrid = [[0] * N for _ in range(N)]\n\ndragon_parts = set()\nparts_used = set()\n\ndef find_next_cell(i, j):\n    for dx, dy in [(0, 1), (1, 0), (-1, 0), (0, -1)]:\n        new_i, new_j = i + dx, j + dy\n        if 0 <= new_i < N and 0 <= new_j < N and grid[new_i][new_j] == 0:\n            return new_i, new_j\n\n# Place Takahashi\ngrid[center - 1][center - 1] = 'T'\n\ndef place_dragon_part(part_number, i, j):\n    if part_number in dragon_parts or part_number in parts_used:\n        return False\n    dragon_parts.add(part_number)\n    parts_used.add(part_number)\n    grid[i][j] = part_number\n    next_i, next_j = find_next_cell(i, j)\n    if next_i is not None and next_j is not None:\n        place_dragon_part(part_number, next_i, next_j)\n\n# Fill the grid with dragon parts\nfor i in range(N):\n    for j in range(N):\n        if (i, j) != (center - 1, center - 1):\n            if place_dragon_part(i * N + j + 1, i, j):\n                continue\n```\n"
+    },
+    {
+        "question_title": "Move It",
+        "bug_span": [
+            [
+                17
+            ]
+        ],
+        "bug_summary": "Incorrectly calculates minimum cost by summing up total weights instead of considering individual item costs.",
+        "planner_text": "1. Replace the current calculation of `min_cost` with iterating over the dictionary values to get individual item costs.\n2. For each value in `box_weight.values()`, add it to `min_cost` as the cost of moving that item.\n\nHere's the corrected code:\n```python\n# Read the input\nN = int(input())\nA = list(map(int, input().split()))\nW = list(map(int, input().split()))\n\n# Create a dictionary to store the total weight of items in each box\nbox_weight = {}\n\n# Iterate through the items and update the total weight of each box\nfor i in range(N):\n    if A[i] in box_weight:\n        box_weight[A[i]] += W[i]\n    else:\n        box_weight[A[i]] = W[i]\n\n# Calculate the minimum total cost by summing up individual item costs\nmin_cost = sum(box_weight.values())\nprint(min_cost)\n```"
+    },
+    {
+        "question_title": "Takahashi the Wall Breaker",
+        "bug_span": [
+            [
+                9,
+                13
+            ]
+        ],
+        "bug_summary": "Incorrect BFS logic for front-kick moves.",
+        "planner_text": "1. In the BFS function, add a check to see if the current position (x, y) has already been visited before processing.\n2. If the cell is not visited, proceed with adding its neighbors.\n\nHere's the modified code:\n\n```python\nfrom collections import deque\n\ndef bfs(h, w, grid, start, end):\n    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]\n    queue = deque([(start, 0)])\n    visited = set()\n    visited.add(start)\n    \n    while queue:\n        (x, y), kicks = queue.popleft()\n        \n        if (x, y) == end:\n            return kicks\n        \n        for dx, dy in directions:\n            nx, ny = x + dx, y + dy\n            if 1 <= nx <= h and 1 <= ny <= w and grid[nx-1][ny-1] == '.' and (nx, ny) not in visited:\n                visited.add((nx, ny))\n                queue.append(((nx, ny), kicks))\n        \n        for dx, dy in directions:\n            for i in range(1, 3):\n                nx, ny = x + dx * i, y + dy * i\n                if 1 <= nx <= h and 1 <= ny <= w and grid[nx-1][ny-1] == '#':\n                    grid[nx-1][ny-1] = '.'\n                    queue.append(((x, y), kicks + 1))\n```\n"
+    },
+    {
+        "question_title": "maximize-active-section-with-trade-i",
+        "bug_span": [
+            [
+                10,
+                18
+            ]
+        ],
+        "bug_summary": "Incorrect trade logic; should iterate over blocks directly instead of nested loops",
+        "planner_text": "1. Replace the nested loop logic with iterating over potential trade boundaries.\n2. Initialize pointers for the start and end of each trade block.\n3. Compute the trade effect by converting blocks of '1' surrounded by '0's to all '0's and vice versa.\n\nPseudocode:\nfor i from 1 to n-1:\n    if s[i-1]=='1' and s[i]=='0':\n        left=i\n        right=i+1\n        while right<n and s[right]=='1':\n            right+=1\n        while left>0 and s[left-1]=='0':\n            left-=1\n        # Perform trade and compute new active sections count\n        trade_s=s[:left-1]+'0'*right-left+s[right:]}\n"
+    },
+    {
+        "question_title": "AtCoder Magics",
+        "bug_span": [
+            [
+                16,
+                17
+            ]
+        ],
+        "bug_summary": "Incorrect logic to determine remaining cards; should sort by cost first and then by strength.",
+        "planner_text": "1. Sort cards by cost and then by strength.\n2. Iterate through sorted cards and add each one to the result only if its cost is greater than the last added card's cost or it is the smallest card with that cost.\n\nSuggested patch:\n    cards.sort(key=lambda x: (-x[1], x[0]))"
+    },
+    {
+        "question_title": "Rearrange Query",
+        "bug_span": [
+            [
+                18,
+                27
+            ]
+        ],
+        "bug_summary": "Incorrect check for frequency equality; comparing counts directly instead of checking if frequencies match exactly",
+        "planner_text": "1. Instead of checking if `Counter(sub_A)` equals `Counter(sub_B)`, use `sub_A == sub_B` to compare the two lists of counts.\n\n2. Modify the condition in the loop at line 26 as follows:\n   ```python\n   if sub_A == sub_B:\n       print(\"Yes\")\n   else:\n       print(\"No\")\n   ```"
+    },
+    {
+        "question_title": "Ideal Holidays",
+        "bug_span": [
+            [
+                7,
+                7
+            ]
+        ],
+        "bug_summary": "Incorrect condition checks for holiday scheduling; should check based on modulo instead of subtraction.",
+        "planner_text": "1. Change the condition from `(d - 1) % (A + B) < A` to `(d - 1) % (A + B) == A`.\n\n2. Update the loop body accordingly."
+    },
+    {
+        "question_title": "Swap 0^X and 1^Y",
+        "bug_span": [
+            [
+                13,
+                14
+            ]
+        ],
+        "bug_summary": "Incorrect logic for checking the conditions; should directly compare counts",
+        "planner_text": "1. Remove the condition checks that rely on substring comparison and count differences.\n2. Replace them with direct comparisons of character counts at relevant indices.\n\nSuggested patch:\n    if S[:X].count('0') == T[:X].count('0') and S[:X].count('1') == T[:X].count('1') and S[-Y:].count('0') == T[-Y:].count('0') and S[-Y:].count('1') == T[-Y:].count('1') and S[X:-Y].count('0') == T[X:-Y].count('0') and S[X:-Y].count('1') == T[X:-Y].count('1'):"
+    },
+    {
+        "question_title": "Xor Sigma Problem",
+        "bug_span": [
+            [
+                30,
+                31
+            ]
+        ],
+        "bug_summary": "Incorrect use of XOR sum calculation; incorrect range for inner loop",
+        "planner_text": "1. Replace the inner loop to correctly iterate over the range [i+1, j].\n2. Use `xor_sum[j + 1] ^ xor_sum[i]` instead of `xor_sum[j] ^ xor_sum[i]` in the result calculation.\n\nPatch:\n    for i in range(n - 1):\n        for j in range(i + 1, n):\n            result += xor_sum[j + 1] ^ xor_sum[i]}"
+    },
+    {
+        "question_title": "maximum-area-rectangle-with-point-constraints-i",
+        "bug_span": [
+            [
+                16,
+                19
+            ]
+        ],
+        "bug_summary": "Incorrect logic for calculating area; incorrectly checks for consecutive cells being filled in",
+        "planner_text": "1. Modify the nested loops for checking the area calculation to iterate over each pair of cells within the rectangle instead of adjacent pairs.\n2. Ensure that `width` is calculated correctly as `j - i`, not just `x_coords[j] - x_coords[i]`.\n3. Adjust the condition to check for filled cells in the inner loop correctly, comparing cells between points (i, k) and (i, l).\n\nSuggested patch:\n```python\ncorner_1 = (x_coords[i], y_coords[k])\ncorner_2 = (x_coords[i], y_coords[l])\ncorner_3 = (x_coords[j], y_coords[k])\ncorner_4 = (x_coords[j], y_coords[l])\nfor x in range(corner_1[0], corner_3[0] + 1):\n    for y in range(corner_1[1], corner_4[1] + 1):\n        if grid[x][y] == 1:\n            max_area = max(max_area, width * height)\n```"
+    },
+    {
+        "question_title": "Fine Triplets",
+        "bug_span": [
+            [
+                14,
+                16
+            ]
+        ],
+        "bug_summary": "Incorrect calculation of the frequency of elements and incorrect handling of the case where third element is equal to second element.",
+        "planner_text": "1. In the loop, when calculating `third` using `S[j] + (S[j] - S[i])`, you should consider that `third` might not exist in the list if `S[j] - S[i]` is negative or greater than any other element in the list.\n2. To fix this, before checking if `third` exists in `freq`, ensure that `S[j] > S[i]` and `S[j] >= third`. This way, `third` will only be considered if it's valid and exists in the list.\n3. After fixing these issues, the corrected code should correctly count the number of fine triplets based on the condition provided."
+    },
+    {
+        "question_title": "peaks-in-array",
+        "bug_span": [
+            [
+                8,
+                9
+            ]
+        ],
+        "bug_summary": "Incorrect calculation of prefix_peaks using arithmetic operations instead of cumulative sum; incorrect handling of edge cases.",
+        "planner_text": "1. Modify the loop that populates prefix_peaks from 2 to n-1 to use cumulative sums instead of arithmetic operations.\n2. Adjust the condition inside the loop to correctly calculate the sum of peaks before and after the current position.\n\nSuggested patch:\n    for i in range(2, n):\n        prefix_peaks[i] = prefix_peaks[i-1] + int(peaks[i])\n\n3. Update the logic for updating prefix_peaks when changing nums[index]:\n    When nums[index] changes, decrement the corresponding prefix_peaks values accordingly, then update the value at index and increment the prefix_peaks values again.\n\nSuggested patch:\n    # Decrement the prefix_peaks values around the index\n    if index > 0:\n        prefix_peaks[index-1] -= 1\n    if index < n-1:\n        prefix_peaks[index+1] -= 1\n    # Update the value at index and increment the prefix_peaks values\n    nums[index] = val\n    if index > 0:\n        prefix_peaks[index-1] += 1\n    if index < n-1:\n        prefix_peaks[index+1] += 1"
+    },
+    {
+        "question_title": "Super Takahashi Bros.",
+        "bug_span": [
+            [
+                4,
+                4
+            ]
+        ],
+        "bug_summary": "Incorrect logic in time calculation; incorrectly calculates total time for reaching X-1.",
+        "planner_text": "1. Change the condition in the second loop to check if the new time reaches the desired stage X-1.\n2. Remove the incorrect line where `time_to_reach[X-1]` is updated with the current time plus the cost of clearing the current stage.\n\n```python\n    # Option 2: Clear the current stage to reach stage X\n    X = stages[current_stage][2]\n    new_time = current_time + stages[current_stage][1]\n    if new_time < time_to_reach[X-1]:\n        time_to_reach[X-1] = new_time\n        heapq.heappush(pq, (new_time, X-1))\n```\n3. Update the time_to_reach array correctly when reaching X-1 or any other stage by replacing the line:\n\n```python\n    if new_time < time_to_reach[X-1]:\n        time_to_reach[X-1] = new_time\n        heapq.heappush(pq, (new_time, X-1))\n```\nwith:\n\n```python\n    if new_time >= time_to_reach[X-1]:\n        time_to_reach[X-1] = new_time\n        heapq.heappush(pq, (new_time, X-1))\n```"
+    },
+    {
+        "question_title": "Isolation",
+        "bug_span": [
+            [
+                8,
+                9
+            ]
+        ],
+        "bug_summary": "Incorrect use of `find` function in `union` function; incorrect update of `parent` array",
+        "planner_text": "1. Replace the `root_x`, `root_y` assignments with the correct call to `find`.\n2. Update the `parent` array correctly after union.\n\nSuggested patch:\n```python\ndef union(parent, size, x, y):\n    root_x = find(parent, x)\n    root_y = find(parent, y)\n    if root_x != root_y:\n        if size[root_x] < size[root_y]:\n            root_x, root_y = root_y, root_x\n        parent[root_y] = root_x\n        size[root_x] += size[root_y]\n    parent[root_x] = root_y\n    size[root_y] = size[root_x]\n```"
+    },
+    {
+        "question_title": "Smooth Occlusion",
+        "bug_span": [
+            [
+                6,
+                6
+            ]
+        ],
+        "bug_summary": "Incorrect calculation of total length and cost; should subtract cost directly.",
+        "planner_text": "1. Modify line 6 to calculate total length as `sum(upper) + sum(lower)` instead of adding it to `diff`.\n   \n2. Remove the unnecessary `diff` variable and calculation in line 11.\n\nPatch:\n\n```python\n        # Calculate the total length of the teeth\n        total_length = sum(upper) + sum(lower)\n```"
+    },
+    {
+        "question_title": "Vitamin Balance",
+        "bug_span": [
+            [
+                9,
+                9
+            ]
+        ],
+        "bug_summary": "Incorrect logic for calculating vitamin intakes; should consider all combinations of foods.",
+        "planner_text": "1. Change the logic to check all combinations of foods instead of just subsets.\n2. Use a nested loop to iterate over all possible subsets of foods.\n\nSuggested patch:\n    for r in range(1, N + 1):\n        for combination in combinations(foods, r):\n            total_calories = sum(food[2] for food in combination)\n            if total_calories > X:\n                continue\n            vitamin_intakes = [0, 0, 0]\n            for food in combination:\n                vitamin_intakes[food[0] - 1] += food[1]\n            min_intake = min(vitamin_intakes)\n            max_min_intake = max(max_min_intake, min_intake)"
+    },
+    {
+        "question_title": "ways-to-express-an-integer-as-sum-of-powers",
+        "bug_span": [],
+        "bug_summary": "parse_error",
+        "planner_text": "parse_error"
+    },
+    {
+        "question_title": "minimize-the-maximum-adjacent-element-difference",
+        "bug_span": [
+            [
+                12,
+                13
+            ]
+        ],
+        "bug_summary": "Logic error in replacing negative ones; should sort only non-negative numbers.",
+        "planner_text": "1. Replace line 12 to filter out negative numbers before sorting.\n2. Replace line 14 to correctly compare and update min_diff.\n\nSuggested patch:\n```python\ndef minDifference(self, nums: List[int]) -> int:\n    # Filter out negative numbers and sort\n    sorted_non_negs = sorted(n for n in nums if n != -1)\n    if len(sorted_non_negs) < 4:\n        return min(abs(a - b) for a, b in zip(sorted_non_negs, sorted_non_negs[1:]))\n    else:\n        min_diff = float('inf')\n        for i in range(3):\n            min_diff = min(min_diff, abs(sorted_non_negs[i] - sorted_non_negs[i+1]))\n        return min_diff\n```"
+    },
+    {
+        "question_title": "Triple Attack",
+        "bug_span": [
+            [
+                7,
+                7
+            ]
+        ],
+        "bug_summary": "Incorrect logic for reducing health based on T modulo 3",
+        "planner_text": "1. Adjust the logic inside the loop to correctly reduce health based on T modulo 3.\n2. Use a conditional statement to check if T is divisible by 3 and subtract 3 accordingly.\n3. Remove unnecessary subtraction if T is not divisible by 3 and directly subtract 1.\n\nSuggested patch:\n    while h > 0:\n        T += 1\n        if T % 3 == 0:\n            h -= 3\n        else:\n            h -= 1"
+    },
+    {
+        "question_title": "Bib",
+        "bug_span": [
+            [
+                20,
+                22
+            ]
+        ],
+        "bug_summary": "Incorrect mapping from bib to person; should use bib_to_person",
+        "planner_text": "1. Change the line where 'bib_to_person' is created to map bib numbers to person numbers using 'bib_to_person = {Q[i]: i for i in range(N)}'.\n2. Ensure 'bib_to_person' correctly maps bib numbers to person numbers before iterating over P.\n\nSuggested patch:\n    bib_to_person = {Q[i]: i for i in range(N)}"
+    },
+    {
+        "question_title": "Grid and Magnet",
+        "bug_span": [
+            [
+                7,
+                8
+            ]
+        ],
+        "bug_summary": "Incorrectly passing 'grid' to 'bfs'",
+        "planner_text": "1. Replace `bfs(grid, start)` with `bfs(start, grid)`.\n\nSuggested patch:\n```python\n    def max_degree_of_freedom(H, W, grid):\n        max_degree = 0\n        for i in range(H):\n            for j in range(W):\n                if grid[i][j] == '.':\n                    start = (i, j)\n                    degree = bfs(start, grid)\n                    if degree > max_degree:\n                        max_degree = degree\n        return max_degree\n\n    def bfs(start, grid):\n        H, W = len(grid), len(grid[0])\n        visited = [[False] * W for _ in range(H)]\n        queue = [start]\n        visited[start[0]][start[1]] = True\n        count = 0\n\n        while queue:\n            x, y = queue.pop(0)\n            count += 1\n            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:\n                nx, ny = x + dx, y + dy\n                if 0 <= nx < H and 0 <= ny < W and not visited[nx][ny]:\n                    if grid[nx][ny] == '.':\n                        queue.append((nx, ny))\n                        visited[nx][ny] = True\n\n        return count\n```\n"
+    },
+    {
+        "question_title": "Christmas Color Grid 1",
+        "bug_span": [
+            [
+                15,
+                24
+            ]
+        ],
+        "bug_summary": "Incorrect use of pow function causing incorrect result due to wrong base and exponent.",
+        "planner_text": "1. Replace pow(len(red_cells), MOD - 2, MOD) with pow(len(red_cells) ** -1, MOD - 2, MOD).\n2. Simplify the expression to len(red_cells) ** -1.\n\nRationale:\npow(x, y, z) computes x raised to the power of y modulo z.\nIn our case, we want the modular multiplicative inverse of len(red_cells), which is equivalent to 1 / len(red_cells) mod MOD.\nlen(red_cells) ** -1 mod MOD is the same as len(red_cells) ^ (-1) mod MOD due to Fermat's Little Theorem.\nUsing pow with base 1 instead of len(red_cells) ensures the correct modular multiplicative inverse is computed without extra complexity.\n"
+    },
+    {
+        "question_title": "I Hate Sigma Problems",
+        "bug_span": [
+            [
+                6,
+                7
+            ]
+        ],
+        "bug_summary": "Incorrect logic for counting distinct values; inner loop iterates over the entire range",
+        "planner_text": "1. Replace the inner loop with a simple counter that increments when a new unique value is found.\n2. Calculate the number of distinct values in each subsequence by subtracting 1 from the total length.\n\nSuggested patch:\n    for i in range(len(sequence)):\n        unique_count = 0\n        for j in range(i, len(sequence)):\n            if sequence[j] not in unique_values:\n                unique_values.add(sequence[j])\n                unique_count += 1\n        distinct_counts[unique_count] += 1"
+    },
+    {
+        "question_title": "sorted-gcd-pair-queries",
+        "bug_span": [
+            [
+                9,
+                9
+            ]
+        ],
+        "bug_summary": "Incorrect logic in finding gcd_pairs; should use `reduce` from functools instead of custom loop.",
+        "planner_text": "1. Replace the nested loops with `reduce(gcd, nums[i:j+1])`.\n2. Remove the unnecessary sorting of gcd_pairs as it's not necessary after reduction.\n\nSuggested patch:\n```python\ndef gcdValues(self, nums: List[int], queries: List[int]) -> List[int]:\n    from functools import reduce\n    from operator import gcd\n\n    n = len(nums)\n    gcd_pairs = []\n    for i in range(n):\n        for j in range(i + 1, n):\n            gcd_pairs.append(reduce(gcd, nums[i:j+1]))\n    return [gcd_pairs[q] for q in queries]\n```"
+    },
+    {
+        "question_title": "Socks 2",
+        "bug_span": [
+            [
+                24,
+                26
+            ]
+        ],
+        "bug_summary": "Incorrect logic for creating pairs; should pair colors such that their absolute differences are minimized",
+        "planner_text": "1. Instead of creating pairs by iterating over sock counts directly, pair colors based on their absolute differences to minimize the sum of these differences.\n2. Use a priority queue or dictionary to efficiently find the closest colors to be paired next.\n\nSuggested patch:\n    # Pair colors with minimal absolute difference\n    current_pair = (sock_counts.index(min(sock_counts)), sock_counts.index(max(sock_counts)))\n    sock_counts[current_pair[0]] -= 1\n    sock_counts[current_pair[1]] -= 1\n    total_weirdness += abs(current_pair[0] - current_pair[1])"
+    },
+    {
+        "question_title": "longest-subsequence-with-decreasing-adjacent-difference",
+        "bug_span": [
+            [
+                11,
+                11
+            ]
+        ],
+        "bug_summary": "Incorrect logic in nested loops leads to incorrect calculation of dp values",
+        "planner_text": "1. The inner loop should start from the current index i instead of j, since dp[i] depends on dp[j+1] which is not computed yet.\n\n2. Modify the inner loop as follows:\n```python\nfor j in range(i):\n    if abs(nums[i] - nums[j]) >= abs(nums[j] - nums[j-1]):\n        dp[i] = max(dp[i], dp[j] + 1)\n```"
+    },
+    {
+        "question_title": "Prepare Another Box",
+        "bug_span": [
+            [
+                35,
+                36
+            ]
+        ],
+        "bug_summary": "Incorrect sorting logic; should sort both toys and boxes separately before checking the largest toy fits.",
+        "planner_text": "1. Remove the sorting of toys and boxes.\n2. Replace the `for` loop with a single condition check after sorting the toys and boxes.\n\nSuggested patch:\n```python\nA.sort()\nB.sort()\nif A[-1] <= B[-1]:\n    x = A[-1]\nelse:\n    print(-1)\n```"
+    },
+    {
+        "question_title": "Prefix Bubble Sort",
+        "bug_span": [
+            [
+                16,
+                18
+            ]
+        ],
+        "bug_summary": "Incorrect use of inversion_count variable inside loop",
+        "planner_text": "1. Initialize inv_count outside of loop.\n2. Update inv_count inside the inner loop before swapping.\n\nSuggested patch:\n\tinv_count -= 1\n\tP[i], P[i + 1] = P[i + 1], P[i]\n\nCommit message:\n\tFix incorrect use of inv_count in loop"
+    },
+    {
+        "question_title": "stone-removal-game",
+        "bug_span": [
+            [
+                7,
+                8
+            ]
+        ],
+        "bug_summary": "Incorrect logic; should decrement by 1 fewer than the previous opponent's move instead of always subtracting 9",
+        "planner_text": "1. Change the loop condition to check if the number of remaining stones is greater than or equal to 10.\n2. Update the loop to decrement stones by 1 less than the previous opponent's move:\n    - If it's Alice's turn, decrement by 10.\n    - If it's Bob's turn, decrement by 9.\n3. Correctly initialize `alice_turn` based on whether the number of initial stones is odd or even.\n4. Remove the unnecessary subtraction in the final check (stones > 0) since the loop will terminate when no more moves are possible.\n\nPseudocode:\nwhile stones >= 10:\n    if alice_turn:\n        stones -= 10\n    else:\n        stones -= 9\n    alice_turn = not alice_turn\nreturn False\n"
+    },
+    {
+        "question_title": "Tile Distance 3",
+        "bug_span": [
+            [
+                17,
+                18
+            ]
+        ],
+        "bug_summary": "Incorrect condition in calculating moves; should compare i and j directly instead of checking if they have the same parity.",
+        "planner_text": "1. Change the condition inside the absolute value calculation to directly compare i and j.\n\n   Before:\n   ```python\n   moves = abs(S_i - T_i) + abs(S_j - T_j) + abs(S_k - T_k)\n   ```\n\n   After:\n   ```python\n   moves = abs(S_i - T_i) + abs(S_j - T_j) + abs(S_k - T_k)\n   ```"
+    },
+    {
+        "question_title": "Count Arithmetic Subsequences",
+        "bug_span": [
+            [
+                7,
+                7
+            ]
+        ],
+        "bug_summary": "Incorrect handling of consecutive elements in dp array",
+        "planner_text": "1. In the first loop, dp[i][A[i]] is initialized to 1. This initializes dp[i][A[i]] correctly but should not affect dp[j][diff] calculations.\n2. Change the initialization to `dp[i][A[i]] += 1` inside the inner loop.\n3. Replace the line `dp[i][diff] = (dp[i][diff] + dp[j][diff]) % MOD` with `dp[i][diff] = (dp[i][diff] + dp[j][diff])` to avoid unnecessary updates for consecutive elements.\n\nPatch:\n```python\ndp[i][A[i]] += 1  # Correct initialization\nfor j in range(i):\n    diff = A[i] - A[j]\n    dp[i][diff] = (dp[i][diff] + dp[j][diff]) % MOD  # Remove unnecessary update\n```"
+    },
+    {
+        "question_title": "T",
+        "bug_span": [],
+        "bug_summary": "parse_error",
+        "planner_text": "parse_error"
+    },
+    {
+        "question_title": "find-missing-and-repeated-values",
+        "bug_span": [
+            [
+                18
+            ]
+        ],
+        "bug_summary": "Incorrect calculation of repeated and missing values; incorrect use of grid elements for repeated and missing calculations.",
+        "planner_text": "1. Replace `total_sum` with the correct formula for the sum of first n natural numbers.\n2. Update the calculation of repeated by subtracting the sum of elements in grid from `actual_sum`.\n3. Correctly calculate missing as `total_sum - repeated` instead of `missing = total_sum - repeated`."
+    },
+    {
+        "question_title": "Train Delay",
+        "bug_span": [
+            [
+                25,
+                26
+            ]
+        ],
+        "bug_summary": "Incorrectly setting initial delays; should consider path-based updates",
+        "planner_text": "1. Modify the initial delays calculation based on the transitive path through each node.\n2. Replace the direct graph traversal with a topological sort approach to update delays correctly.\n\nSuggested patch:\n   - Replace the loop starting at 1 with a topological sort.\n   - Use `visited` to track nodes that have been processed.\n   - Correctly propagate delays through the graph during the DFS.\n\nNote: This might require additional changes or optimizations depending on the exact constraints and graph structure.\n\nFinal patch:\n   - Modified loop starts at 0 (dummy start).\n   - Added visited array to track processed nodes.\n   - Updated DFS to compute and store delays recursively.\n   - Corrected initial delay computation using path propagation.\n"
+    },
+    {
+        "question_title": "assign-elements-to-groups-with-constraints",
+        "bug_span": [
+            [
+                6,
+                6
+            ]
+        ],
+        "bug_summary": "Element indices should be sorted before iterating over them",
+        "planner_text": "1. Sort the `element_indices` dictionary based on the element values.\n2. Iterate over the sorted indices and find the first element whose value divides the current group size and hasn't been assigned yet.\n\nSuggested patch:\n\n    element_indices = dict(sorted(element_indices.items(), key=lambda x: x[0]))"
+    },
+    {
+        "question_title": "zigzag-grid-traversal-with-skip",
+        "bug_span": [
+            [
+                1,
+                1
+            ]
+        ],
+        "bug_summary": "Incorrectly appending result after each cell, only every other cell is appended",
+        "planner_text": "1. Append only the current cell's value to result.\n2. Update row and col based on current direction.\n3. Reverse direction when changing rows or columns.\n\nRevised code:\n\nclass Solution:\n    def zigzagTraversal(self, grid: List[List[int]]) -> List[int]:\n        result = []\n        rows, cols = len(grid), len(grid[0])\n        row, col = 0, 0\n        direction = 1  # 1 for right, -1 for left\n\n        for _ in range(rows * cols):\n            result.append(grid[row][col])\n            if direction == 1:\n                if col < cols - 1:\n                    col += 1\n                else:\n                    row += 1\n                    direction = -1\n            else:\n                if row < rows - 1:\n                    row += 1\n                    direction = 1\n                else:\n                    col += 1\n\n        return result"
+    }
+]
